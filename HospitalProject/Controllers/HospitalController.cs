@@ -45,7 +45,7 @@ namespace HospitalProject.Controllers
 
 
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPost("hospital/doctor/register")]
         public async Task<IActionResult> RegisterDoctor(DoctorRegDto dto)
         {
