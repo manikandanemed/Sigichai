@@ -41,21 +41,30 @@ namespace HospitalProject.Controllers
             });
         }
 
-       
 
 
 
-        //[Authorize(Roles = "Admin")]
-        [HttpPost("hospital/doctor/register")]
+
+
+        //[HttpPost("hospital/doctor/register")]
+        //public async Task<IActionResult> RegisterDoctor(DoctorRegDto dto)
+        //{
+        //    int hospitalId = int.Parse(
+        //        User.FindFirst("HospitalId")!.Value
+        //    );
+
+        //    await _service.RegisterDoctor(hospitalId, dto);
+        //    return Ok("Doctor registered successfully");
+        //}
+
+
+        [HttpPost("public/doctor/register")]
         public async Task<IActionResult> RegisterDoctor(DoctorRegDto dto)
         {
-            int hospitalId = int.Parse(
-                User.FindFirst("HospitalId")!.Value
-            );
-
-            await _service.RegisterDoctor(hospitalId, dto);
-            return Ok("Doctor registered successfully");
+            await _service.RegisterDoctor(dto);
+            return Ok("Doctor registered successfully. Pending verification");
         }
+
 
         //SUPER ADMIN
 

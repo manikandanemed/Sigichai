@@ -102,13 +102,50 @@ namespace HospitalProject.Services
 
 
 
-        public async Task RegisterDoctor(int hospitalIdFromJwt, DoctorRegDto d)
+        //public async Task RegisterDoctor(int hospitalIdFromJwt, DoctorRegDto d)
+        //{
+        //    // 1️⃣ Duplicate mobile check
+        //    if (await _u.GetAsync(x => x.MobileNumber == d.Mobile) != null)
+        //        throw new Exception("Mobile already exists");
+
+        //    // 2️⃣ Create User
+        //    var user = new User
+        //    {
+        //        Name = d.Name,
+        //        MobileNumber = d.Mobile,
+        //        Password = BCrypt.Net.BCrypt.HashPassword(d.Password),
+        //        Role = "Doctor",
+        //        Latitude = d.Lat,
+        //        Longitude = d.Lon
+        //    };
+
+        //    await _u.AddAsync(user);
+        //    await _u.SaveAsync();
+
+        //    // 3️⃣ Create Doctor (HospitalId AUTO from JWT)
+        //    await _d.AddAsync(new Doctor
+        //    {
+        //        UserId = user.Id,
+        //        HospitalId = hospitalIdFromJwt, // 🔥 AUTO ASSIGN
+        //        Specialization = d.Specialization
+        //    });
+
+        //    await _d.SaveAsync();
+        //}
+
+
+        public async Task RegisterDoctor(DoctorRegDto d)
         {
-            // 1️⃣ Duplicate mobile check
+            // 1️⃣ Hospital exists check
+            var hospital = await _hospital.GetAsync(h => h.Id == d.HospitalId);
+            if (hospital == null)
+                throw new Exception("Invalid hospital");
+
+            // 2️⃣ Duplicate mobile check
             if (await _u.GetAsync(x => x.MobileNumber == d.Mobile) != null)
                 throw new Exception("Mobile already exists");
 
-            // 2️⃣ Create User
+            // 3️⃣ Create User
             var user = new User
             {
                 Name = d.Name,
@@ -122,16 +159,19 @@ namespace HospitalProject.Services
             await _u.AddAsync(user);
             await _u.SaveAsync();
 
-            // 3️⃣ Create Doctor (HospitalId AUTO from JWT)
+            // 4️⃣ Create Doctor (NOT verified)
             await _d.AddAsync(new Doctor
             {
                 UserId = user.Id,
-                HospitalId = hospitalIdFromJwt, // 🔥 AUTO ASSIGN
-                Specialization = d.Specialization
+                HospitalId = d.HospitalId,
+                Specialization = d.Specialization,
+                IsVerified = false,
+                VerificationStatus = "PENDING"
             });
 
             await _d.SaveAsync();
         }
+
 
 
 

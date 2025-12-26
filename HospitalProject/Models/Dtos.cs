@@ -13,7 +13,7 @@
     );
 
     public record DoctorRegDto(
-        //int HospitalId,
+        int HospitalId,
         string Name,
         string Mobile,
         string Password,
