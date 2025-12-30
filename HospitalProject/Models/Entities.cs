@@ -29,14 +29,17 @@ namespace HospitalProject.Models
     {
         public int Id { get; set; }
 
-        // FK → User
         public int UserId { get; set; }
         public User User { get; set; } = null!;
 
-        // One patient → many family members
+        // 🔥 NEW PERSONAL DETAILS
+        public DateOnly? Dob { get; set; }
+        public string? Gender { get; set; }       // Male / Female / Other
+        public string? BloodGroup { get; set; }   // O+, A+, etc
+        public string? Email { get; set; }
+
         public ICollection<FamilyMember> FamilyMembers { get; set; }
             = new List<FamilyMember>();
-        //public int HospitalId { get; set; }
 
     }
 
@@ -47,24 +50,27 @@ namespace HospitalProject.Models
     {
         public int Id { get; set; }
 
-        // FK → User
         public int UserId { get; set; }
         public User User { get; set; } = null!;
 
         public string Specialization { get; set; } = string.Empty;
 
-        // One doctor → many slots
+        // 🔥 Hospital optional
+        public int? HospitalId { get; set; }
+        public Hospital? Hospital { get; set; }
+
+        // 📍 Location
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
+
+        // 🔐 Verification
+        public bool IsVerified { get; set; } = false;
+
+        // 🔥 ADD THIS (VERY IMPORTANT)
         public ICollection<DoctorAvailability> Availabilities { get; set; }
             = new List<DoctorAvailability>();
-
-        public int HospitalId { get; set; }
-        public Hospital Hospital { get; set; } = null!;
-
-        public bool IsVerified { get; set; } = false;
-        public string VerificationStatus { get; set; } = "PENDING";
-
-
     }
+
 
 
 
@@ -163,9 +169,13 @@ namespace HospitalProject.Models
         public decimal Fees { get; set; }
         public bool IsPaid { get; set; }
 
+        // 🔥 NEW
+        public string? PaymentMode { get; set; }   // Cash / UPI / Card
+        public DateTime? PaidAt { get; set; }
+
         public int? FamilyMemberId { get; set; }
         public FamilyMember? FamilyMember { get; set; }
-        public int HospitalId { get; set; }
+        public int? HospitalId { get; set; }
 
         public string? ReasonForVisit { get; set; }   // 👈 ADD
 
@@ -176,13 +186,39 @@ namespace HospitalProject.Models
     // =========================
     // OTP STORE
     // =========================
+    //public class OtpStore
+    //{
+    //    public int Id { get; set; }
+    //    public string MobileNumber { get; set; } = string.Empty;
+    //    public string OtpCode { get; set; } = string.Empty;
+    //    public DateTime Expiry { get; set; }
+    //}
+
+
     public class OtpStore
     {
         public int Id { get; set; }
+
+        // 🔥 NEW
+        public int? UserId { get; set; }      // nullable (old data safe)
+
         public string MobileNumber { get; set; } = string.Empty;
         public string OtpCode { get; set; } = string.Empty;
+
+        // 🔥 NEW
+        public string? OtpType { get; set; }   // SMS / EMAIL
+        public string? Purpose { get; set; }   // LOGIN / FORGOT / REGISTER
+
+        // 🔥 NEW
+        public DateTime CreatedTime { get; set; } = DateTime.UtcNow;
+
         public DateTime Expiry { get; set; }
+
+        // 🔥 NEW
+        public bool IsUsed { get; set; } = false;
+        public bool IsSent { get; set; } = false;
     }
+
 
 
     public class Hospital

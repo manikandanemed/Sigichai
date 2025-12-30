@@ -102,50 +102,20 @@ namespace HospitalProject.Services
 
 
 
-        //public async Task RegisterDoctor(int hospitalIdFromJwt, DoctorRegDto d)
-        //{
-        //    // 1️⃣ Duplicate mobile check
-        //    if (await _u.GetAsync(x => x.MobileNumber == d.Mobile) != null)
-        //        throw new Exception("Mobile already exists");
-
-        //    // 2️⃣ Create User
-        //    var user = new User
-        //    {
-        //        Name = d.Name,
-        //        MobileNumber = d.Mobile,
-        //        Password = BCrypt.Net.BCrypt.HashPassword(d.Password),
-        //        Role = "Doctor",
-        //        Latitude = d.Lat,
-        //        Longitude = d.Lon
-        //    };
-
-        //    await _u.AddAsync(user);
-        //    await _u.SaveAsync();
-
-        //    // 3️⃣ Create Doctor (HospitalId AUTO from JWT)
-        //    await _d.AddAsync(new Doctor
-        //    {
-        //        UserId = user.Id,
-        //        HospitalId = hospitalIdFromJwt, // 🔥 AUTO ASSIGN
-        //        Specialization = d.Specialization
-        //    });
-
-        //    await _d.SaveAsync();
-        //}
 
 
-        public async Task RegisterDoctor(DoctorRegDto d)
+        public async Task RegisterHospitalDoctor(HospitalDoctorRegDto d)
         {
-            // 1️⃣ Hospital exists check
-            var hospital = await _hospital.GetAsync(h => h.Id == d.HospitalId);
-            if (hospital == null)
+            if (d.HospitalId <= 0)
                 throw new Exception("Invalid hospital");
 
-            // 2️⃣ Duplicate mobile check
+            var hospital = await _hospital.GetAsync(h => h.Id == d.HospitalId);
+            if (hospital == null)
+                throw new Exception("Hospital not found");
+
             if (await _u.GetAsync(x => x.MobileNumber == d.Mobile) != null)
                 throw new Exception("Mobile already exists");
 
-            // 3️⃣ Create User
             var user = new User
             {
                 Name = d.Name,
@@ -159,18 +129,55 @@ namespace HospitalProject.Services
             await _u.AddAsync(user);
             await _u.SaveAsync();
 
-            // 4️⃣ Create Doctor (NOT verified)
             await _d.AddAsync(new Doctor
             {
                 UserId = user.Id,
-                HospitalId = d.HospitalId,
                 Specialization = d.Specialization,
-                IsVerified = false,
-                VerificationStatus = "PENDING"
+                HospitalId = d.HospitalId,
+                Latitude = d.Lat,
+                Longitude = d.Lon,
+                IsVerified = false
             });
 
             await _d.SaveAsync();
         }
+
+
+
+        public async Task RegisterIndependentDoctor(
+    IndependentDoctorRegDto d)
+        {
+            if (await _u.GetAsync(x => x.MobileNumber == d.Mobile) != null)
+                throw new Exception("Mobile already exists");
+
+            var user = new User
+            {
+                Name = d.Name,
+                MobileNumber = d.Mobile,
+                Password = BCrypt.Net.BCrypt.HashPassword(d.Password),
+                Role = "Doctor",
+                Latitude = d.Lat,
+                Longitude = d.Lon
+            };
+
+            await _u.AddAsync(user);
+            await _u.SaveAsync();
+
+            await _d.AddAsync(new Doctor
+            {
+                UserId = user.Id,
+                Specialization = d.Specialization,
+                HospitalId = null,      // 🔥 NO hospital
+                Latitude = d.Lat,
+                Longitude = d.Lon,
+                IsVerified = false
+            });
+
+            await _d.SaveAsync();
+        }
+
+
+
 
 
 
@@ -222,41 +229,137 @@ namespace HospitalProject.Services
 
             await _otp.AddAsync(new OtpStore
             {
-                MobileNumber = d.MobileNumber,
+                UserId = user.Id,
+                MobileNumber = user.MobileNumber,
                 OtpCode = otp,
-                Expiry = DateTime.UtcNow.AddMinutes(5)
+                OtpType = "SMS",
+                Purpose = "LOGIN",
+                CreatedTime = DateTime.UtcNow,
+                Expiry = DateTime.UtcNow.AddMinutes(5),
+                IsUsed = false,
+                IsSent = true
             });
+
             await _otp.SaveAsync();
 
             await _twilio.SendOtpAsync(d.MobileNumber, otp);
             return "OTP Sent";
         }
 
- 
 
 
-        public async Task<string> VerifyOtp(VerifyOtpDto d)
+        public async Task CreateIndependentDoctorAdmin(
+    int doctorUserId,
+    DoctorAdminCreateDto dto)
+        {
+            // 1️⃣ Doctor (logged-in user)
+            var doctor = await _d.GetAsync(d => d.UserId == doctorUserId);
+            if (doctor == null)
+                throw new Exception("Doctor not found");
+
+            // 2️⃣ Duplicate mobile check
+            if (await _u.GetAsync(x => x.MobileNumber == dto.Mobile) != null)
+                throw new Exception("Mobile already exists");
+
+            // 3️⃣ Create ADMIN user
+            var adminUser = new User
+            {
+                Name = dto.Name.Trim(),
+                MobileNumber = dto.Mobile.Trim(),
+                Password = BCrypt.Net.BCrypt.HashPassword("1234"), // temp
+                Role = "Admin"
+            };
+
+            await _u.AddAsync(adminUser);
+            await _u.SaveAsync();
+
+            // 4️⃣ Link admin to doctor (NO hospital)
+            await _doctorStaff.AddAsync(new DoctorStaff
+            {
+                DoctorId = doctor.Id,
+                UserId = adminUser.Id,
+                StaffRole = "Admin"
+            });
+
+            await _doctorStaff.SaveAsync();
+
+            // 5️⃣ OTP for first login
+            var otp = new Random().Next(1000, 9999).ToString();
+
+            await _otp.AddAsync(new OtpStore
+            {
+                MobileNumber = dto.Mobile,
+                OtpCode = otp,
+                Expiry = DateTime.UtcNow.AddMinutes(5)
+            });
+
+            await _otp.SaveAsync();
+
+            await _twilio.SendOtpAsync(
+                dto.Mobile,
+                $"You are added as clinic admin. OTP: {otp}"
+            );
+        }
+
+
+
+
+
+        //public async Task<string> VerifyOtp(VerifyOtpDto d)
+        //{
+        //    var rec = await _otp.GetAsync(x =>
+        //        x.MobileNumber == d.MobileNumber &&
+        //        x.OtpCode == d.Otp &&
+        //        x.Expiry > DateTime.UtcNow);
+
+        //    if (rec == null)
+        //        throw new Exception("Invalid OTP");
+
+        //    // 🔥 INCLUDE navigation properties
+        //    var user = await _u.Query()
+        //        .Include(x => x.Admin)
+        //        .Include(x => x.Doctor)
+        //        .Include(x => x.Patient)
+        //        .FirstOrDefaultAsync(x => x.MobileNumber == d.MobileNumber);
+
+        //    if (user == null)
+        //        throw new Exception("User not found");
+
+        //    return GenerateJwt(user);
+        //}
+
+
+        public async Task<(string Token, string Role)> VerifyOtp(VerifyOtpDto d)
         {
             var rec = await _otp.GetAsync(x =>
                 x.MobileNumber == d.MobileNumber &&
                 x.OtpCode == d.Otp &&
-                x.Expiry > DateTime.UtcNow);
+                x.Purpose == "LOGIN" &&
+                x.IsUsed == false &&
+                x.Expiry > DateTime.UtcNow
+            );
 
             if (rec == null)
-                throw new Exception("Invalid OTP");
+                throw new Exception("Invalid or expired OTP");
 
-            // 🔥 INCLUDE navigation properties
+            rec.IsUsed = true;
+            await _otp.SaveAsync();
+
             var user = await _u.Query()
                 .Include(x => x.Admin)
                 .Include(x => x.Doctor)
                 .Include(x => x.Patient)
-                .FirstOrDefaultAsync(x => x.MobileNumber == d.MobileNumber);
+                .FirstOrDefaultAsync(x => x.Id == rec.UserId);
 
             if (user == null)
                 throw new Exception("User not found");
 
-            return GenerateJwt(user);
+            var token = GenerateJwt(user);
+
+            return (token, user.Role);
         }
+
+
 
         // =========================
         // FORGET PASSWORD
@@ -273,10 +376,17 @@ namespace HospitalProject.Services
 
             await _otp.AddAsync(new OtpStore
             {
-                MobileNumber = dto.MobileNumber,
+                UserId = user.Id,
+                MobileNumber = user.MobileNumber,
                 OtpCode = otp,
-                Expiry = DateTime.UtcNow.AddMinutes(5)
+                OtpType = "SMS",
+                Purpose = "ForgotPassword",
+                CreatedTime = DateTime.UtcNow,
+                Expiry = DateTime.UtcNow.AddMinutes(5),
+                IsUsed = false,
+                IsSent = true
             });
+
 
             await _otp.SaveAsync();
 
@@ -309,7 +419,7 @@ namespace HospitalProject.Services
 
 
 
-      
+
 
         // =========================
         // SLOT ADD (Doctor / Admin)
@@ -406,33 +516,33 @@ namespace HospitalProject.Services
             await _apps.SaveAsync();
             return tempToken;
         }
-
         // =========================
-        // SELF BOOKING
+        // SELF BOOKING (Doctor based)
         // =========================
-
-
         public async Task<string> BookPatientByTime(
-    int userId,
-    PatientTimeBookingDto dto)
+            int userId,
+            PatientTimeBookingDto dto)
         {
+            // 1️⃣ Patient check
             var patient = await _p.GetAsync(x => x.UserId == userId);
             if (patient == null)
                 throw new Exception("Patient not found");
 
-            // 🔴 IMPORTANT: Hospital → Doctor validation (HERE)
+            // 2️⃣ Doctor check (ONLY verified doctor)
             var doctor = await _d.GetAsync(x =>
                 x.Id == dto.DoctorId &&
-                x.HospitalId == dto.HospitalId);
+                x.IsVerified == true);
 
             if (doctor == null)
-                throw new Exception("Doctor not belongs to this hospital");
+                throw new Exception("Doctor not available");
 
+            // 3️⃣ Convert date to UTC
             var utcDate = DateTime.SpecifyKind(
                 dto.Date.ToDateTime(TimeOnly.MinValue),
                 DateTimeKind.Utc
             );
 
+            // 4️⃣ Slot availability check
             var slotExists = await _slots.GetAsync(x =>
                 x.DoctorId == dto.DoctorId &&
                 x.AvailableDate == utcDate &&
@@ -441,18 +551,22 @@ namespace HospitalProject.Services
             if (slotExists == null)
                 throw new Exception("Selected time not available");
 
-            var token = Guid.NewGuid().ToString("N")[..8].ToUpper();
+            // 5️⃣ Generate temp token
+            var token = Guid.NewGuid()
+                .ToString("N")[..8]
+                .ToUpper();
 
+            // 6️⃣ Create appointment
             await _apps.AddAsync(new Appointment
             {
-                HospitalId = dto.HospitalId,   // 👈 VERY IMPORTANT
+                HospitalId = doctor.HospitalId, // ✅ NULL or value – both OK
                 PatientId = patient.Id,
-                DoctorId = dto.DoctorId,
+                DoctorId = doctor.Id,
                 AppointmentDate = utcDate,
-                TimeSlot = dto.TimeSlot,
+                TimeSlot = dto.TimeSlot.Trim(),
                 TempToken = token,
                 Status = "Booked",
-                ReasonForVisit = dto.ReasonForVisit   // 👈 ADD
+                ReasonForVisit = dto.ReasonForVisit
             });
 
             await _apps.SaveAsync();
@@ -461,20 +575,18 @@ namespace HospitalProject.Services
 
 
         // =========================
-        // FAMILY BOOKING
+        // FAMILY BOOKING (Doctor based)
         // =========================
-
-
         public async Task<string> BookFamilyByTime(
-    int userId,
-    FamilyTimeBookingDto dto)
+            int userId,
+            FamilyTimeBookingDto dto)
         {
             // 1️⃣ Logged-in patient check
             var patient = await _p.GetAsync(x => x.UserId == userId);
             if (patient == null)
                 throw new Exception("Patient not found");
 
-            // 2️⃣ Family member belongs to this patient check
+            // 2️⃣ Family member belongs to patient
             var family = await _family.GetAsync(x =>
                 x.Id == dto.FamilyMemberId &&
                 x.PatientId == patient.Id);
@@ -482,21 +594,21 @@ namespace HospitalProject.Services
             if (family == null)
                 throw new Exception("Invalid family member");
 
-            // 3️⃣ Doctor belongs to selected hospital check (🔥 VERY IMPORTANT)
+            // 3️⃣ Doctor check (ONLY verified)
             var doctor = await _d.GetAsync(x =>
                 x.Id == dto.DoctorId &&
-                x.HospitalId == dto.HospitalId);
+                x.IsVerified == true);
 
             if (doctor == null)
-                throw new Exception("Doctor does not belong to this hospital");
+                throw new Exception("Doctor not available");
 
-            // 4️⃣ Convert DateOnly → UTC DateTime (00:00)
+            // 4️⃣ Convert date to UTC
             var utcDate = DateTime.SpecifyKind(
                 dto.Date.ToDateTime(TimeOnly.MinValue),
                 DateTimeKind.Utc
             );
 
-            // 5️⃣ Check slot availability (doctor + date + time)
+            // 5️⃣ Slot availability check
             var slotExists = await _slots.GetAsync(x =>
                 x.DoctorId == dto.DoctorId &&
                 x.AvailableDate == utcDate &&
@@ -505,28 +617,26 @@ namespace HospitalProject.Services
             if (slotExists == null)
                 throw new Exception("Selected time slot not available");
 
-            // 6️⃣ Generate temporary token
+            // 6️⃣ Generate temp token
             var tempToken = Guid.NewGuid()
                 .ToString("N")[..8]
                 .ToUpper();
 
-            // 7️⃣ Create appointment for family member
+            // 7️⃣ Create appointment
             await _apps.AddAsync(new Appointment
             {
-                HospitalId = dto.HospitalId,      // 🔥 Multi-hospital safety
+                HospitalId = doctor.HospitalId, // ✅ optional
                 PatientId = patient.Id,
                 FamilyMemberId = family.Id,
-                DoctorId = dto.DoctorId,
+                DoctorId = doctor.Id,
                 AppointmentDate = utcDate,
                 TimeSlot = dto.TimeSlot.Trim(),
                 TempToken = tempToken,
                 Status = "Booked",
-                ReasonForVisit = dto.ReasonForVisit   // 👈 ADD
-                //IsPaid = false
+                ReasonForVisit = dto.ReasonForVisit
             });
 
             await _apps.SaveAsync();
-
             return tempToken;
         }
 
@@ -767,7 +877,7 @@ namespace HospitalProject.Services
                 .ToListAsync();
         }
 
-     //Doctor create staff
+        //Doctor create staff
         public async Task CreateStaff(
     int doctorUserId,
     StaffCreateDto dto)
@@ -815,7 +925,7 @@ namespace HospitalProject.Services
             await _twilio.SendOtpAsync(dto.Mobile, otp);
         }
 
-     // Staff see quee for doctors assigned staffs
+        // Staff see quee for doctors assigned staffs
         public async Task<List<StaffQueueDto>> GetStaffQueue(
     int staffUserId,
     DateOnly date)
@@ -861,8 +971,8 @@ namespace HospitalProject.Services
         // =========================
         // DOCTOR CONSULT
         // =========================
-  
- 
+
+
         public async Task Consult(DoctorConsultDto d)
         {
             // 1️⃣ Appointment check
@@ -1012,9 +1122,11 @@ namespace HospitalProject.Services
                 throw new Exception("Appointment not found");
 
             if (app.IsPaid)
-                throw new Exception("Already paid");
+                throw new Exception("Payment already completed");
 
             app.IsPaid = true;
+            app.PaymentMode = dto.PaymentMode;
+            app.PaidAt = DateTime.UtcNow;
             app.Status = "Completed";
 
             await _apps.SaveAsync();
@@ -1022,17 +1134,22 @@ namespace HospitalProject.Services
 
 
 
-      
+
+
 
 
         // =========================
         // NEARBY DOCTORS
         // =========================
         public async Task<List<object>> GetNearbyDoctors(
-            double lat, double lon, double radiusKm)
+      double lat, double lon, double radiusKm)
         {
             var doctors = await _d.Query()
-                .Include(x => x.User)
+                .Include(d => d.User)
+                .Where(d =>
+                    d.IsVerified == true &&
+                    d.Latitude != null &&
+                    d.Longitude != null)
                 .ToListAsync();
 
             return doctors
@@ -1043,8 +1160,8 @@ namespace HospitalProject.Services
                     d.Specialization,
                     Distance =
                         Math.Sqrt(
-                            Math.Pow(lat - (d.User.Latitude ?? 0), 2) +
-                            Math.Pow(lon - (d.User.Longitude ?? 0), 2)
+                            Math.Pow(lat - d.Latitude!.Value, 2) +
+                            Math.Pow(lon - d.Longitude!.Value, 2)
                         ) * 111
                 })
                 .Where(x => x.Distance <= radiusKm)
@@ -1052,6 +1169,7 @@ namespace HospitalProject.Services
                 .Cast<object>()
                 .ToList();
         }
+
 
 
 
@@ -1133,6 +1251,91 @@ namespace HospitalProject.Services
             await _admin.SaveAsync();
         }
 
+        //Patient History for Doctor
+
+        public async Task<List<DoctorPatientHistoryDto>>
+  GetPatientHistoryForDoctor(int doctorUserId, int patientId)
+        {
+            // 1️⃣ Doctor check
+            var doctor = await _d.GetAsync(d => d.UserId == doctorUserId);
+            if (doctor == null)
+                throw new Exception("Doctor not found");
+
+            // 2️⃣ Patient exists check
+            var patient = await _p.GetAsync(p => p.Id == patientId);
+            if (patient == null)
+                throw new Exception("Patient not found");
+
+            // 3️⃣ History (only this doctor)
+            return await _apps.Query()
+                .Where(a =>
+                    a.DoctorId == doctor.Id &&
+                    a.PatientId == patientId &&
+                    a.Status == "Completed")
+                .OrderByDescending(a => a.AppointmentDate)
+                .Select(a => new DoctorPatientHistoryDto(
+                    a.AppointmentDate,
+                    a.ReasonForVisit,
+                    a.Diagnosis,
+                    a.Prescription,
+                    a.Fees
+                ))
+                .ToListAsync();
+        }
+
+
+        // Patient OWN History
+
+        public async Task<List<PatientHistoryDto>>
+GetPatientHistory(int userId)
+        {
+            // 1️⃣ Patient fetch
+            var patient = await _p.GetAsync(p => p.UserId == userId);
+            if (patient == null)
+                throw new Exception("Patient not found");
+
+            // 2️⃣ History
+            return await _apps.Query()
+                .Include(a => a.Doctor)
+                .ThenInclude(d => d.User)
+                .Where(a =>
+                    a.PatientId == patient.Id &&
+                    a.Status == "Completed")
+                .OrderByDescending(a => a.AppointmentDate)
+                .Select(a => new PatientHistoryDto(
+                    a.AppointmentDate,
+                    a.Doctor.User.Name,
+                    a.ReasonForVisit,
+                    a.Diagnosis,
+                    a.Prescription,
+                    a.Fees
+                ))
+                .ToListAsync();
+        }
+
+
+        //Update Patient Details
+
+        public async Task UpdatePatientPersonalDetails(
+    int userId,
+    PatientPersonalDetailsDto dto)
+        {
+            var patient = await _p.GetAsync(p => p.UserId == userId);
+            if (patient == null)
+                throw new Exception("Patient not found");
+
+            patient.Dob = dto.Dob;
+            patient.Gender = dto.Gender.Trim();
+            patient.BloodGroup = dto.BloodGroup.Trim();
+            patient.Email = dto.Email.Trim();
+
+            await _p.SaveAsync();
+        }
+
+
+
+
+
 
 
 
@@ -1141,7 +1344,7 @@ namespace HospitalProject.Services
         // =========================
         // JWT
         // =========================
-       
+
 
 
         private string GenerateJwt(User u)
@@ -1160,21 +1363,38 @@ namespace HospitalProject.Services
             // 🔒 HospitalId ONLY for Admin & Doctor
             if (u.Role == "Admin")
             {
-                if (u.Admin == null)
-                    throw new Exception("Admin not linked to hospital");
+                // Hospital Admin
+                if (u.Admin?.HospitalId != null)
+                {
+                    claims.Add(
+                        new Claim("HospitalId", u.Admin.HospitalId.ToString())
+                    );
+                }
+                else
+                {
+                    // Doctor Clinic Admin
+                    var staff = _doctorStaff
+                        .GetAsync(x => x.UserId == u.Id)
+                        .GetAwaiter()
+                        .GetResult();
 
-                claims.Add(
-                    new Claim("HospitalId", u.Admin.HospitalId.ToString())
-                );
+                    if (staff == null)
+                        throw new Exception("Admin not linked to hospital or doctor");
+
+                    claims.Add(
+                        new Claim("DoctorId", staff.DoctorId.ToString())
+                    );
+                }
             }
+
             else if (u.Role == "Doctor")
             {
-                if (u.Doctor == null)
-                    throw new Exception("Doctor not linked to hospital");
-
-                claims.Add(
-                    new Claim("HospitalId", u.Doctor.HospitalId.ToString())
-                );
+                if (u.Doctor?.HospitalId != null)
+                {
+                    claims.Add(
+                        new Claim("HospitalId", u.Doctor.HospitalId.Value.ToString())
+                    );
+                }
             }
 
             else if (u.Role == "Staff")
@@ -1198,6 +1418,7 @@ namespace HospitalProject.Services
                 // ✅ Patient-க்கு HospitalId claim வேண்டாம்
                 // Nothing to add here
             }
+
 
 
             else
@@ -1293,14 +1514,17 @@ namespace HospitalProject.Services
             return await query
                 .OrderByDescending(a => a.AppointmentDate)
                 .Select(a => new PatientAppointmentDto(
-                    a.Id,
-                    a.Doctor.User.Name,
-                    a.Doctor.Specialization,
-                    a.Doctor.Hospital.Name,
-                    a.AppointmentDate,
-                    a.TimeSlot,
-                    a.Status
-                ))
+                     a.Id,
+    a.Doctor.User.Name,
+    a.Doctor.Specialization,
+    a.Doctor.Hospital != null
+        ? a.Doctor.Hospital.Name
+        : "Independent Doctor",   // ✅ SAFE
+    a.AppointmentDate,
+    a.TimeSlot,
+    a.Status
+))
+
                 .ToListAsync();
         }
 
@@ -1326,11 +1550,12 @@ namespace HospitalProject.Services
                 .Include(d => d.Hospital)
                 .Where(d => d.HospitalId == hospitalId)
                 .Select(d => new DoctorPublicDto(
-                    d.Id,
-                    d.User.Name,
-                    d.Specialization,
-                    d.Hospital.Name
-                ))
+    d.Id,
+    d.User.Name,
+    d.Specialization,
+    d.Hospital != null ? d.Hospital.Name : "-"
+))
+
                 .ToListAsync();
         }
 

@@ -58,12 +58,40 @@ namespace HospitalProject.Controllers
         //}
 
 
-        [HttpPost("public/doctor/register")]
-        public async Task<IActionResult> RegisterDoctor(DoctorRegDto dto)
+        [HttpPost("doctor/register/hospital")]
+        public async Task<IActionResult> RegisterHospitalDoctor(
+       HospitalDoctorRegDto dto)
         {
-            await _service.RegisterDoctor(dto);
-            return Ok("Doctor registered successfully. Pending verification");
+            await _service.RegisterHospitalDoctor(dto);
+            return Ok("Hospital doctor registered. Pending verification");
         }
+
+
+        [HttpPost("doctor/register/independent")]
+        public async Task<IActionResult> RegisterIndependentDoctor(
+    IndependentDoctorRegDto dto)
+        {
+            await _service.RegisterIndependentDoctor(dto);
+            return Ok("Independent doctor registered. Pending verification");
+        }
+
+
+
+        [Authorize(Roles = "Doctor")]
+        [HttpPost("doctor/admin/create")]
+        public async Task<IActionResult> CreateDoctorAdmin(
+    DoctorAdminCreateDto dto)
+        {
+            int doctorUserId = int.Parse(
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!
+            );
+
+            await _service.CreateIndependentDoctorAdmin(
+                doctorUserId, dto);
+
+            return Ok("Admin created for your clinic & OTP sent");
+        }
+
 
 
         //SUPER ADMIN
@@ -80,7 +108,7 @@ namespace HospitalProject.Controllers
 
 
 
-     
+
         [Authorize(Roles = "Admin")]
         [HttpPost("hospital/admin/register")]
         public async Task<IActionResult> RegisterAdmin(AdminRegDto dto)
@@ -105,12 +133,26 @@ namespace HospitalProject.Controllers
             return Ok(result);
         }
 
+        //[HttpPost("verify-otp")]
+        //public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpDto dto)
+        //{
+        //    var token = await _service.VerifyOtp(dto);
+        //    return Ok(new { token });
+        //}
+
+
         [HttpPost("verify-otp")]
         public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpDto dto)
         {
-            var token = await _service.VerifyOtp(dto);
-            return Ok(new { token });
+            var result = await _service.VerifyOtp(dto);
+
+            return Ok(new
+            {
+                token = result.Token,
+                role = result.Role
+            });
         }
+
 
         // =========================
         // FORGOT / RESET PASSWORD
@@ -157,7 +199,7 @@ namespace HospitalProject.Controllers
         }
 
 
-    
+
 
 
         // =========================
@@ -542,7 +584,7 @@ namespace HospitalProject.Controllers
         // ADMIN VIEWS
         // =========================
 
-      
+
 
 
         [Authorize(Roles = "Admin")]
@@ -552,6 +594,58 @@ namespace HospitalProject.Controllers
             int hospitalId = int.Parse(User.FindFirst("HospitalId")!.Value);
             return Ok(_service.GetDoctorsForAdmin(hospitalId));
         }
+
+        //Patient History For Doctor
+
+        [Authorize(Roles = "Doctor")]
+        [HttpGet("doctor/patient/{patientId}/history")]
+        public async Task<IActionResult> GetPatientHistoryForDoctor(int patientId)
+        {
+            int doctorUserId = int.Parse(
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!
+            );
+
+            var history = await _service
+                .GetPatientHistoryForDoctor(doctorUserId, patientId);
+
+            return Ok(history);
+        }
+
+
+        //Patient Own History
+
+
+        [Authorize(Roles = "Patient")]
+        [HttpGet("patient/history")]
+        public async Task<IActionResult> GetMyHistory()
+        {
+            int userId = int.Parse(
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!
+            );
+
+            var history = await _service.GetPatientHistory(userId);
+
+            return Ok(history);
+        }
+
+        //Update Patient Details
+
+        [Authorize(Roles = "Patient")]
+        [HttpPost("patient/personal-details")]
+        public async Task<IActionResult> UpdatePatientPersonalDetails(
+    PatientPersonalDetailsDto dto)
+        {
+            int userId = int.Parse(
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!
+            );
+
+            await _service.UpdatePatientPersonalDetails(userId, dto);
+
+            return Ok("Patient personal details saved successfully");
+        }
+
+
+
 
     }
 }

@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HospitalProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251217075938_AddDoctorStaff")]
-    partial class AddDoctorStaff
+    [Migration("20251230122023_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -72,20 +72,29 @@ namespace HospitalProject.Migrations
                     b.Property<decimal>("Fees")
                         .HasColumnType("numeric");
 
-                    b.Property<int>("HospitalId")
+                    b.Property<int?>("HospitalId")
                         .HasColumnType("integer");
 
                     b.Property<bool>("IsPaid")
                         .HasColumnType("boolean");
 
+                    b.Property<DateTime?>("PaidAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("PatientId")
                         .HasColumnType("integer");
+
+                    b.Property<string>("PaymentMode")
+                        .HasColumnType("text");
 
                     b.Property<string>("Prescription")
                         .HasColumnType("text");
 
                     b.Property<int?>("QueueToken")
                         .HasColumnType("integer");
+
+                    b.Property<string>("ReasonForVisit")
+                        .HasColumnType("text");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -120,8 +129,17 @@ namespace HospitalProject.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("HospitalId")
+                    b.Property<int?>("HospitalId")
                         .HasColumnType("integer");
+
+                    b.Property<bool>("IsVerified")
+                        .HasColumnType("boolean");
+
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("double precision");
 
                     b.Property<string>("Specialization")
                         .IsRequired()
@@ -280,6 +298,46 @@ namespace HospitalProject.Migrations
                     b.ToTable("DoctorStaffs");
                 });
 
+            modelBuilder.Entity("HospitalProject.Models.DoctorVerification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CouncilName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("DoctorId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("RawResponse")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("RegistrationNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("VerificationStatus")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("VerifiedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("YearOfRegistration")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DoctorId");
+
+                    b.ToTable("DoctorVerifications");
+                });
+
             modelBuilder.Entity("HospitalProject.Models.FamilyMember", b =>
                 {
                     b.Property<int>("Id")
@@ -339,8 +397,17 @@ namespace HospitalProject.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<DateTime>("Expiry")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsSent")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("MobileNumber")
                         .IsRequired()
@@ -349,6 +416,15 @@ namespace HospitalProject.Migrations
                     b.Property<string>("OtpCode")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<string>("OtpType")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Purpose")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -363,15 +439,22 @@ namespace HospitalProject.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("HospitalId")
-                        .HasColumnType("integer");
+                    b.Property<string>("BloodGroup")
+                        .HasColumnType("text");
+
+                    b.Property<DateOnly?>("Dob")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Gender")
+                        .HasColumnType("text");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("HospitalId");
 
                     b.HasIndex("UserId")
                         .IsUnique();
@@ -447,8 +530,7 @@ namespace HospitalProject.Migrations
                     b.HasOne("HospitalProject.Models.Hospital", null)
                         .WithMany()
                         .HasForeignKey("HospitalId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("HospitalProject.Models.Patient", "Patient")
                         .WithMany()
@@ -468,8 +550,7 @@ namespace HospitalProject.Migrations
                     b.HasOne("HospitalProject.Models.Hospital", "Hospital")
                         .WithMany()
                         .HasForeignKey("HospitalId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("HospitalProject.Models.User", "User")
                         .WithOne("Doctor")
@@ -534,6 +615,17 @@ namespace HospitalProject.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("HospitalProject.Models.DoctorVerification", b =>
+                {
+                    b.HasOne("HospitalProject.Models.Doctor", "Doctor")
+                        .WithMany()
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Doctor");
+                });
+
             modelBuilder.Entity("HospitalProject.Models.FamilyMember", b =>
                 {
                     b.HasOne("HospitalProject.Models.Patient", "Patient")
@@ -547,12 +639,6 @@ namespace HospitalProject.Migrations
 
             modelBuilder.Entity("HospitalProject.Models.Patient", b =>
                 {
-                    b.HasOne("HospitalProject.Models.Hospital", null)
-                        .WithMany()
-                        .HasForeignKey("HospitalId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("HospitalProject.Models.User", "User")
                         .WithOne("Patient")
                         .HasForeignKey("HospitalProject.Models.Patient", "UserId")

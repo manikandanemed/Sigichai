@@ -12,8 +12,8 @@
         double? Lon
     );
 
-    public record DoctorRegDto(
-        int HospitalId,
+    public record HospitalDoctorRegDto(
+        int HospitalId,           // 🔥 REQUIRED
         string Name,
         string Mobile,
         string Password,
@@ -21,6 +21,16 @@
         double? Lat,
         double? Lon
     );
+
+    public record IndependentDoctorRegDto(
+    string Name,
+    string Mobile,
+    string Password,
+    string Specialization,
+    double? Lat,
+    double? Lon
+);
+
 
     public record AdminRegDto(
         string Name,
@@ -270,25 +280,58 @@
     );
 
 
+    // =========================
+    // ADMIN  VERIFICATION DOCTOR DTO
+    // =========================
+
+    public record AdminDoctorVerificationViewDto(
+    int DoctorId,
+    string DoctorName,
+    string MobileNumber,
+    string Specialization,
+    string RegistrationNumber,
+    int YearOfRegistration,
+    string CouncilName,
+    string VerificationStatus
+);
+
+
+    public record DoctorAdminCreateDto(
+    string Name,
+    string Mobile
+);
+
+
+    // =========================
+    // HISTORY DTOs
+    // =========================
+
+    public record DoctorPatientHistoryDto(
+        DateTime AppointmentDate,
+        string? ReasonForVisit,
+        string? Diagnosis,
+        string? Prescription,
+        decimal Fees
+    );
+
+    public record PatientHistoryDto(
+        DateTime AppointmentDate,
+        string DoctorName,
+        string? ReasonForVisit,
+        string? Diagnosis,
+        string? Prescription,
+        decimal Fees
+    );
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    // =========================
+    // PATIENT PERSONAL DETAILS DTO
+    // =========================
+    public record PatientPersonalDetailsDto(
+        DateOnly Dob,
+        string Gender,
+        string BloodGroup,
+        string Email
+    );
 }

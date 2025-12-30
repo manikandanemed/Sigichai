@@ -20,7 +20,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // =========================
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<HospitalService>();
-builder.Services.AddScoped<DoctorVerificationService>();    
+builder.Services.AddScoped<DoctorManualVerificationService>();
 builder.Services.AddScoped<ITwilioService, TwilioService>();
 
 // =========================
