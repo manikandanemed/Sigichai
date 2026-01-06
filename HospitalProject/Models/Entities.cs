@@ -16,6 +16,12 @@ namespace HospitalProject.Models
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
 
+        // 🔥 ADD THIS
+        public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
+
+        // 🔥 SOFT DELETE
+        public bool IsDeleted { get; set; } = false;
+
         // Navigation (One-to-One)
         public Patient? Patient { get; set; }
         public Doctor? Doctor { get; set; }
@@ -37,6 +43,17 @@ namespace HospitalProject.Models
         public string? Gender { get; set; }       // Male / Female / Other
         public string? BloodGroup { get; set; }   // O+, A+, etc
         public string? Email { get; set; }
+
+
+        // 🔹 NEW DETAILS
+        public string? Address { get; set; }
+        public string? EmergencyContact { get; set; }
+
+        public decimal? HeightCm { get; set; }   // 170.5
+        public decimal? WeightKg { get; set; }   // 68.2
+
+        public string? MedicalHistory { get; set; }
+        public string? Allergies { get; set; }
 
         public ICollection<FamilyMember> FamilyMembers { get; set; }
             = new List<FamilyMember>();
@@ -65,6 +82,10 @@ namespace HospitalProject.Models
 
         // 🔐 Verification
         public bool IsVerified { get; set; } = false;
+
+        public bool IsArrivedToday { get; set; } = false;
+        public DateTime? ArrivedTime { get; set; }
+
 
         // 🔥 ADD THIS (VERY IMPORTANT)
         public ICollection<DoctorAvailability> Availabilities { get; set; }
@@ -178,6 +199,12 @@ namespace HospitalProject.Models
         public int? HospitalId { get; set; }
 
         public string? ReasonForVisit { get; set; }   // 👈 ADD
+
+        public string? BloodPressure { get; set; }
+        public int? Pulse { get; set; }
+        public decimal? Temperature { get; set; }
+        public int? SpO2 { get; set; }
+
 
 
     }

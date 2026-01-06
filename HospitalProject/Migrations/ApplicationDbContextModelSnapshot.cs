@@ -57,6 +57,9 @@ namespace HospitalProject.Migrations
                     b.Property<DateTime>("AppointmentDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("BloodPressure")
+                        .HasColumnType("text");
+
                     b.Property<string>("Diagnosis")
                         .HasColumnType("text");
 
@@ -87,11 +90,17 @@ namespace HospitalProject.Migrations
                     b.Property<string>("Prescription")
                         .HasColumnType("text");
 
+                    b.Property<int?>("Pulse")
+                        .HasColumnType("integer");
+
                     b.Property<int?>("QueueToken")
                         .HasColumnType("integer");
 
                     b.Property<string>("ReasonForVisit")
                         .HasColumnType("text");
+
+                    b.Property<int?>("SpO2")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -100,6 +109,9 @@ namespace HospitalProject.Migrations
                     b.Property<string>("TempToken")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<decimal?>("Temperature")
+                        .HasColumnType("numeric");
 
                     b.Property<string>("TimeSlot")
                         .IsRequired()
@@ -126,8 +138,14 @@ namespace HospitalProject.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime?>("ArrivedTime")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int?>("HospitalId")
                         .HasColumnType("integer");
+
+                    b.Property<bool>("IsArrivedToday")
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsVerified")
                         .HasColumnType("boolean");
@@ -436,6 +454,12 @@ namespace HospitalProject.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Address")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Allergies")
+                        .HasColumnType("text");
+
                     b.Property<string>("BloodGroup")
                         .HasColumnType("text");
 
@@ -445,11 +469,23 @@ namespace HospitalProject.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("text");
 
+                    b.Property<string>("EmergencyContact")
+                        .HasColumnType("text");
+
                     b.Property<string>("Gender")
+                        .HasColumnType("text");
+
+                    b.Property<decimal?>("HeightCm")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("MedicalHistory")
                         .HasColumnType("text");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
+
+                    b.Property<decimal?>("WeightKg")
+                        .HasColumnType("numeric");
 
                     b.HasKey("Id");
 
@@ -466,6 +502,12 @@ namespace HospitalProject.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.Property<double?>("Latitude")
                         .HasColumnType("double precision");

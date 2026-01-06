@@ -328,10 +328,81 @@
     // =========================
     // PATIENT PERSONAL DETAILS DTO
     // =========================
+    //public record PatientPersonalDetailsDto(
+    //    DateOnly Dob,
+    //    string Gender,
+    //    string BloodGroup,
+    //    string Email
+    //);
+
+
     public record PatientPersonalDetailsDto(
-        DateOnly Dob,
-        string Gender,
-        string BloodGroup,
-        string Email
-    );
+    DateOnly Dob,
+    string Gender,
+    string BloodGroup,
+    string Email,
+
+    string Address,
+    string EmergencyContact,
+
+    decimal HeightCm,
+    decimal WeightKg,
+
+    string MedicalHistory,
+    string Allergies
+);
+
+
+
+    // =========================
+    // PATIENT PERSONAL DETAILS DOCTOR VIEW
+    // =========================
+    public record PatientBasicDetailsDto(
+    string Name,
+    DateOnly? Dob,
+    string? Gender,
+    string? BloodGroup,
+    string? Email
+);
+
+
+
+
+
+//Update vitals
+    public record UpdateVitalsDto(
+    int AppointmentId,
+    string BloodPressure,
+    int Pulse,
+    decimal Temperature,
+    int SpO2
+);
+
+
+// Doctor View Patient Vitals
+    public record PatientWorkspaceDto(
+    string PatientName,
+    int Age,
+    string Gender,
+
+    string? Complaint,
+
+    string? BloodPressure,
+    int? Pulse,
+    decimal? Temperature,
+    int? SpO2
+);
+
+
+    // Public api for get user details
+    public record PublicUserDetailsDto(
+    int UserId,
+    string Name,
+    string Role,
+    int? Age,
+    string? Gender
+);
+
+
+
 }

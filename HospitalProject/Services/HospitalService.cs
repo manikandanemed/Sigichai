@@ -217,11 +217,21 @@ namespace HospitalProject.Services
         public async Task<string> Login(LoginDto d)
         {
             //var user = await _u.GetAsync(x => x.MobileNumber == d.MobileNumber);
+            //        var user = await _u.Query()
+            //.Include(x => x.Admin)
+            //.Include(x => x.Doctor)
+            //.Include(x => x.Patient)
+            //.FirstOrDefaultAsync(x => x.MobileNumber == d.MobileNumber);
+
             var user = await _u.Query()
-    .Include(x => x.Admin)
-    .Include(x => x.Doctor)
-    .Include(x => x.Patient)
-    .FirstOrDefaultAsync(x => x.MobileNumber == d.MobileNumber);
+              .Include(x => x.Admin)
+              .Include(x => x.Doctor)
+              .Include(x => x.Patient)
+              .FirstOrDefaultAsync(x =>
+              x.MobileNumber == d.MobileNumber &&
+              x.IsDeleted == false   // 🔥 ADD THIS
+              );
+
             if (user == null || !BCrypt.Net.BCrypt.Verify(d.Password, user.Password))
                 return "Invalid Credentials";
 
@@ -246,8 +256,63 @@ namespace HospitalProject.Services
             return "OTP Sent";
         }
 
+        ////flow2 doctor create admin without password
+
+        //    public async Task CreateIndependentDoctorAdmin(
+        //int doctorUserId,
+        //DoctorAdminCreateDto dto)
+        //    {
+        //        // 1️⃣ Doctor (logged-in user)
+        //        var doctor = await _d.GetAsync(d => d.UserId == doctorUserId);
+        //        if (doctor == null)
+        //            throw new Exception("Doctor not found");
+
+        //        // 2️⃣ Duplicate mobile check
+        //        if (await _u.GetAsync(x => x.MobileNumber == dto.Mobile) != null)
+        //            throw new Exception("Mobile already exists");
+
+        //        // 3️⃣ Create ADMIN user
+        //        var adminUser = new User
+        //        {
+        //            Name = dto.Name.Trim(),
+        //            MobileNumber = dto.Mobile.Trim(),
+        //            Password = BCrypt.Net.BCrypt.HashPassword("1234"), // temp
+        //            Role = "Admin"
+        //        };
+
+        //        await _u.AddAsync(adminUser);
+        //        await _u.SaveAsync();
+
+        //        // 4️⃣ Link admin to doctor (NO hospital)
+        //        await _doctorStaff.AddAsync(new DoctorStaff
+        //        {
+        //            DoctorId = doctor.Id,
+        //            UserId = adminUser.Id,
+        //            StaffRole = "Admin"
+        //        });
+
+        //        await _doctorStaff.SaveAsync();
+
+        //        // 5️⃣ OTP for first login
+        //        var otp = new Random().Next(1000, 9999).ToString();
+
+        //        await _otp.AddAsync(new OtpStore
+        //        {
+        //            MobileNumber = dto.Mobile,
+        //            OtpCode = otp,
+        //            Expiry = DateTime.UtcNow.AddMinutes(5)
+        //        });
+
+        //        await _otp.SaveAsync();
+
+        //        await _twilio.SendOtpAsync(
+        //            dto.Mobile,
+        //            $"You are added as clinic admin. OTP: {otp}"
+        //        );
+        //    }
 
 
+        //flow2 doctor create admin with password
         public async Task CreateIndependentDoctorAdmin(
     int doctorUserId,
     DoctorAdminCreateDto dto)
@@ -261,12 +326,15 @@ namespace HospitalProject.Services
             if (await _u.GetAsync(x => x.MobileNumber == dto.Mobile) != null)
                 throw new Exception("Mobile already exists");
 
+            // 🔥 Generate TEMP PASSWORD
+            var tempPassword = new Random().Next(1000, 9999).ToString();
+
             // 3️⃣ Create ADMIN user
             var adminUser = new User
             {
                 Name = dto.Name.Trim(),
                 MobileNumber = dto.Mobile.Trim(),
-                Password = BCrypt.Net.BCrypt.HashPassword("1234"), // temp
+                Password = BCrypt.Net.BCrypt.HashPassword(tempPassword), // 🔥 temp password
                 Role = "Admin"
             };
 
@@ -288,18 +356,29 @@ namespace HospitalProject.Services
 
             await _otp.AddAsync(new OtpStore
             {
+                UserId = adminUser.Id,
                 MobileNumber = dto.Mobile,
                 OtpCode = otp,
-                Expiry = DateTime.UtcNow.AddMinutes(5)
+                OtpType = "SMS",
+                Purpose = "LOGIN",
+                CreatedTime = DateTime.UtcNow,
+                Expiry = DateTime.UtcNow.AddMinutes(5),
+                IsUsed = false,
+                IsSent = true
             });
 
             await _otp.SaveAsync();
 
+            // 6️⃣ SEND SMS (Temp Password + OTP)
             await _twilio.SendOtpAsync(
                 dto.Mobile,
-                $"You are added as clinic admin. OTP: {otp}"
+                $"You are added as Clinic Admin.\n" +
+                $"Temp Password: {tempPassword}\n" +
+                $"OTP: {otp}\n" +
+                $"Please login and change your password."
             );
         }
+
 
 
 
@@ -329,7 +408,11 @@ namespace HospitalProject.Services
         //}
 
 
-        public async Task<(string Token, string Role)> VerifyOtp(VerifyOtpDto d)
+        //----------------------
+        // Verify Otp
+        //----------------------
+
+        public async Task<(string Token, string Role, string Name)> VerifyOtp(VerifyOtpDto d)
         {
             var rec = await _otp.GetAsync(x =>
                 x.MobileNumber == d.MobileNumber &&
@@ -354,9 +437,13 @@ namespace HospitalProject.Services
             if (user == null)
                 throw new Exception("User not found");
 
+            // 🔥 ADD THIS CHECK
+            if (user.IsDeleted)
+                throw new Exception("User account is deactivated");
+
             var token = GenerateJwt(user);
 
-            return (token, user.Role);
+            return (token, user.Role, user.Name);
         }
 
 
@@ -757,6 +844,125 @@ namespace HospitalProject.Services
             await _apps.SaveAsync();
             return app.QueueToken.Value;
         }
+
+     //Update vitals by admin
+        public async Task UpdateVitalsByAdmin(
+    int adminUserId,
+    UpdateVitalsDto dto)
+        {
+            // 1️⃣ Admin validate
+            var admin = await _u.GetAsync(x =>
+                x.Id == adminUserId &&
+                x.Role == "Admin" &&
+                x.IsDeleted == false);
+
+            if (admin == null)
+                throw new Exception("Admin not found");
+
+            // 2️⃣ Appointment fetch
+            var app = await _apps.GetAsync(a => a.Id == dto.AppointmentId);
+            if (app == null)
+                throw new Exception("Appointment not found");
+
+            // 3️⃣ Update vitals
+            app.BloodPressure = dto.BloodPressure;
+            app.Pulse = dto.Pulse;
+            app.Temperature = dto.Temperature;
+            app.SpO2 = dto.SpO2;
+
+            await _apps.SaveAsync();
+        }
+
+
+
+        // Doctor View Patient Vitals
+
+
+        public async Task<PatientWorkspaceDto>
+       GetPatientWorkspaceForDoctor(
+       int doctorUserId,
+       int patientUserId)
+        {
+            var doctor = await _d.GetAsync(d => d.UserId == doctorUserId);
+            if (doctor == null)
+                throw new Exception("Doctor not found");
+
+            var patient = await _p.Query()
+                .Include(p => p.User)
+                .FirstOrDefaultAsync(p => p.UserId == patientUserId);
+
+            if (patient == null)
+                throw new Exception("Patient not found");
+
+            var app = await _apps.Query()
+                .Where(a =>
+                    a.DoctorId == doctor.Id &&
+                    a.PatientId == patient.Id &&
+                    a.AppointmentDate.Date == DateTime.Today)
+                .FirstOrDefaultAsync();
+
+            if (app == null)
+                throw new Exception("No appointment");
+
+            int age = patient.Dob.HasValue
+                ? DateTime.Today.Year - patient.Dob.Value.Year
+                : 0;
+
+            return new PatientWorkspaceDto(
+                patient.User.Name,
+                age,
+                patient.Gender ?? "",
+                app.ReasonForVisit,
+                app.BloodPressure,
+                app.Pulse,
+                app.Temperature,
+                app.SpO2
+            );
+        }
+
+        // =========================
+        // Public api for get user details
+        // =========================
+
+        public async Task<PublicUserDetailsDto>
+         GetPublicUserDetails(int userId)
+        {
+            var user = await _u.Query()
+                .Include(x => x.Patient)
+                .Include(x => x.Doctor)
+                .FirstOrDefaultAsync(x =>
+                    x.Id == userId &&
+                    x.IsDeleted == false);
+
+            if (user == null)
+                throw new Exception("User not found");
+
+            int? age = null;
+            string? gender = null;
+
+            if (user.Role == "Patient" && user.Patient?.Dob != null)
+            {
+                age = DateTime.Today.Year - user.Patient.Dob.Value.Year;
+                gender = user.Patient.Gender;
+            }
+
+            return new PublicUserDetailsDto(
+                user.Id,
+                user.Name,
+                user.Role,
+                age,
+                gender
+            );
+        }
+
+
+
+
+
+
+
+
+
 
         // =========================
         // Doctor – Appointments (Upcoming / Past)
@@ -1317,17 +1523,26 @@ GetPatientHistory(int userId)
         //Update Patient Details
 
         public async Task UpdatePatientPersonalDetails(
-    int userId,
-    PatientPersonalDetailsDto dto)
+     int userId,
+     PatientPersonalDetailsDto dto)
         {
             var patient = await _p.GetAsync(p => p.UserId == userId);
             if (patient == null)
                 throw new Exception("Patient not found");
 
             patient.Dob = dto.Dob;
-            patient.Gender = dto.Gender.Trim();
-            patient.BloodGroup = dto.BloodGroup.Trim();
-            patient.Email = dto.Email.Trim();
+            patient.Gender = dto.Gender;
+            patient.BloodGroup = dto.BloodGroup;
+            patient.Email = dto.Email;
+
+            patient.Address = dto.Address;
+            patient.EmergencyContact = dto.EmergencyContact;
+
+            patient.HeightCm = dto.HeightCm;
+            patient.WeightKg = dto.WeightKg;
+
+            patient.MedicalHistory = dto.MedicalHistory;
+            patient.Allergies = dto.Allergies;
 
             await _p.SaveAsync();
         }
@@ -1568,6 +1783,96 @@ GetPatientHistory(int userId)
                 .Select(s => new SpecialityDto(s))
                 .ToListAsync();
         }
+
+
+        // =========================
+        // PATIENT PERSONAL DETAILS DOCTOR VIEW
+        // =========================
+
+
+        public async Task<PatientBasicDetailsDto>
+            GetPatientBasicDetailsForDoctor(int doctorUserId, int patientId)
+        {
+            // Doctor check
+            var doctor = await _d.GetAsync(d => d.UserId == doctorUserId);
+            if (doctor == null)
+                throw new Exception("Doctor not found");
+
+            // Patient + User fetch
+            var patient = await _p.Query()
+                .Include(p => p.User)
+                .FirstOrDefaultAsync(p => p.Id == patientId);
+
+            if (patient == null)
+                throw new Exception("Patient not found");
+
+            // (Optional but good) – doctor only sees his patient
+            var hasAppointment = await _apps.GetAsync(a =>
+                a.DoctorId == doctor.Id &&
+                a.PatientId == patientId);
+
+            if (hasAppointment == null)
+                throw new Exception("Unauthorized patient access");
+
+            return new PatientBasicDetailsDto(
+                patient.User.Name,
+                patient.Dob,
+                patient.Gender,
+                patient.BloodGroup,
+                patient.Email
+            );
+        }
+
+     // ---------------------------------
+     // Doctor Arrived send message to patient
+     // ---------------------------------
+        public async Task MarkDoctorArrived(
+    int adminUserId,
+    int doctorId)
+        {
+            // 1️⃣ Admin validate
+            var admin = await _u.GetAsync(x =>
+                x.Id == adminUserId &&
+                x.Role == "Admin" &&
+                x.IsDeleted == false);
+
+            if (admin == null)
+                throw new Exception("Admin not found");
+
+            // 2️⃣ Doctor
+            var doctor = await _d.GetAsync(d => d.Id == doctorId);
+            if (doctor == null)
+                throw new Exception("Doctor not found");
+
+            // 3️⃣ Mark arrived
+            doctor.IsArrivedToday = true;
+            doctor.ArrivedTime = DateTime.UtcNow;
+
+            await _d.SaveAsync();
+
+            // 4️⃣ Get today's booked appointments
+            var todaysAppointments = await _apps.Query()
+                .Include(a => a.Patient)
+                .ThenInclude(p => p.User)
+                .Where(a =>
+                    a.DoctorId == doctorId &&
+                    a.AppointmentDate.Date == DateTime.Today &&
+                    a.Status == "Booked")
+                .ToListAsync();
+
+            // 5️⃣ Send SMS to patients
+            foreach (var app in todaysAppointments)
+            {
+                var mobile = app.Patient.User.MobileNumber;
+
+                await _twilio.SendOtpAsync(
+                    mobile,
+                    "Doctor has arrived at the clinic and consultations have started. Please be ready."
+                );
+            }
+        }
+
+
 
 
 

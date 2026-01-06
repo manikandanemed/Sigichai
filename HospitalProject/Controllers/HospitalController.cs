@@ -252,6 +252,58 @@ namespace HospitalProject.Controllers
             return Ok("Profile updated successfully");
         }
 
+        // =========================
+        //  Update Vitals by Admin
+        // =========================
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("admin/appointment/update-vitals")]
+        public async Task<IActionResult> UpdateVitalsByAdmin(
+    UpdateVitalsDto dto)
+        {
+            int adminUserId = int.Parse(
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!
+            );
+
+            await _service.UpdateVitalsByAdmin(adminUserId, dto);
+            return Ok("Vitals updated successfully");
+        }
+
+        // =========================
+        //  Doctor View Patient Vitals
+        // =========================
+
+        [Authorize(Roles = "Doctor")]
+        [HttpGet("doctor/patient/workspace/{patientUserId}")]
+        public async Task<IActionResult> GetPatientWorkspace(
+    int patientUserId)
+        {
+            int doctorUserId = int.Parse(
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!
+            );
+
+            var data = await _service
+                .GetPatientWorkspaceForDoctor(doctorUserId, patientUserId);
+
+            return Ok(data);
+        }
+
+
+        // =========================
+        // Public api for get user details
+        // =========================
+
+
+
+        [HttpGet("public/user/{userId}")]
+        public async Task<IActionResult> GetPublicUserDetails(int userId)
+        {
+            var data = await _service.GetPublicUserDetails(userId);
+            return Ok(data);
+        }
+
+
+
 
         // =========================
         // PUBLIC APIs (NO AUTH)
@@ -633,16 +685,58 @@ namespace HospitalProject.Controllers
         [Authorize(Roles = "Patient")]
         [HttpPost("patient/personal-details")]
         public async Task<IActionResult> UpdatePatientPersonalDetails(
-    PatientPersonalDetailsDto dto)
+         PatientPersonalDetailsDto dto)
         {
             int userId = int.Parse(
                 User.FindFirstValue(ClaimTypes.NameIdentifier)!
             );
 
             await _service.UpdatePatientPersonalDetails(userId, dto);
-
-            return Ok("Patient personal details saved successfully");
+            return Ok("Patient details updated successfully");
         }
+
+
+
+        // =========================
+        // PATIENT PERSONAL DETAILS DOCTOR VIEW
+        // =========================
+
+
+        [Authorize(Roles = "Doctor")]
+        [HttpGet("doctor/patient/{patientId}/details")]
+        public async Task<IActionResult> GetPatientDetails(int patientId)
+        {
+            int doctorUserId = int.Parse(
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!
+            );
+
+            var details = await _service
+                .GetPatientBasicDetailsForDoctor(doctorUserId, patientId);
+
+            return Ok(details);
+        }
+
+
+
+
+        // =========================
+        // Doctor Arrived send message to patient
+        // =========================
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("admin/doctor/{doctorId}/arrived")]
+        public async Task<IActionResult> MarkDoctorArrived(int doctorId)
+        {
+            int adminUserId = int.Parse(
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!
+            );
+
+            await _service.MarkDoctorArrived(adminUserId, doctorId);
+
+            return Ok("Doctor marked as arrived and patients notified");
+        }
+
+
 
 
 
