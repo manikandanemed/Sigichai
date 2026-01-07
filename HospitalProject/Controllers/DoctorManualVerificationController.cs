@@ -32,7 +32,11 @@ namespace HospitalProject.Controllers
             await _service.SubmitVerificationAsync(
                 doctorUserId, dto);
 
-            return Ok("Verification submitted. Approval may take up to 4 hours.");
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Verification submitted. Approval may take up to 4 hours."
+            });
         }
 
 
@@ -46,7 +50,12 @@ namespace HospitalProject.Controllers
             var details = await _service
                 .GetDoctorVerificationDetails(doctorId);
 
-            return Ok(details);
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Data = details
+            });
+
         }
 
 
@@ -62,11 +71,12 @@ namespace HospitalProject.Controllers
             await _service.ApproveDoctorAsync(
                 doctorId, approve);
 
-            return Ok(
-                approve
-                ? "Doctor approved"
-                : "Doctor rejected"
-            );
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = approve ? "Doctor approved" : "Doctor rejected"
+            });
+
         }
 
         // =========================
@@ -79,9 +89,12 @@ namespace HospitalProject.Controllers
             int hospitalId = int.Parse(
                 User.FindFirst("HospitalId")!.Value);
 
-            return Ok(
-                _service.GetPendingDoctors(hospitalId)
-            );
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Data = _service.GetPendingDoctors(hospitalId)
+            });
+
         }
     }
 }

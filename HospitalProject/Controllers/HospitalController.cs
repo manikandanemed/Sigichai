@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using System.Collections.Generic;
+using System.Security.Claims;
 using HospitalProject.Models;
 using HospitalProject.Services;
-using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Twilio.Jwt.AccessToken;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HospitalProject.Controllers
 {
@@ -25,7 +28,11 @@ namespace HospitalProject.Controllers
         public async Task<IActionResult> RegisterPatient([FromBody] PatientRegDto dto)
         {
             await _service.RegisterPatient(dto);
-            return Ok("Patient registered successfully");
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Patient registered successfully"
+            });
         }
 
         [HttpPost("create")]
@@ -34,10 +41,14 @@ namespace HospitalProject.Controllers
         {
             var hospitalId = await _service.CreateHospital(dto);
 
-            return Ok(new
+            return Ok(new ApiResponse
             {
-                HospitalId = hospitalId,
-                Message = "Hospital created successfully"
+                Success = true,
+                Message = "Hospital created successfully",
+                Data = new
+                {
+                    hospitalId = hospitalId
+                }
             });
         }
 
@@ -63,7 +74,11 @@ namespace HospitalProject.Controllers
        HospitalDoctorRegDto dto)
         {
             await _service.RegisterHospitalDoctor(dto);
-            return Ok("Hospital doctor registered. Pending verification");
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Hospital doctor registered. Pending verification"
+            });
         }
 
 
@@ -72,7 +87,12 @@ namespace HospitalProject.Controllers
     IndependentDoctorRegDto dto)
         {
             await _service.RegisterIndependentDoctor(dto);
-            return Ok("Independent doctor registered. Pending verification");
+       
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Independent doctor registered. Pending verification"
+            });
         }
 
 
@@ -89,7 +109,11 @@ namespace HospitalProject.Controllers
             await _service.CreateIndependentDoctorAdmin(
                 doctorUserId, dto);
 
-            return Ok("Admin created for your clinic & OTP sent");
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Admin created for your clinic & OTP sent"
+            });
         }
 
 
@@ -101,7 +125,13 @@ namespace HospitalProject.Controllers
         HospitalSetupDto dto)
         {
             await _service.SetupHospitalWithAdmin(dto);
-            return Ok("Hospital & First Admin created");
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Hospital & First Admin created"
+            });
+           
         }
 
 
@@ -118,7 +148,12 @@ namespace HospitalProject.Controllers
             );
 
             await _service.RegisterAdmin(hospitalId, dto);
-            return Ok("Admin registered");
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Admin registered"
+            });
         }
 
 
@@ -130,7 +165,11 @@ namespace HospitalProject.Controllers
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
             var result = await _service.Login(dto);
-            return Ok(result);
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "OTP sent successfully"
+            });
         }
 
         //[HttpPost("verify-otp")]
@@ -146,10 +185,16 @@ namespace HospitalProject.Controllers
         {
             var result = await _service.VerifyOtp(dto);
 
-            return Ok(new
+            return Ok(new ApiResponse
             {
-                token = result.Token,
-                role = result.Role
+                Success = true,
+                Message = "OTP verified successfully",
+                Data = new
+                {
+                    token = result.Token,
+                    role = result.Role,
+                    //name = result.Name   // if you added name
+                }
             });
         }
 
@@ -163,7 +208,12 @@ namespace HospitalProject.Controllers
             ForgotPasswordDto dto)
         {
             await _service.ForgotPassword(dto);
-            return Ok("OTP sent to registered mobile number");
+            
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "OTP sent to registered mobile number"
+            });
         }
 
         [HttpPost("reset-password")]
@@ -171,7 +221,12 @@ namespace HospitalProject.Controllers
             ResetPasswordDto dto)
         {
             await _service.ResetPassword(dto);
-            return Ok("Password reset successfully");
+         
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Password reset successfully"
+            });
         }
 
 
@@ -186,7 +241,14 @@ namespace HospitalProject.Controllers
             double radiusKm = 10)
         {
             var doctors = await _service.GetNearbyDoctors(lat, lon, radiusKm);
-            return Ok(doctors);
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Data = doctors
+            });
+
+
         }
 
         [HttpGet("doctor/{doctorId}/slots")]
@@ -195,7 +257,11 @@ namespace HospitalProject.Controllers
      DateOnly date)
         {
             var slots = await _service.GetAvailableSlots(doctorId, date);
-            return Ok(slots);
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Data = slots
+            });
         }
 
 
@@ -217,7 +283,16 @@ namespace HospitalProject.Controllers
             );
 
             var token = await _service.BookPatientByTime(userId, dto);
-            return Ok(new { tempToken = token });
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Appointment booked successfully",
+                Data = new
+                {
+                    tempToken = token
+                }
+            });
+
         }
 
 
@@ -236,7 +311,14 @@ namespace HospitalProject.Controllers
             );
 
             var profile = await _service.GetPatientProfile(userId);
-            return Ok(profile);
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Profile fetched successfully",
+                Data = profile
+            });
+
         }
 
         [Authorize(Roles = "Patient")]
@@ -249,7 +331,13 @@ namespace HospitalProject.Controllers
             );
 
             await _service.UpdatePatientProfile(userId, dto);
-            return Ok("Profile updated successfully");
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Profile updated successfully"
+            });
+            
         }
 
         // =========================
@@ -266,7 +354,12 @@ namespace HospitalProject.Controllers
             );
 
             await _service.UpdateVitalsByAdmin(adminUserId, dto);
-            return Ok("Vitals updated successfully");
+  
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Vitals updated successfully"
+            });
         }
 
         // =========================
@@ -285,7 +378,12 @@ namespace HospitalProject.Controllers
             var data = await _service
                 .GetPatientWorkspaceForDoctor(doctorUserId, patientUserId);
 
-            return Ok(data);
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "patient details fetched successfully",
+                Data = data
+            });
         }
 
 
@@ -299,7 +397,13 @@ namespace HospitalProject.Controllers
         public async Task<IActionResult> GetPublicUserDetails(int userId)
         {
             var data = await _service.GetPublicUserDetails(userId);
-            return Ok(data);
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Users details fetched successfully",
+                Data = data
+            });
         }
 
 
@@ -309,23 +413,62 @@ namespace HospitalProject.Controllers
         // PUBLIC APIs (NO AUTH)
         // =========================
 
+        //[HttpGet("public/hospitals")]
+        //public async Task<IActionResult> GetAllHospitals()
+        //{
+        //    return Ok(await _service.GetAllHospitals());
+        //}
+
+        //[HttpGet("public/hospital/{hospitalId}/doctors")]
+        //public async Task<IActionResult> GetDoctorsByHospital(int hospitalId)
+        //{
+        //    return Ok(await _service.GetDoctorsByHospital(hospitalId));
+        //}
+
+        //[HttpGet("public/specialities")]
+        //public async Task<IActionResult> GetSpecialities()
+        //{
+        //    return Ok(await _service.GetSpecialities());
+        //}
+
+
+
         [HttpGet("public/hospitals")]
         public async Task<IActionResult> GetAllHospitals()
         {
-            return Ok(await _service.GetAllHospitals());
+            var hospitals = await _service.GetAllHospitals();
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Data = hospitals
+            });
         }
 
         [HttpGet("public/hospital/{hospitalId}/doctors")]
         public async Task<IActionResult> GetDoctorsByHospital(int hospitalId)
         {
-            return Ok(await _service.GetDoctorsByHospital(hospitalId));
+            var doctors = await _service.GetDoctorsByHospital(hospitalId);
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Data = doctors
+            });
         }
 
         [HttpGet("public/specialities")]
         public async Task<IActionResult> GetSpecialities()
         {
-            return Ok(await _service.GetSpecialities());
+            var specialities = await _service.GetSpecialities();
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Data = specialities
+            });
         }
+
 
 
 
@@ -343,7 +486,13 @@ namespace HospitalProject.Controllers
             );
 
             var list = await _service.GetPatientAppointments(userId, type);
-            return Ok(list);
+          
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Appointments details get successfully",
+                Data = list
+            });
         }
 
 
@@ -364,7 +513,16 @@ namespace HospitalProject.Controllers
             );
 
             var token = await _service.BookFamilyByTime(userId, dto);
-            return Ok(new { tempToken = token });
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Appointment booked successfully",
+                Data = new
+                {
+                    tempToken = token
+                }
+            });
         }
 
 
@@ -379,7 +537,12 @@ namespace HospitalProject.Controllers
         {
             int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
             await _service.AddFamilyMember(userId, dto);
-            return Ok("Family member added");
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Family member added"
+            });
         }
 
 
@@ -396,7 +559,14 @@ namespace HospitalProject.Controllers
         public async Task<IActionResult> GetBookedAppointments(DateOnly date)
         {
             var list = await _service.GetOnlineBookingsByDate(date);
-            return Ok(list);
+            
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Get Booked Appointments details  successfully",
+                Data = list
+            });
+
         }
 
 
@@ -411,7 +581,13 @@ namespace HospitalProject.Controllers
         public async Task<IActionResult> GetCheckedInAppointments(DateOnly date)
         {
             var list = await _service.GetCheckedInAppointmentsByDate(date);
-            return Ok(list);
+         
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Checked in Details",
+                Data = list
+            });
         }
 
         //***********************
@@ -429,7 +605,13 @@ namespace HospitalProject.Controllers
             );
 
             await _service.AddDoctorProfile(userId, dto);
-            return Ok("Doctor profile created");
+            
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Doctor profile created"
+            });
         }
 
 
@@ -452,7 +634,12 @@ namespace HospitalProject.Controllers
             await file.CopyToAsync(stream);
 
             // save path to DoctorDocument table (service layer)
-            return Ok("Document uploaded");
+           
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Document uploaded"
+            });
         }
 
 
@@ -470,7 +657,12 @@ namespace HospitalProject.Controllers
             );
 
             await _service.CreateStaff(userId, dto);
-            return Ok("Staff created & OTP sent");
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Staff created & OTP sent"
+            });
         }
 
 
@@ -489,7 +681,14 @@ namespace HospitalProject.Controllers
                 User.FindFirstValue(ClaimTypes.NameIdentifier)!
             );
 
-            return Ok(await _service.GetStaffQueue(userId, date));
+            var staffqueue = await _service.GetStaffQueue(userId, date);
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Staff Queue list",
+                Data = staffqueue
+            });
         }
 
 
@@ -514,7 +713,13 @@ namespace HospitalProject.Controllers
             SlotCreateDto dto)
         {
             await _service.AddDoctorSlot(doctorId, dto);
-            return Ok("Slot added");
+           
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Slot added"
+            });
+
         }
 
 
@@ -527,7 +732,13 @@ namespace HospitalProject.Controllers
         public async Task<IActionResult> CheckIn(string token)
         {
             var queueNo = await _service.CheckIn(token);
-            return Ok(new { queueNo });
+        
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Check in Successfully",
+                Data = queueNo
+            });
         }
 
         // =========================
@@ -543,7 +754,16 @@ namespace HospitalProject.Controllers
                 User.FindFirstValue(ClaimTypes.NameIdentifier)!
             );
 
-            return Ok(await _service.GetDoctorAppointments(userId, type));
+            var appointments = await _service.GetDoctorAppointments(userId, type);
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                //Message = "Apontments Details",
+                Data = appointments
+            });
+
+
         }
 
         [Authorize(Roles = "Doctor")]
@@ -554,7 +774,16 @@ namespace HospitalProject.Controllers
                 User.FindFirstValue(ClaimTypes.NameIdentifier)!
             );
 
-            return Ok(await _service.GetDoctorQueue(userId, date));
+            var Queue = await _service.GetDoctorQueue(userId, date);
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                //Message = "Apontments Details",
+                Data = Queue
+            });
+
+           
         }
 
         // =========================
@@ -566,7 +795,13 @@ namespace HospitalProject.Controllers
         public async Task<IActionResult> Consult([FromBody] DoctorConsultDto dto)
         {
             await _service.Consult(dto);
-            return Ok("Consultation saved");
+            
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Consultation saved",
+                
+            });
         }
 
 
@@ -587,7 +822,13 @@ namespace HospitalProject.Controllers
             var list = await _service.GetAdminAppointments(
                 hospitalId, date, status);
 
-            return Ok(list);
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Get Apontments Details Successfully",
+                Data = list
+            });
         }
 
         [Authorize(Roles = "Admin")]
@@ -599,7 +840,15 @@ namespace HospitalProject.Controllers
                 User.FindFirst("HospitalId")!.Value
             );
 
-            return Ok(await _service.GetAdminQueue(hospitalId, date));
+            var adminqueue = await _service.GetAdminQueue(hospitalId, date);
+
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                //Message = "Apontments Details",
+                Data = adminqueue
+            });
         }
 
 
@@ -613,7 +862,13 @@ namespace HospitalProject.Controllers
         public async Task<IActionResult> GetPayment(int appointmentId)
         {
             var details = await _service.GetPaymentDetails(appointmentId);
-            return Ok(details);
+            
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                //Message = "Apontments Details",
+                Data = details
+            });
         }
 
         // =========================
@@ -626,7 +881,13 @@ namespace HospitalProject.Controllers
         public async Task<IActionResult> ConfirmPayment(ConfirmPaymentDto dto)
         {
             await _service.ConfirmPayment(dto);
-            return Ok("Payment completed");
+         
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Payment completed"
+                
+            });
         }
 
 
@@ -644,8 +905,17 @@ namespace HospitalProject.Controllers
         public IActionResult GetDoctorsForAdmin()
         {
             int hospitalId = int.Parse(User.FindFirst("HospitalId")!.Value);
-            return Ok(_service.GetDoctorsForAdmin(hospitalId));
+
+            var doctors =  _service.GetDoctorsForAdmin(hospitalId);
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Data = doctors
+            });
         }
+
+
 
         //Patient History For Doctor
 
@@ -660,7 +930,12 @@ namespace HospitalProject.Controllers
             var history = await _service
                 .GetPatientHistoryForDoctor(doctorUserId, patientId);
 
-            return Ok(history);
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Data = history
+            });
         }
 
 
@@ -677,7 +952,12 @@ namespace HospitalProject.Controllers
 
             var history = await _service.GetPatientHistory(userId);
 
-            return Ok(history);
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Data = history
+            });
         }
 
         //Update Patient Details
@@ -692,7 +972,12 @@ namespace HospitalProject.Controllers
             );
 
             await _service.UpdatePatientPersonalDetails(userId, dto);
-            return Ok("Patient details updated successfully");
+            
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Patient details updated successfully"
+            });
         }
 
 
@@ -713,7 +998,13 @@ namespace HospitalProject.Controllers
             var details = await _service
                 .GetPatientBasicDetailsForDoctor(doctorUserId, patientId);
 
-            return Ok(details);
+       
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Data = details
+            });
         }
 
 
@@ -733,7 +1024,12 @@ namespace HospitalProject.Controllers
 
             await _service.MarkDoctorArrived(adminUserId, doctorId);
 
-            return Ok("Doctor marked as arrived and patients notified");
+            
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Doctor marked as arrived and patients notified"
+            });
         }
 
 

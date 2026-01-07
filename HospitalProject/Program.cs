@@ -1,10 +1,11 @@
+using System.Text;
 using HospitalProject.Data;
+using HospitalProject.Middleware;
 using HospitalProject.Repositories;
 using HospitalProject.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -87,6 +88,10 @@ var app = builder.Build();
 // =========================
 app.UseSwagger();
 app.UseSwaggerUI();
+
+// ?? GLOBAL EXCEPTION MIDDLEWARE (ADD HERE)
+app.UseMiddleware<ExceptionMiddleware>();
+
 
 app.UseAuthentication();
 app.UseAuthorization();
