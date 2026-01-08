@@ -373,7 +373,12 @@
     string Phone,
     DateOnly Dob,
     string Gender,
-    string Relation
+    string Relation,
+    string Address,
+    string BloodGroup,
+    string EmergencyContact,
+    decimal HeightCm,
+    decimal WeightKg
 );
 
 
@@ -448,7 +453,12 @@
         string Phone,
         DateOnly? Dob,
         string Gender,
-        string Relation
+        string Relation,
+        string Address,
+    string BloodGroup,
+    string EmergencyContact,
+    decimal HeightCm,
+    decimal WeightKg
     );
 
 

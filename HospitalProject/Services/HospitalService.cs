@@ -1634,7 +1634,12 @@ GetPatientHistory(int userId)
                     Phone = f.Phone,
                     Dob = f.Dob,
                     Gender = f.Gender,
-                    Relationship = f.Relation
+                    Relationship = f.Relation,
+                    Address = f.Address,
+                    BloodGroup = f.BloodGroup,
+                    EmergencyContact = f.EmergencyContact,
+                    HeightCm = f.HeightCm,
+                    WeightKg = f.WeightKg
                 });
             }
 
@@ -2008,7 +2013,12 @@ GetPatientHistory(int userId)
                         f.Phone,
                         f.Dob,
                         f.Gender,
-                        f.Relationship
+                        f.Relationship,
+                        f.Address,
+                        f.BloodGroup,
+                        f.EmergencyContact,
+                        f.HeightCm,
+                        f.WeightKg
                     )
                 ).ToList()
             );

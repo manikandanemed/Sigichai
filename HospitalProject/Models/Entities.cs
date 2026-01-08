@@ -161,6 +161,13 @@ namespace HospitalProject.Models
         public DateOnly? Dob { get; set; }
         public string Gender { get; set; } = "";
         public string Relationship { get; set; } = "";
+
+        // 🔥 HR REQUIRED FIELDS
+        public string Address { get; set; } = "";
+        public string BloodGroup { get; set; } = "";
+        public string EmergencyContact { get; set; } = "";
+        public decimal HeightCm { get; set; }
+        public decimal WeightKg { get; set; }
     }
 
 
