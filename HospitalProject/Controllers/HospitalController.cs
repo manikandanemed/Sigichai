@@ -157,77 +157,7 @@ namespace HospitalProject.Controllers
         }
 
 
-        // =========================
-        // LOGIN + OTP APIs
-        // =========================
 
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginDto dto)
-        {
-            var result = await _service.Login(dto);
-            return Ok(new ApiResponse
-            {
-                Success = true,
-                Message = "OTP sent successfully"
-            });
-        }
-
-        //[HttpPost("verify-otp")]
-        //public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpDto dto)
-        //{
-        //    var token = await _service.VerifyOtp(dto);
-        //    return Ok(new { token });
-        //}
-
-
-        [HttpPost("verify-otp")]
-        public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpDto dto)
-        {
-            var result = await _service.VerifyOtp(dto);
-
-            return Ok(new ApiResponse
-            {
-                Success = true,
-                Message = "OTP verified successfully",
-                Data = new
-                {
-                    token = result.Token,
-                    role = result.Role,
-                    //name = result.Name   // if you added name
-                }
-            });
-        }
-
-
-        // =========================
-        // FORGOT / RESET PASSWORD
-        // =========================
-
-        [HttpPost("forgot-password")]
-        public async Task<IActionResult> ForgotPassword(
-            ForgotPasswordDto dto)
-        {
-            await _service.ForgotPassword(dto);
-            
-            return Ok(new ApiResponse
-            {
-                Success = true,
-                Message = "OTP sent to registered mobile number"
-            });
-        }
-
-        [HttpPost("reset-password")]
-        public async Task<IActionResult> ResetPassword(
-            ResetPasswordDto dto)
-        {
-            await _service.ResetPassword(dto);
-         
-            return Ok(new ApiResponse
-            {
-                Success = true,
-                Message = "Password reset successfully"
-            });
-        }
 
 
         // =========================
@@ -962,23 +892,43 @@ namespace HospitalProject.Controllers
 
         //Update Patient Details
 
+        //[Authorize(Roles = "Patient")]
+        //[HttpPost("patient/personal-details")]
+        //public async Task<IActionResult> UpdatePatientPersonalDetails(
+        // PatientPersonalDetailsDto dto)
+        //{
+        //    int userId = int.Parse(
+        //        User.FindFirstValue(ClaimTypes.NameIdentifier)!
+        //    );
+
+        //    await _service.UpdatePatientPersonalDetails(userId, dto);
+
+        //    return Ok(new ApiResponse
+        //    {
+        //        Success = true,
+        //        Message = "Patient details updated successfully"
+        //    });
+        //}
+
+
         [Authorize(Roles = "Patient")]
-        [HttpPost("patient/personal-details")]
+        [HttpPut("patient/personal-details")]
         public async Task<IActionResult> UpdatePatientPersonalDetails(
-         PatientPersonalDetailsDto dto)
+    UpdatePatientPersonalDetailsDto dto)
         {
             int userId = int.Parse(
                 User.FindFirstValue(ClaimTypes.NameIdentifier)!
             );
 
             await _service.UpdatePatientPersonalDetails(userId, dto);
-            
+
             return Ok(new ApiResponse
             {
                 Success = true,
-                Message = "Patient details updated successfully"
+                Message = "Patient personal details updated successfully"
             });
         }
+
 
 
 
@@ -1029,6 +979,26 @@ namespace HospitalProject.Controllers
             {
                 Success = true,
                 Message = "Doctor marked as arrived and patients notified"
+            });
+        }
+
+
+
+        [Authorize(Roles = "Patient")]
+        [HttpGet("patient/personal-details")]
+        public async Task<IActionResult> GetPatientPersonalDetails()
+        {
+            int userId = int.Parse(
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!
+            );
+
+            var data = await _service.GetPatientPersonalDetails(userId);
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Patient personal details fetched successfully",
+                Data = data
             });
         }
 

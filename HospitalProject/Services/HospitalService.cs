@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 
 namespace HospitalProject.Services
 {
@@ -214,26 +215,61 @@ namespace HospitalProject.Services
         // =========================
         // LOGIN + OTP
         // =========================
-        public async Task<string> Login(LoginDto d)
-        {
-            //var user = await _u.GetAsync(x => x.MobileNumber == d.MobileNumber);
-            //        var user = await _u.Query()
-            //.Include(x => x.Admin)
-            //.Include(x => x.Doctor)
-            //.Include(x => x.Patient)
-            //.FirstOrDefaultAsync(x => x.MobileNumber == d.MobileNumber);
+        //public async Task<string> Login(LoginDto d)
+        //{
+        //    //var user = await _u.GetAsync(x => x.MobileNumber == d.MobileNumber);
+        //    //        var user = await _u.Query()
+        //    //.Include(x => x.Admin)
+        //    //.Include(x => x.Doctor)
+        //    //.Include(x => x.Patient)
+        //    //.FirstOrDefaultAsync(x => x.MobileNumber == d.MobileNumber);
 
+        //    var user = await _u.Query()
+        //      .Include(x => x.Admin)
+        //      .Include(x => x.Doctor)
+        //      .Include(x => x.Patient)
+        //      .FirstOrDefaultAsync(x =>
+        //      x.MobileNumber == d.MobileNumber &&
+        //      x.IsDeleted == false   // 🔥 ADD THIS
+        //      );
+
+        //    if (user == null || !BCrypt.Net.BCrypt.Verify(d.Password, user.Password))
+        //        return "Invalid Credentials";
+
+        //    var otp = new Random().Next(1000, 9999).ToString();
+
+        //    await _otp.AddAsync(new OtpStore
+        //    {
+        //        UserId = user.Id,
+        //        MobileNumber = user.MobileNumber,
+        //        OtpCode = otp,
+        //        OtpType = "SMS",
+        //        Purpose = "LOGIN",
+        //        CreatedTime = DateTime.UtcNow,
+        //        Expiry = DateTime.UtcNow.AddMinutes(5),
+        //        IsUsed = false,
+        //        IsSent = true
+        //    });
+
+        //    await _otp.SaveAsync();
+
+        //    await _twilio.SendOtpAsync(d.MobileNumber, otp);
+        //    return "OTP Sent";
+        //}
+
+        public async Task<bool> Login(LoginDto d)
+        {
             var user = await _u.Query()
-              .Include(x => x.Admin)
-              .Include(x => x.Doctor)
-              .Include(x => x.Patient)
-              .FirstOrDefaultAsync(x =>
-              x.MobileNumber == d.MobileNumber &&
-              x.IsDeleted == false   // 🔥 ADD THIS
-              );
+                .Include(x => x.Admin)
+                .Include(x => x.Doctor)
+                .Include(x => x.Patient)
+                .FirstOrDefaultAsync(x =>
+                    x.MobileNumber == d.MobileNumber &&
+                    x.IsDeleted == false
+                );
 
             if (user == null || !BCrypt.Net.BCrypt.Verify(d.Password, user.Password))
-                return "Invalid Credentials";
+                throw new Exception("Invalid credentials");
 
             var otp = new Random().Next(1000, 9999).ToString();
 
@@ -251,10 +287,11 @@ namespace HospitalProject.Services
             });
 
             await _otp.SaveAsync();
-
             await _twilio.SendOtpAsync(d.MobileNumber, otp);
-            return "OTP Sent";
+
+            return true; // 🔥 IMPORTANT
         }
+
 
         ////flow2 doctor create admin without password
 
@@ -1522,30 +1559,90 @@ GetPatientHistory(int userId)
 
         //Update Patient Details
 
+        //   public async Task UpdatePatientPersonalDetails(
+        //int userId,
+        //PatientPersonalDetailsDto dto)
+        //   {
+        //       var patient = await _p.GetAsync(p => p.UserId == userId);
+        //       if (patient == null)
+        //           throw new Exception("Patient not found");
+
+        //       patient.Dob = dto.Dob;
+        //       patient.Gender = dto.Gender;
+        //       patient.BloodGroup = dto.BloodGroup;
+        //       patient.Email = dto.Email;
+
+        //       patient.Address = dto.Address;
+        //       patient.EmergencyContact = dto.EmergencyContact;
+
+        //       patient.HeightCm = dto.HeightCm;
+        //       patient.WeightKg = dto.WeightKg;
+
+        //       patient.MedicalHistory = dto.MedicalHistory;
+        //       patient.Allergies = dto.Allergies;
+
+        //       await _p.SaveAsync();
+        //   }
+
+
+
         public async Task UpdatePatientPersonalDetails(
-     int userId,
-     PatientPersonalDetailsDto dto)
+    int userId,
+    UpdatePatientPersonalDetailsDto dto)
         {
+            var user = await _u.GetAsync(x => x.Id == userId);
+            if (user == null)
+                throw new Exception("User not found");
+
             var patient = await _p.GetAsync(p => p.UserId == userId);
             if (patient == null)
                 throw new Exception("Patient not found");
 
+            // 🔹 Update user
+            user.Name = dto.Name;
+            user.MobileNumber = dto.Phone;
+
+            // 🔹 Update patient
             patient.Dob = dto.Dob;
             patient.Gender = dto.Gender;
-            patient.BloodGroup = dto.BloodGroup;
-            patient.Email = dto.Email;
-
             patient.Address = dto.Address;
+            patient.BloodGroup = dto.BloodGroup;
             patient.EmergencyContact = dto.EmergencyContact;
-
             patient.HeightCm = dto.HeightCm;
             patient.WeightKg = dto.WeightKg;
 
-            patient.MedicalHistory = dto.MedicalHistory;
-            patient.Allergies = dto.Allergies;
+            patient.MedicalHistory =
+                JsonSerializer.Serialize(dto.MedicalHistory);
 
+            // 🔥 DELETE OLD FAMILY (CORRECT WAY)
+            var oldFamilyMembers = _family.Query()
+                .Where(f => f.PatientId == patient.Id)
+                .ToList();
+
+            foreach (var member in oldFamilyMembers)
+            {
+                _family.Remove(member);
+            }
+
+            // 🔥 ADD NEW FAMILY
+            foreach (var f in dto.Family)
+            {
+                await _family.AddAsync(new FamilyMember
+                {
+                    PatientId = patient.Id,
+                    Name = f.Name,
+                    Phone = f.Phone,
+                    Dob = f.Dob,
+                    Gender = f.Gender,
+                    Relationship = f.Relation
+                });
+            }
+
+            await _u.SaveAsync();
             await _p.SaveAsync();
+            await _family.SaveAsync();
         }
+
 
 
 
@@ -1870,6 +1967,51 @@ GetPatientHistory(int userId)
                     "Doctor has arrived at the clinic and consultations have started. Please be ready."
                 );
             }
+        }
+
+
+
+        public async Task<PatientPersonalDetailsViewDto>
+    GetPatientPersonalDetails(int userId)
+        {
+            var user = await _u.GetAsync(x => x.Id == userId);
+            if (user == null)
+                throw new Exception("User not found");
+
+            var patient = await _p.Query()
+                .Include(p => p.FamilyMembers)
+                .FirstOrDefaultAsync(p => p.UserId == userId);
+
+            if (patient == null)
+                throw new Exception("Patient not found");
+
+            // Medical history JSON → List<string>
+            var medicalHistory = string.IsNullOrEmpty(patient.MedicalHistory)
+                ? new List<string>()
+                : JsonSerializer.Deserialize<List<string>>(patient.MedicalHistory)
+                    ?? new List<string>();
+
+            return new PatientPersonalDetailsViewDto(
+                user.Name,
+                user.MobileNumber,
+                patient.Dob,
+                patient.Gender,
+                patient.Address,
+                patient.BloodGroup,
+                patient.EmergencyContact,
+                patient.HeightCm,
+                patient.WeightKg,
+                medicalHistory,
+                patient.FamilyMembers.Select(f =>
+                    new FamilyMemberViewDto(
+                        f.Name,
+                        f.Phone,
+                        f.Dob,
+                        f.Gender,
+                        f.Relationship
+                    )
+                ).ToList()
+            );
         }
 
 

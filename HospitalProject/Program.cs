@@ -1,4 +1,4 @@
-using System.Text;
+﻿using System.Text;
 using HospitalProject.Data;
 using HospitalProject.Middleware;
 using HospitalProject.Repositories;
@@ -10,7 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 var builder = WebApplication.CreateBuilder(args);
 
 // =========================
-// DATABASE (PostgreSQL)
+// DATABASE
 // =========================
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
@@ -36,17 +36,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
-
         IssuerSigningKey = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)
         )
     };
 });
 
-// =========================
 builder.Services.AddAuthorization();
 
 // =========================
@@ -64,37 +61,22 @@ builder.Services.AddSwaggerGen(c =>
         BearerFormat = "JWT",
         In = Microsoft.OpenApi.Models.ParameterLocation.Header
     });
-
-    c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
-    {
-        {
-            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
-            {
-                Reference = new Microsoft.OpenApi.Models.OpenApiReference
-                {
-                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new string[] { }
-        }
-    });
 });
 
 var app = builder.Build();
 
 // =========================
-// MIDDLEWARE PIPELINE
+// MIDDLEWARE PIPELINE (ORDER MATTERS)
 // =========================
 app.UseSwagger();
 app.UseSwaggerUI();
 
-// ?? GLOBAL EXCEPTION MIDDLEWARE (ADD HERE)
+app.UseRouting();
+
+
+
+// 🔥 Exception middleware AFTER auth
 app.UseMiddleware<ExceptionMiddleware>();
-
-
-app.UseAuthentication();
-app.UseAuthorization();
 
 app.MapControllers();
 

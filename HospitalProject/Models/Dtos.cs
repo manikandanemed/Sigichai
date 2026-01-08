@@ -353,6 +353,30 @@
 );
 
 
+    public record UpdatePatientPersonalDetailsDto(
+    string Name,
+    string Phone,
+    DateOnly Dob,
+    string Gender,
+    string Address,
+    string BloodGroup,
+    string EmergencyContact,
+    decimal? HeightCm,
+    decimal? WeightKg,
+    List<string> MedicalHistory,
+    List<FamilyMemberInputDto> Family
+);
+
+
+    public record FamilyMemberInputDto(
+    string Name,
+    string Phone,
+    DateOnly Dob,
+    string Gender,
+    string Relation
+);
+
+
 
     // =========================
     // PATIENT PERSONAL DETAILS DOCTOR VIEW
@@ -402,6 +426,31 @@
     int? Age,
     string? Gender
 );
+
+
+
+    public record PatientPersonalDetailsViewDto(
+    string Name,
+    string Phone,
+    DateOnly? Dob,
+    string? Gender,
+    string? Address,
+    string? BloodGroup,
+    string? EmergencyContact,
+    decimal? HeightCm,
+    decimal? WeightKg,
+    List<string> MedicalHistory,
+    List<FamilyMemberViewDto> Family
+);
+
+    public record FamilyMemberViewDto(
+        string Name,
+        string Phone,
+        DateOnly? Dob,
+        string Gender,
+        string Relation
+    );
+
 
 
 

@@ -21,7 +21,15 @@ namespace HospitalProject.Middleware
             }
             catch (Exception ex)
             {
-                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                // 🔥 AUTH errors skip
+                if (ex.Message.Contains("Authenticate") ||
+                    context.Response.StatusCode == 401)
+                {
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    return;
+                }
+
+                context.Response.StatusCode = StatusCodes.Status400BadRequest;
                 context.Response.ContentType = "application/json";
 
                 var response = new ApiResponse
@@ -30,9 +38,12 @@ namespace HospitalProject.Middleware
                     Message = ex.Message
                 };
 
-                var json = JsonSerializer.Serialize(response);
-                await context.Response.WriteAsync(json);
+                await context.Response.WriteAsync(
+                    JsonSerializer.Serialize(response)
+                );
             }
         }
+
     }
 }
+

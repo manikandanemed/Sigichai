@@ -10,6 +10,7 @@ namespace HospitalProject.Repositories
     public interface IRepository<T> where T : class
     {
         Task AddAsync(T entity);
+        void Remove(T entity);          // 🔥 ADD THIS
         Task SaveAsync();
         IQueryable<T> Query();
         Task<T?> GetAsync(Expression<Func<T, bool>> predicate);
@@ -31,6 +32,13 @@ namespace HospitalProject.Repositories
         public async Task AddAsync(T entity)
         {
             await _context.Set<T>().AddAsync(entity);
+        }
+
+
+        // 🔥 ADD THIS
+        public void Remove(T entity)
+        {
+            _context.Set<T>().Remove(entity);
         }
 
         // Save changes
