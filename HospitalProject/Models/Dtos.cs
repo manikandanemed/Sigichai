@@ -172,6 +172,7 @@
 
     public record PatientAppointmentDto(
     int AppointmentId,
+    string TempToken,
     string DoctorName,
     string Specialization,
     string HospitalName,

@@ -1903,6 +1903,7 @@ GetPatientHistory(int userId)
                 .OrderByDescending(a => a.AppointmentDate)
                 .Select(a => new PatientAppointmentDto(
                      a.Id,
+                     a.TempToken,
     a.Doctor.User.Name,
     a.Doctor.Specialization,
     a.Doctor.Hospital != null
