@@ -694,8 +694,29 @@ namespace HospitalProject.Services
             });
 
             await _apps.SaveAsync();
+
+            // =========================
+            // 🔔 SEND SMS TO PATIENT
+            // =========================
+
+            var patientUser = await _u.GetAsync(u => u.Id == userId);
+
+            if (patientUser != null)
+            {
+                await _twilio.SendOtpAsync(
+                    patientUser.MobileNumber,
+                    $"Your appointment is booked.\n" +
+                    $"Doctor: {doctor.User.Name}\n" +
+                    $"Date: {dto.Date}\n" +
+                    $"Time: {dto.TimeSlot}\n" +
+                    $"Token: {token}\n" +
+                    $"Please check-in on arrival."
+                );
+            }
+
             return token;
         }
+            
 
 
         // =========================
@@ -761,6 +782,27 @@ namespace HospitalProject.Services
             });
 
             await _apps.SaveAsync();
+
+
+            // =========================
+            // 🔔 SEND SMS TO PATIENT
+            // =========================
+
+            var patientUser = await _u.GetAsync(u => u.Id == userId);
+
+            if (patientUser != null)
+            {
+                await _twilio.SendOtpAsync(
+                    patientUser.MobileNumber,
+                    $"Appointment booked for {family.Name}.\n" +
+                    $"Doctor: {doctor.User.Name}\n" +
+                    $"Date: {dto.Date}\n" +
+                    $"Time: {dto.TimeSlot}\n" +
+                    $"Token: {tempToken}\n" +
+                    $"Please check-in on arrival."
+                );
+            }
+
             return tempToken;
         }
 
@@ -882,10 +924,39 @@ namespace HospitalProject.Services
             return app.QueueToken.Value;
         }
 
-     //Update vitals by admin
+     // Queue Token reset for morning afternoon evening night
+
+        //public async Task<int> CheckIn(string tempToken)
+        //{
+        //    var app = await _apps.GetAsync(x => x.TempToken == tempToken);
+        //    if (app == null)
+        //        throw new Exception("Invalid token");
+
+        //    if (app.Status == "CheckedIn")
+        //        return app.QueueToken!.Value;
+
+        //    int count = _apps.Query().Count(x =>
+        //        x.DoctorId == app.DoctorId &&
+        //        x.AppointmentDate.Date == app.AppointmentDate.Date &&
+        //        x.TimeSlot == app.TimeSlot &&   // ✅ slot based reset
+        //        x.Status == "CheckedIn");
+
+        //    app.Status = "CheckedIn";
+        //    app.QueueToken = count + 1;
+
+        //    await _apps.SaveAsync();
+        //    return app.QueueToken.Value;
+        //}
+
+
+
+
+
+
+        //Update vitals by admin
         public async Task UpdateVitalsByAdmin(
-    int adminUserId,
-    UpdateVitalsDto dto)
+        int adminUserId,
+        UpdateVitalsDto dto)
         {
             // 1️⃣ Admin validate
             var admin = await _u.GetAsync(x =>
