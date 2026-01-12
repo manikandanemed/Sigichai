@@ -450,6 +450,7 @@
 );
 
     public record FamilyMemberViewDto(
+        int Id,
         string Name,
         string Phone,
         DateOnly? Dob,

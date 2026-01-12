@@ -2081,6 +2081,7 @@ GetPatientHistory(int userId)
                 medicalHistory,
                 patient.FamilyMembers.Select(f =>
                     new FamilyMemberViewDto(
+                        f.Id,
                         f.Name,
                         f.Phone,
                         f.Dob,
