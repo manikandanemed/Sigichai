@@ -640,6 +640,7 @@ namespace HospitalProject.Services
             await _apps.SaveAsync();
             return tempToken;
         }
+
         // =========================
         // SELF BOOKING (Doctor based)
         // =========================
@@ -653,9 +654,18 @@ namespace HospitalProject.Services
                 throw new Exception("Patient not found");
 
             // 2️⃣ Doctor check (ONLY verified doctor)
-            var doctor = await _d.GetAsync(x =>
-                x.Id == dto.DoctorId &&
-                x.IsVerified == true);
+
+
+            //var doctor = await _d.GetAsync(x =>
+            //    x.Id == dto.DoctorId &&
+            //    x.IsVerified == true);
+
+            var doctor = await _d.Query()
+                 .Include(d => d.User)
+                 .FirstOrDefaultAsync(x =>
+                 x.Id == dto.DoctorId &&
+                 x.IsVerified == true);
+
 
             if (doctor == null)
                 throw new Exception("Doctor not available");
@@ -740,9 +750,16 @@ namespace HospitalProject.Services
                 throw new Exception("Invalid family member");
 
             // 3️⃣ Doctor check (ONLY verified)
-            var doctor = await _d.GetAsync(x =>
-                x.Id == dto.DoctorId &&
-                x.IsVerified == true);
+            //var doctor = await _d.GetAsync(x =>
+            //    x.Id == dto.DoctorId &&
+            //    x.IsVerified == true);
+
+            var doctor = await _d.Query()
+           .Include(d => d.User)          // 👈 IMPORTANT
+           .FirstOrDefaultAsync(x =>
+            x.Id == dto.DoctorId &&
+            x.IsVerified == true);
+
 
             if (doctor == null)
                 throw new Exception("Doctor not available");
