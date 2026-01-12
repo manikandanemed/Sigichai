@@ -1004,6 +1004,26 @@ namespace HospitalProject.Controllers
 
 
 
+        // patient can view queue line details
+
+        [Authorize(Roles = "Patient")]
+        [HttpGet("patient/queue-status/{tempToken}")]
+        public async Task<IActionResult> GetPatientQueueStatus(string tempToken)
+        {
+            var status = await _service
+                .GetPatientQueueStatusByTempToken(tempToken);
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Queue status fetched successfully",
+                Data = status
+            });
+        }
+
+
+
+
 
 
 

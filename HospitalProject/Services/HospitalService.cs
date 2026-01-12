@@ -2069,6 +2069,7 @@ GetPatientHistory(int userId)
                     ?? new List<string>();
 
             return new PatientPersonalDetailsViewDto(
+                user.Id,
                 user.Name,
                 user.MobileNumber,
                 patient.Dob,
@@ -2094,6 +2095,53 @@ GetPatientHistory(int userId)
                         f.WeightKg
                     )
                 ).ToList()
+            );
+        }
+
+
+
+        // patient can view queue line details
+
+
+        public async Task<PatientQueueStatusDto>
+        GetPatientQueueStatusByTempToken(string tempToken)
+        {
+            // 1️⃣ Get patient appointment
+            var appointment = await _apps.GetAsync(a =>
+                a.TempToken == tempToken);
+
+            if (appointment == null)
+                throw new Exception("Invalid token");
+
+            if (appointment.QueueToken == null)
+                throw new Exception("Patient not checked-in yet");
+
+            // 2️⃣ Get all checked-in / consulted patients (same doctor + date + slot)
+            var list = await _apps.Query()
+                .Where(a =>
+                    a.DoctorId == appointment.DoctorId &&
+                    a.AppointmentDate == appointment.AppointmentDate &&
+                    a.TimeSlot == appointment.TimeSlot &&
+                    (a.Status == "CheckedIn" || a.Status == "Consulted"))
+                .OrderBy(a => a.QueueToken)
+                .ToListAsync();
+
+            // 3️⃣ Find currently serving patient (latest Consulted)
+            var currentServing = list
+                .Where(a => a.Status == "Consulted")
+                .OrderByDescending(a => a.QueueToken)
+                .FirstOrDefault();
+
+            // 4️⃣ Count patients before current patient
+            int beforeYou = list.Count(a =>
+                a.QueueToken < appointment.QueueToken &&
+                a.Status == "CheckedIn");
+
+            return new PatientQueueStatusDto(
+                appointment.QueueToken.Value,
+                currentServing?.QueueToken,
+                beforeYou,
+                list.Count
             );
         }
 

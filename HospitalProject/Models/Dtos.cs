@@ -436,6 +436,7 @@
 
 
     public record PatientPersonalDetailsViewDto(
+    int Id,
     string Name,
     string Phone,
     DateOnly? Dob,
@@ -462,6 +463,16 @@
     decimal HeightCm,
     decimal WeightKg
     );
+
+
+// patient can view queue line details
+    public record PatientQueueStatusDto(
+    int YourQueueToken,
+    int? CurrentlyServingToken,
+    int PatientsBeforeYou,
+    int TotalCheckedIn
+);
+
 
 
 
