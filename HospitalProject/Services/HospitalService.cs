@@ -449,7 +449,7 @@ namespace HospitalProject.Services
         // Verify Otp
         //----------------------
 
-        public async Task<(string Token, string Role, string Name)> VerifyOtp(VerifyOtpDto d)
+        public async Task<(string Token, string Role, string Name, int UserId)> VerifyOtp(VerifyOtpDto d)
         {
             var rec = await _otp.GetAsync(x =>
                 x.MobileNumber == d.MobileNumber &&
@@ -480,7 +480,7 @@ namespace HospitalProject.Services
 
             var token = GenerateJwt(user);
 
-            return (token, user.Role, user.Name);
+            return (token, user.Role, user.Name, user.Id);
         }
 
 

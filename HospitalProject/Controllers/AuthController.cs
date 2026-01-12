@@ -42,7 +42,9 @@ namespace HospitalProject.Controllers
                 Data = new
                 {
                     token = result.Token,
-                    role = result.Role
+                    role = result.Role,
+                    userId = result.UserId,
+                    userName = result.Name
                 }
             });
         }
