@@ -1004,7 +1004,7 @@ namespace HospitalProject.Services
 
 
         public async Task<PatientWorkspaceDto>
-       GetPatientWorkspaceForDoctor(
+       GetPatientVitalsForDoctor(
        int doctorUserId,
        int patientUserId)
         {
@@ -1225,39 +1225,39 @@ namespace HospitalProject.Services
 
 
 
-        public async Task<List<DoctorAppointmentDto>> GetDoctorQueue(
-    int userId,
-    DateOnly date)
-        {
-            var doctor = await _d.GetAsync(d => d.UserId == userId);
-            if (doctor == null)
-                throw new Exception("Doctor not found");
+    //    public async Task<List<DoctorAppointmentDto>> GetDoctorQueue(
+    //int userId,
+    //DateOnly date)
+    //    {
+    //        var doctor = await _d.GetAsync(d => d.UserId == userId);
+    //        if (doctor == null)
+    //            throw new Exception("Doctor not found");
 
-            var utcDate = DateTime.SpecifyKind(
-                date.ToDateTime(TimeOnly.MinValue),
-                DateTimeKind.Utc
-            );
+    //        var utcDate = DateTime.SpecifyKind(
+    //            date.ToDateTime(TimeOnly.MinValue),
+    //            DateTimeKind.Utc
+    //        );
 
-            return await _apps.Query()
-                .Include(a => a.Patient).ThenInclude(p => p.User)
-                .Include(a => a.FamilyMember)
-                .Where(a =>
-                    a.DoctorId == doctor.Id &&
-                    a.AppointmentDate == utcDate &&
-                    a.Status == "CheckedIn")
-                .OrderBy(a => a.QueueToken)
-                .Select(a => new DoctorAppointmentDto(
-                    a.Id,
-                    a.Patient.User.Name,
-                    a.FamilyMember != null ? a.FamilyMember.Name : null,
-                    a.AppointmentDate,
-                    a.TimeSlot,
-                    a.Status,
-                    a.QueueToken,
-                    a.ReasonForVisit      // 👈 MUST ADD
-                ))
-                .ToListAsync();
-        }
+    //        return await _apps.Query()
+    //            .Include(a => a.Patient).ThenInclude(p => p.User)
+    //            .Include(a => a.FamilyMember)
+    //            .Where(a =>
+    //                a.DoctorId == doctor.Id &&
+    //                a.AppointmentDate == utcDate &&
+    //                a.Status == "CheckedIn")
+    //            .OrderBy(a => a.QueueToken)
+    //            .Select(a => new DoctorAppointmentDto(
+    //                a.Id,
+    //                a.Patient.User.Name,
+    //                a.FamilyMember != null ? a.FamilyMember.Name : null,
+    //                a.AppointmentDate,
+    //                a.TimeSlot,
+    //                a.Status,
+    //                a.QueueToken,
+    //                a.ReasonForVisit      // 👈 MUST ADD
+    //            ))
+    //            .ToListAsync();
+    //    }
 
         //Doctor create staff
         public async Task CreateStaff(
@@ -1383,7 +1383,6 @@ namespace HospitalProject.Services
 
 
         public async Task<List<AdminAppointmentDto>> GetAdminAppointments(
-    int hospitalId,
     DateOnly date,
     string? status)
         {
@@ -1396,14 +1395,12 @@ namespace HospitalProject.Services
                 .Include(a => a.Patient).ThenInclude(p => p.User)
                 .Include(a => a.FamilyMember)
                 .Include(a => a.Doctor).ThenInclude(d => d.User)
-                .Where(a =>
-                    a.HospitalId == hospitalId &&
-                    a.AppointmentDate == utcDate
-                );
+                .Where(a => a.AppointmentDate.Date == utcDate.Date);
 
             if (!string.IsNullOrWhiteSpace(status))
             {
-                query = query.Where(a => a.Status == status);
+                query = query.Where(a =>
+                    a.Status.ToLower() == status.ToLower());
             }
 
             return await query
@@ -1420,15 +1417,17 @@ namespace HospitalProject.Services
                     a.QueueToken,
                     a.Fees,
                     a.IsPaid,
-                    a.ReasonForVisit        // 👈
+                    a.ReasonForVisit
                 ))
                 .ToListAsync();
         }
 
 
 
+
+     
+
         public async Task<List<AdminAppointmentDto>> GetAdminQueue(
-    int hospitalId,
     DateOnly date)
         {
             var utcDate = DateTime.SpecifyKind(
@@ -1441,9 +1440,9 @@ namespace HospitalProject.Services
                 .Include(a => a.FamilyMember)
                 .Include(a => a.Doctor).ThenInclude(d => d.User)
                 .Where(a =>
-                    a.HospitalId == hospitalId &&
-                    a.AppointmentDate == utcDate &&
-                    a.Status == "CheckedIn")
+                    a.AppointmentDate.Date == utcDate.Date &&   // ✅ FIX
+                    a.Status == "CheckedIn"
+                )
                 .OrderBy(a => a.QueueToken)
                 .Select(a => new AdminAppointmentDto(
                     a.Id,
@@ -1457,10 +1456,111 @@ namespace HospitalProject.Services
                     a.QueueToken,
                     a.Fees,
                     a.IsPaid,
-                    a.ReasonForVisit        // 👈
+                    a.ReasonForVisit
                 ))
                 .ToListAsync();
         }
+
+
+
+
+        public async Task<List<AdminAppointmentDto>> GetDoctorQueuee(
+     int doctorUserId,
+     DateOnly date)
+        {
+            var utcDate = DateTime.SpecifyKind(
+                date.ToDateTime(TimeOnly.MinValue),
+                DateTimeKind.Utc
+            );
+
+            var doctor = await _d.Query()
+                .Include(d => d.User)   // ✅ FIX
+                .FirstOrDefaultAsync(d => d.UserId == doctorUserId);
+
+            if (doctor == null)
+                throw new Exception("Doctor not found");
+
+            return await _apps.Query()
+                .Include(a => a.Patient).ThenInclude(p => p.User)
+                .Include(a => a.FamilyMember)
+                .Where(a =>
+                    a.DoctorId == doctor.Id &&
+                    a.AppointmentDate.Date == utcDate.Date &&
+                    a.Status == "CheckedIn")
+                .OrderBy(a => a.QueueToken)
+                .Select(a => new AdminAppointmentDto(
+                    a.Id,
+                    a.Patient.User.Name,
+                    a.FamilyMember != null ? a.FamilyMember.Name : null,
+                    doctor.User.Name,              // ✅ now safe
+                    doctor.Specialization,
+                    a.AppointmentDate,
+                    a.TimeSlot,
+                    a.Status,
+                    a.QueueToken,
+                    a.Fees,
+                    a.IsPaid,
+                    a.ReasonForVisit
+                ))
+                .ToListAsync();
+        }
+
+
+
+        public async Task<List<DoctorAppointmentDto>> GetDoctorAppointmentss(
+     int doctorUserId,
+     DateOnly date,
+     string? status)
+        {
+            // Convert DateOnly → UTC DateTime
+            var utcDate = DateTime.SpecifyKind(
+                date.ToDateTime(TimeOnly.MinValue),
+                DateTimeKind.Utc
+            );
+
+            // Get doctor by logged-in user
+            var doctor = await _d.Query()
+                .Include(d => d.User)
+                .FirstOrDefaultAsync(d => d.UserId == doctorUserId);
+
+            if (doctor == null)
+                throw new Exception("Doctor not found");
+
+            var query = _apps.Query()
+                .Include(a => a.Patient).ThenInclude(p => p.User)
+                .Include(a => a.FamilyMember)
+                .Where(a =>
+                    a.DoctorId == doctor.Id &&
+                    a.AppointmentDate.Date == utcDate.Date
+                );
+
+            // Optional status filter (Booked / CheckedIn / Consulted)
+            if (!string.IsNullOrWhiteSpace(status))
+            {
+                query = query.Where(a =>
+                    a.Status.ToLower() == status.ToLower());
+            }
+
+            return await query
+                .OrderBy(a => a.AppointmentDate)
+                .ThenBy(a => a.QueueToken)
+                .Select(a => new DoctorAppointmentDto(
+                    a.Id,
+                    a.Patient.User.Name,
+                    a.FamilyMember != null ? a.FamilyMember.Name : null,
+                    a.AppointmentDate,
+                    a.TimeSlot,
+                    a.Status,
+                    a.QueueToken,
+                    a.ReasonForVisit
+                ))
+                .ToListAsync();
+        }
+
+
+
+
+
 
 
 
@@ -1557,21 +1657,21 @@ namespace HospitalProject.Services
 
 
 
-        public List<object> GetDoctorsForAdmin(int hospitalId)
-        {
-            return _d.Query()
-                .Where(d => d.HospitalId == hospitalId)
-                .Include(d => d.User)
-                .Select(d => new
-                {
-                    d.Id,
-                    d.User.Name,
-                    d.User.MobileNumber,
-                    d.Specialization
-                })
-                .Cast<object>()
-                .ToList();
-        }
+        //public List<object> GetDoctorsForAdmin(int hospitalId)
+        //{
+        //    return _d.Query()
+        //        .Where(d => d.HospitalId == hospitalId)
+        //        .Include(d => d.User)
+        //        .Select(d => new
+        //        {
+        //            d.Id,
+        //            d.User.Name,
+        //            d.User.MobileNumber,
+        //            d.Specialization
+        //        })
+        //        .Cast<object>()
+        //        .ToList();
+        //}
 
 
         // =========================
@@ -1896,50 +1996,50 @@ GetPatientHistory(int userId)
 
 
 
-        public async Task<PatientProfileDto> GetPatientProfile(int userId)
-        {
-            var patient = await _p.Query()
-                .Include(p => p.User)
-                .Include(p => p.FamilyMembers)
-                .FirstOrDefaultAsync(p => p.UserId == userId);
+        //public async Task<PatientProfileDto> GetPatientProfile(int userId)
+        //{
+        //    var patient = await _p.Query()
+        //        .Include(p => p.User)
+        //        .Include(p => p.FamilyMembers)
+        //        .FirstOrDefaultAsync(p => p.UserId == userId);
 
-            if (patient == null)
-                throw new Exception("Patient not found");
+        //    if (patient == null)
+        //        throw new Exception("Patient not found");
 
-            return new PatientProfileDto(
-                patient.User.Name,
-                patient.User.MobileNumber,
-                patient.User.Latitude,
-                patient.User.Longitude,
-                patient.FamilyMembers
-                    .Select(f => new FamilyMemberDto(
-                        f.Id,
-                        f.Name,
-                        f.Relationship
-                    )).ToList()
-            );
-        }
-
-
+        //    return new PatientProfileDto(
+        //        patient.User.Name,
+        //        patient.User.MobileNumber,
+        //        patient.User.Latitude,
+        //        patient.User.Longitude,
+        //        patient.FamilyMembers
+        //            .Select(f => new FamilyMemberDto(
+        //                f.Id,
+        //                f.Name,
+        //                f.Relationship
+        //            )).ToList()
+        //    );
+        //}
 
 
-        public async Task UpdatePatientProfile(
-    int userId,
-    UpdatePatientProfileDto dto)
-        {
-            var patient = await _p.Query()
-                .Include(p => p.User)
-                .FirstOrDefaultAsync(p => p.UserId == userId);
 
-            if (patient == null)
-                throw new Exception("Patient not found");
 
-            patient.User.Name = dto.Name;
-            patient.User.Latitude = dto.Latitude;
-            patient.User.Longitude = dto.Longitude;
+    //    public async Task UpdatePatientProfile(
+    //int userId,
+    //UpdatePatientProfileDto dto)
+    //    {
+    //        var patient = await _p.Query()
+    //            .Include(p => p.User)
+    //            .FirstOrDefaultAsync(p => p.UserId == userId);
 
-            await _u.SaveAsync();
-        }
+    //        if (patient == null)
+    //            throw new Exception("Patient not found");
+
+    //        patient.User.Name = dto.Name;
+    //        patient.User.Latitude = dto.Latitude;
+    //        patient.User.Longitude = dto.Longitude;
+
+    //        await _u.SaveAsync();
+    //    }
 
 
 

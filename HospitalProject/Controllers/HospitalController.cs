@@ -232,43 +232,43 @@ namespace HospitalProject.Controllers
         // PATIENT PROFILE
         // =========================
 
-        [Authorize(Roles = "Patient")]
-        [HttpGet("patient/profile")]
-        public async Task<IActionResult> GetPatientProfile()
-        {
-            int userId = int.Parse(
-                User.FindFirstValue(ClaimTypes.NameIdentifier)!
-            );
+        //[Authorize(Roles = "Patient")]
+        //[HttpGet("patient/profile")]
+        //public async Task<IActionResult> GetPatientProfile()
+        //{
+        //    int userId = int.Parse(
+        //        User.FindFirstValue(ClaimTypes.NameIdentifier)!
+        //    );
 
-            var profile = await _service.GetPatientProfile(userId);
+        //    var profile = await _service.GetPatientProfile(userId);
 
-            return Ok(new ApiResponse
-            {
-                Success = true,
-                Message = "Profile fetched successfully",
-                Data = profile
-            });
+        //    return Ok(new ApiResponse
+        //    {
+        //        Success = true,
+        //        Message = "Profile fetched successfully",
+        //        Data = profile
+        //    });
 
-        }
+        //}
 
-        [Authorize(Roles = "Patient")]
-        [HttpPut("patient/profile")]
-        public async Task<IActionResult> UpdatePatientProfile(
-            UpdatePatientProfileDto dto)
-        {
-            int userId = int.Parse(
-                User.FindFirstValue(ClaimTypes.NameIdentifier)!
-            );
+        //[Authorize(Roles = "Patient")]
+        //[HttpPut("patient/profile")]
+        //public async Task<IActionResult> UpdatePatientProfile(
+        //    UpdatePatientProfileDto dto)
+        //{
+        //    int userId = int.Parse(
+        //        User.FindFirstValue(ClaimTypes.NameIdentifier)!
+        //    );
 
-            await _service.UpdatePatientProfile(userId, dto);
+        //    await _service.UpdatePatientProfile(userId, dto);
 
-            return Ok(new ApiResponse
-            {
-                Success = true,
-                Message = "Profile updated successfully"
-            });
+        //    return Ok(new ApiResponse
+        //    {
+        //        Success = true,
+        //        Message = "Profile updated successfully"
+        //    });
             
-        }
+        //}
 
         // =========================
         //  Update Vitals by Admin
@@ -297,8 +297,8 @@ namespace HospitalProject.Controllers
         // =========================
 
         [Authorize(Roles = "Doctor")]
-        [HttpGet("doctor/patient/workspace/{patientUserId}")]
-        public async Task<IActionResult> GetPatientWorkspace(
+        [HttpGet("doctor/patient/Vitals/{patientUserId}")]
+        public async Task<IActionResult> GetPatientVitals(
     int patientUserId)
         {
             int doctorUserId = int.Parse(
@@ -306,7 +306,7 @@ namespace HospitalProject.Controllers
             );
 
             var data = await _service
-                .GetPatientWorkspaceForDoctor(doctorUserId, patientUserId);
+                .GetPatientVitalsForDoctor(doctorUserId, patientUserId);
 
             return Ok(new ApiResponse
             {
@@ -484,20 +484,20 @@ namespace HospitalProject.Controllers
 
 
 
-        [Authorize(Roles = "Doctor,Admin")]
-        [HttpGet("appointments/booked")]
-        public async Task<IActionResult> GetBookedAppointments(DateOnly date)
-        {
-            var list = await _service.GetOnlineBookingsByDate(date);
+        //[Authorize(Roles = "Doctor,Admin")]
+        //[HttpGet("appointments/booked")]
+        //public async Task<IActionResult> GetBookedAppointments(DateOnly date)
+        //{
+        //    var list = await _service.GetOnlineBookingsByDate(date);
             
-            return Ok(new ApiResponse
-            {
-                Success = true,
-                Message = "Get Booked Appointments details  successfully",
-                Data = list
-            });
+        //    return Ok(new ApiResponse
+        //    {
+        //        Success = true,
+        //        Message = "Get Booked Appointments details  successfully",
+        //        Data = list
+        //    });
 
-        }
+        //}
 
 
 
@@ -506,19 +506,19 @@ namespace HospitalProject.Controllers
         // ===========================
 
 
-        [Authorize(Roles = "Doctor,Admin")]
-        [HttpGet("appointments/checkedin")]
-        public async Task<IActionResult> GetCheckedInAppointments(DateOnly date)
-        {
-            var list = await _service.GetCheckedInAppointmentsByDate(date);
+        //[Authorize(Roles = "Doctor,Admin")]
+        //[HttpGet("appointments/checkedin")]
+        //public async Task<IActionResult> GetCheckedInAppointments(DateOnly date)
+        //{
+        //    var list = await _service.GetCheckedInAppointmentsByDate(date);
          
-            return Ok(new ApiResponse
-            {
-                Success = true,
-                Message = "Checked in Details",
-                Data = list
-            });
-        }
+        //    return Ok(new ApiResponse
+        //    {
+        //        Success = true,
+        //        Message = "Checked in Details",
+        //        Data = list
+        //    });
+        //}
 
         //***********************
         //Doctor profile create
@@ -700,46 +700,46 @@ namespace HospitalProject.Controllers
         // DOCTOR DASHBOARD (FINAL)
         // =========================
 
-        [Authorize(Roles = "Doctor")]
-        [HttpGet("doctor/appointments")]
-        public async Task<IActionResult> GetDoctorAppointments(
-            [FromQuery] string type = "upcoming")
-        {
-            int userId = int.Parse(
-                User.FindFirstValue(ClaimTypes.NameIdentifier)!
-            );
+        //[Authorize(Roles = "Doctor")]
+        //[HttpGet("doctor/appointments")]
+        //public async Task<IActionResult> GetDoctorAppointments(
+        //    [FromQuery] string type = "upcoming")
+        //{
+        //    int userId = int.Parse(
+        //        User.FindFirstValue(ClaimTypes.NameIdentifier)!
+        //    );
 
-            var appointments = await _service.GetDoctorAppointments(userId, type);
+        //    var appointments = await _service.GetDoctorAppointments(userId, type);
 
-            return Ok(new ApiResponse
-            {
-                Success = true,
-                //Message = "Apontments Details",
-                Data = appointments
-            });
+        //    return Ok(new ApiResponse
+        //    {
+        //        Success = true,
+        //        //Message = "Apontments Details",
+        //        Data = appointments
+        //    });
 
 
-        }
+        //}
 
-        [Authorize(Roles = "Doctor")]
-        [HttpGet("doctor/queue")]
-        public async Task<IActionResult> GetDoctorQueue(DateOnly date)
-        {
-            int userId = int.Parse(
-                User.FindFirstValue(ClaimTypes.NameIdentifier)!
-            );
+        //[Authorize(Roles = "Doctor")]
+        //[HttpGet("doctor/queue")]
+        //public async Task<IActionResult> GetDoctorQueue(DateOnly date)
+        //{
+        //    int userId = int.Parse(
+        //        User.FindFirstValue(ClaimTypes.NameIdentifier)!
+        //    );
 
-            var Queue = await _service.GetDoctorQueue(userId, date);
+        //    var Queue = await _service.GetDoctorQueue(userId, date);
 
-            return Ok(new ApiResponse
-            {
-                Success = true,
-                //Message = "Apontments Details",
-                Data = Queue
-            });
+        //    return Ok(new ApiResponse
+        //    {
+        //        Success = true,
+        //        //Message = "Apontments Details",
+        //        Data = Queue
+        //    });
 
            
-        }
+        //}
 
         // =========================
         // DOCTOR CONSULT
@@ -764,47 +764,92 @@ namespace HospitalProject.Controllers
         // ADMIN DASHBOARD
         // =========================
 
+     
+
+
+
         [Authorize(Roles = "Admin")]
         [HttpGet("admin/appointments")]
         public async Task<IActionResult> GetAdminAppointments(
-            DateOnly date,
-            [FromQuery] string? status)
+    DateOnly date,
+    [FromQuery] string? status)
         {
-            int hospitalId = int.Parse(
-                User.FindFirst("HospitalId")!.Value
-            );
-
             var list = await _service.GetAdminAppointments(
-                hospitalId, date, status);
-
+                date, status);
 
             return Ok(new ApiResponse
             {
                 Success = true,
-                Message = "Get Apontments Details Successfully",
+                Message = "Appointments fetched successfully",
                 Data = list
             });
         }
 
+
+       
+
+    /*// Queue seperate not used
         [Authorize(Roles = "Admin")]
         [HttpGet("admin/queue")]
-        public async Task<IActionResult> GetAdminQueue(
-            DateOnly date)
+        public async Task<IActionResult> GetAdminQueue(DateOnly date)
         {
-            int hospitalId = int.Parse(
-                User.FindFirst("HospitalId")!.Value
-            );
-
-            var adminqueue = await _service.GetAdminQueue(hospitalId, date);
-
+            var list = await _service.GetAdminQueue(date);
 
             return Ok(new ApiResponse
             {
                 Success = true,
-                //Message = "Apontments Details",
-                Data = adminqueue
+                Message = "Checked-in queue fetched successfully",
+                Data = list
             });
         }
+
+
+
+        [Authorize(Roles = "Doctor")]
+        [HttpGet("doctor/queuee")]
+        public async Task<IActionResult> GetDoctorQueuee(DateOnly date)
+        {
+            int userId = int.Parse(
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!
+            );
+
+            var list = await _service.GetDoctorQueuee(userId, date);
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Doctor queue fetched successfully",
+                Data = list
+            });
+        }
+
+        // Queue seperate not used*/
+
+
+
+        [Authorize(Roles = "Doctor")]
+        [HttpGet("doctor/appointmentss")]
+        public async Task<IActionResult> GetDoctorAppointments(
+    DateOnly date,
+    [FromQuery] string? status)
+        {
+            int userId = int.Parse(
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!
+            );
+
+            var list = await _service.GetDoctorAppointmentss(
+                userId, date, status);
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Doctor appointments fetched successfully",
+                Data = list
+            });
+        }
+
+
+
 
 
         // =========================
@@ -855,20 +900,20 @@ namespace HospitalProject.Controllers
 
 
 
-        [Authorize(Roles = "Admin")]
-        [HttpGet("admin/doctors")]
-        public IActionResult GetDoctorsForAdmin()
-        {
-            int hospitalId = int.Parse(User.FindFirst("HospitalId")!.Value);
+        //[Authorize(Roles = "Admin")]
+        //[HttpGet("admin/doctors")]
+        //public IActionResult GetDoctorsForAdmin()
+        //{
+        //    int hospitalId = int.Parse(User.FindFirst("HospitalId")!.Value);
 
-            var doctors =  _service.GetDoctorsForAdmin(hospitalId);
+        //    var doctors =  _service.GetDoctorsForAdmin(hospitalId);
 
-            return Ok(new ApiResponse
-            {
-                Success = true,
-                Data = doctors
-            });
-        }
+        //    return Ok(new ApiResponse
+        //    {
+        //        Success = true,
+        //        Data = doctors
+        //    });
+        //}
 
 
 
