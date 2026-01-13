@@ -2167,8 +2167,9 @@ GetPatientHistory(int userId)
         }
 
 
-
+        //**************************************
         // patient can view queue line details
+        //***************************************
 
 
         public async Task<PatientQueueStatusDto>
