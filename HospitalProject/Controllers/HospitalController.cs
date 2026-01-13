@@ -545,6 +545,31 @@ namespace HospitalProject.Controllers
         }
 
 
+
+        //********************************
+        //Doctor profile View get Method
+        //********************************
+
+        [Authorize(Roles = "Doctor")]
+        [HttpGet("doctor/profile")]
+        public async Task<IActionResult> GetDoctorProfile()
+        {
+            int userId = int.Parse(
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!
+            );
+
+            var data = await _service.GetDoctorProfile(userId);
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Doctor profile fetched successfully",
+                Data = data
+            });
+        }
+
+
+
         //***********************
         //Doctor profile Upload
         //************************

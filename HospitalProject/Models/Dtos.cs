@@ -239,6 +239,10 @@
     );
 
 
+    //********************************
+    //Doctor profile Add  Method
+    //********************************
+
     public record DoctorProfileCreateDto(
     DateOnly Dob,
     int Experience,
@@ -252,6 +256,32 @@
     string PracticeMode,
     decimal ConsultationFee
 );
+
+
+    //********************************
+    //Doctor profile View get Method
+    //********************************
+    public record DoctorProfileViewDto(
+    int DoctorId,
+    string DoctorName,
+    string Specialization,
+
+    DateOnly Dob,
+    int Experience,
+    string Languages,
+
+    string LicenseType,
+    string LicenseNumber,
+    string StateCouncil,
+
+    string Degree,
+    string University,
+    int GraduationYear,
+
+    string PracticeMode,
+    decimal ConsultationFee
+);
+
 
 
     public record StaffCreateDto(

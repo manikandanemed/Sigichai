@@ -1131,6 +1131,10 @@ namespace HospitalProject.Services
         }
 
 
+        //********************************
+        //Doctor profile Add  Method
+        //********************************
+
         public async Task AddDoctorProfile(
     int userId,
     DoctorProfileCreateDto dto)
@@ -1164,6 +1168,53 @@ namespace HospitalProject.Services
             await _doctorProfile.AddAsync(profile);
             await _doctorProfile.SaveAsync();
         }
+
+
+
+        //********************************
+        //Doctor profile View get Method
+        //********************************
+
+        public async Task<DoctorProfileViewDto> GetDoctorProfile(int userId)
+        {
+            // 1️⃣ Doctor fetch with User
+            var doctor = await _d.Query()
+                .Include(d => d.User)
+                .Include(d => d.Hospital)
+                .FirstOrDefaultAsync(d => d.UserId == userId);
+
+            if (doctor == null)
+                throw new Exception("Doctor not found");
+
+            // 2️⃣ Doctor profile fetch
+            var profile = await _doctorProfile.GetAsync(
+                p => p.DoctorId == doctor.Id);
+
+            if (profile == null)
+                throw new Exception("Doctor profile not created");
+
+            return new DoctorProfileViewDto(
+                doctor.Id,
+                doctor.User.Name,
+                doctor.Specialization,
+
+                profile.Dob,
+                profile.Experience,
+                profile.Languages,
+
+                profile.LicenseType,
+                profile.LicenseNumber,
+                profile.StateCouncil,
+
+                profile.Degree,
+                profile.University,
+                profile.GraduationYear,
+
+                profile.PracticeMode,
+                profile.ConsultationFee
+            );
+        }
+
 
 
 
