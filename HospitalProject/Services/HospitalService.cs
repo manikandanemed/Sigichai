@@ -2317,6 +2317,31 @@ GetPatientHistory(int userId)
 
 
 
+        //***************************************
+        // Admin view doctor details for Add slot
+        //***************************************
+
+        public async Task<List<AdminDoctorViewDto>> GetDoctorsForAdmin()
+        {
+            return await _d.Query()
+                .Include(d => d.User)
+                .Where(d => d.User.IsDeleted == false)
+                .OrderBy(d => d.User.Name)
+                .Select(d => new AdminDoctorViewDto(
+                    d.Id,
+                    d.User.Name,
+                    d.User.MobileNumber,
+                    d.Specialization,
+                    d.IsVerified,
+                    !d.User.IsDeleted
+                ))
+                .ToListAsync();
+        }
+
+
+
+
+
 
 
 

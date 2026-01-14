@@ -1093,6 +1093,27 @@ namespace HospitalProject.Controllers
 
 
 
+        //***************************************
+        // Admin view doctor details for Add slot
+        //***************************************
+
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("admin/doctors")]
+        public async Task<IActionResult> GetDoctorsForAdmin()
+        {
+            var list = await _service.GetDoctorsForAdmin();
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Doctors fetched successfully",
+                Data = list
+            });
+        }
+
+
+
 
 
 

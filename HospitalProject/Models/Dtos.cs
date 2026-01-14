@@ -504,6 +504,19 @@
 );
 
 
+//***************************************
+// Admin view doctor details for Add slot
+//***************************************
+    public record AdminDoctorViewDto(
+        int DoctorId,
+        string DoctorName,
+        string MobileNumber,
+        string Specialization,
+        bool IsVerified,
+        bool IsActive
+    );
+
+
 
 
 
