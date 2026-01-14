@@ -1409,29 +1409,51 @@ namespace HospitalProject.Services
 
 
 
-        public async Task<List<AdminAppointmentDto>> GetAdminAppointments(
-    DateOnly date,
-    string? status)
-        {
-            var utcDate = DateTime.SpecifyKind(
-                date.ToDateTime(TimeOnly.MinValue),
-                DateTimeKind.Utc
-            );
 
-            var query = _apps.Query()
+
+        //************************************************
+        // Admin view appointments with date status slot 
+        //************************************************
+
+        public async Task<List<AdminAppointmentDto>> GetAdminAppointments(
+    DateOnly? date,
+    string? status,
+    string? timeSlot)
+        {
+            IQueryable<Appointment> query = _apps.Query()
                 .Include(a => a.Patient).ThenInclude(p => p.User)
                 .Include(a => a.FamilyMember)
-                .Include(a => a.Doctor).ThenInclude(d => d.User)
-                .Where(a => a.AppointmentDate.Date == utcDate.Date);
+                .Include(a => a.Doctor).ThenInclude(d => d.User);
 
+            // 🔹 Date filter (optional)
+            if (date.HasValue)
+            {
+                var utcDate = DateTime.SpecifyKind(
+                    date.Value.ToDateTime(TimeOnly.MinValue),
+                    DateTimeKind.Utc
+                );
+
+                query = query.Where(a =>
+                    a.AppointmentDate.Date == utcDate.Date);
+            }
+
+            // 🔹 Status filter (optional)
             if (!string.IsNullOrWhiteSpace(status))
             {
                 query = query.Where(a =>
                     a.Status.ToLower() == status.ToLower());
             }
 
+            // 🔹 Slot filter (optional)
+            if (!string.IsNullOrWhiteSpace(timeSlot))
+            {
+                query = query.Where(a =>
+                    a.TimeSlot == timeSlot.Trim());
+            }
+
             return await query
-                .OrderBy(a => a.QueueToken)
+                .OrderBy(a => a.AppointmentDate)
+                .ThenBy(a => a.QueueToken)
                 .Select(a => new AdminAppointmentDto(
                     a.Id,
                     a.Patient.User.Name,
@@ -1452,7 +1474,8 @@ namespace HospitalProject.Services
 
 
 
-     
+
+
 
         public async Task<List<AdminAppointmentDto>> GetAdminQueue(
     DateOnly date)
@@ -1534,18 +1557,20 @@ namespace HospitalProject.Services
 
 
 
-        public async Task<List<DoctorAppointmentDto>> GetDoctorAppointmentss(
-     int doctorUserId,
-     DateOnly date,
-     string? status)
-        {
-            // Convert DateOnly → UTC DateTime
-            var utcDate = DateTime.SpecifyKind(
-                date.ToDateTime(TimeOnly.MinValue),
-                DateTimeKind.Utc
-            );
+        
 
-            // Get doctor by logged-in user
+        //************************************************
+        // Doctor view appointments with date status slot 
+        //************************************************
+
+
+        public async Task<List<DoctorAppointmentDto>> GetDoctorAppointmentss(
+       int doctorUserId,
+       DateOnly? date,
+       string? status,
+       string? timeSlot)
+        {
+            // 🔹 Get doctor by logged-in user
             var doctor = await _d.Query()
                 .Include(d => d.User)
                 .FirstOrDefaultAsync(d => d.UserId == doctorUserId);
@@ -1553,19 +1578,36 @@ namespace HospitalProject.Services
             if (doctor == null)
                 throw new Exception("Doctor not found");
 
-            var query = _apps.Query()
+            // 🔹 IMPORTANT: declare as IQueryable
+            IQueryable<Appointment> query = _apps.Query()
                 .Include(a => a.Patient).ThenInclude(p => p.User)
                 .Include(a => a.FamilyMember)
-                .Where(a =>
-                    a.DoctorId == doctor.Id &&
-                    a.AppointmentDate.Date == utcDate.Date
+                .Where(a => a.DoctorId == doctor.Id);
+
+            // 🔹 Date filter (optional)
+            if (date.HasValue)
+            {
+                var utcDate = DateTime.SpecifyKind(
+                    date.Value.ToDateTime(TimeOnly.MinValue),
+                    DateTimeKind.Utc
                 );
 
-            // Optional status filter (Booked / CheckedIn / Consulted)
+                query = query.Where(a =>
+                    a.AppointmentDate.Date == utcDate.Date);
+            }
+
+            // 🔹 Status filter (optional)
             if (!string.IsNullOrWhiteSpace(status))
             {
                 query = query.Where(a =>
                     a.Status.ToLower() == status.ToLower());
+            }
+
+            // 🔹 Slot filter (optional)
+            if (!string.IsNullOrWhiteSpace(timeSlot))
+            {
+                query = query.Where(a =>
+                    a.TimeSlot == timeSlot.Trim());
             }
 
             return await query
@@ -1583,6 +1625,7 @@ namespace HospitalProject.Services
                 ))
                 .ToListAsync();
         }
+
 
 
 

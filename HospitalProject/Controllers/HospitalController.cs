@@ -764,18 +764,23 @@ namespace HospitalProject.Controllers
         // ADMIN DASHBOARD
         // =========================
 
-     
 
+
+
+        //************************************************
+        // Admin view appointments with date status slot 
+        //************************************************
 
 
         [Authorize(Roles = "Admin")]
         [HttpGet("admin/appointments")]
         public async Task<IActionResult> GetAdminAppointments(
-    DateOnly date,
-    [FromQuery] string? status)
+    [FromQuery] DateOnly? date,
+    [FromQuery] string? status,
+    [FromQuery] string? timeSlot)
         {
             var list = await _service.GetAdminAppointments(
-                date, status);
+                date, status, timeSlot);
 
             return Ok(new ApiResponse
             {
@@ -786,59 +791,65 @@ namespace HospitalProject.Controllers
         }
 
 
-       
 
-    /*// Queue seperate not used
-        [Authorize(Roles = "Admin")]
-        [HttpGet("admin/queue")]
-        public async Task<IActionResult> GetAdminQueue(DateOnly date)
-        {
-            var list = await _service.GetAdminQueue(date);
 
-            return Ok(new ApiResponse
+        /*// Queue seperate not used
+            [Authorize(Roles = "Admin")]
+            [HttpGet("admin/queue")]
+            public async Task<IActionResult> GetAdminQueue(DateOnly date)
             {
-                Success = true,
-                Message = "Checked-in queue fetched successfully",
-                Data = list
-            });
-        }
+                var list = await _service.GetAdminQueue(date);
+
+                return Ok(new ApiResponse
+                {
+                    Success = true,
+                    Message = "Checked-in queue fetched successfully",
+                    Data = list
+                });
+            }
 
 
 
-        [Authorize(Roles = "Doctor")]
-        [HttpGet("doctor/queuee")]
-        public async Task<IActionResult> GetDoctorQueuee(DateOnly date)
-        {
-            int userId = int.Parse(
-                User.FindFirstValue(ClaimTypes.NameIdentifier)!
-            );
-
-            var list = await _service.GetDoctorQueuee(userId, date);
-
-            return Ok(new ApiResponse
+            [Authorize(Roles = "Doctor")]
+            [HttpGet("doctor/queuee")]
+            public async Task<IActionResult> GetDoctorQueuee(DateOnly date)
             {
-                Success = true,
-                Message = "Doctor queue fetched successfully",
-                Data = list
-            });
-        }
+                int userId = int.Parse(
+                    User.FindFirstValue(ClaimTypes.NameIdentifier)!
+                );
 
-        // Queue seperate not used*/
+                var list = await _service.GetDoctorQueuee(userId, date);
+
+                return Ok(new ApiResponse
+                {
+                    Success = true,
+                    Message = "Doctor queue fetched successfully",
+                    Data = list
+                });
+            }
+
+            // Queue seperate not used*/
 
 
+
+
+        //************************************************
+        // Doctor view appointments with date status slot 
+        //************************************************
 
         [Authorize(Roles = "Doctor")]
         [HttpGet("doctor/appointmentss")]
         public async Task<IActionResult> GetDoctorAppointments(
-    DateOnly date,
-    [FromQuery] string? status)
+        [FromQuery] DateOnly? date,
+        [FromQuery] string? status,
+        [FromQuery] string? timeSlot)
         {
             int userId = int.Parse(
                 User.FindFirstValue(ClaimTypes.NameIdentifier)!
             );
 
             var list = await _service.GetDoctorAppointmentss(
-                userId, date, status);
+                userId, date, status, timeSlot);
 
             return Ok(new ApiResponse
             {
