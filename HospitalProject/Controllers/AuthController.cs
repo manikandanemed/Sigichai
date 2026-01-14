@@ -30,6 +30,26 @@ namespace HospitalProject.Controllers
         }
 
 
+        //[HttpPost("verify-otp")]
+        //public async Task<IActionResult> VerifyOtp(VerifyOtpDto dto)
+        //{
+        //    var result = await _service.VerifyOtp(dto);
+
+        //    return Ok(new ApiResponse
+        //    {
+        //        Success = true,
+        //        Message = "OTP verified",
+        //        Data = new
+        //        {
+        //            token = result.Token,
+        //            role = result.Role,
+        //            userId = result.UserId,
+        //            userName = result.Name
+        //        }
+        //    });
+        //}
+
+
         [HttpPost("verify-otp")]
         public async Task<IActionResult> VerifyOtp(VerifyOtpDto dto)
         {
@@ -43,11 +63,16 @@ namespace HospitalProject.Controllers
                 {
                     token = result.Token,
                     role = result.Role,
+                    name = result.Name,
                     userId = result.UserId,
-                    userName = result.Name
+
+                    adminId = result.AdminId,
+                    doctorId = result.DoctorId,
+                    patientId = result.PatientId
                 }
             });
         }
+
 
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordDto dto)

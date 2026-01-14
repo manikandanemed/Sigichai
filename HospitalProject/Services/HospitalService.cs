@@ -421,35 +421,54 @@ namespace HospitalProject.Services
 
 
 
-        //public async Task<string> VerifyOtp(VerifyOtpDto d)
-        //{
-        //    var rec = await _otp.GetAsync(x =>
-        //        x.MobileNumber == d.MobileNumber &&
-        //        x.OtpCode == d.Otp &&
-        //        x.Expiry > DateTime.UtcNow);
-
-        //    if (rec == null)
-        //        throw new Exception("Invalid OTP");
-
-        //    // 🔥 INCLUDE navigation properties
-        //    var user = await _u.Query()
-        //        .Include(x => x.Admin)
-        //        .Include(x => x.Doctor)
-        //        .Include(x => x.Patient)
-        //        .FirstOrDefaultAsync(x => x.MobileNumber == d.MobileNumber);
-
-        //    if (user == null)
-        //        throw new Exception("User not found");
-
-        //    return GenerateJwt(user);
-        //}
-
-
         //----------------------
         // Verify Otp
         //----------------------
 
-        public async Task<(string Token, string Role, string Name, int UserId)> VerifyOtp(VerifyOtpDto d)
+        //public async Task<(string Token, string Role, string Name, int UserId)> VerifyOtp(VerifyOtpDto d)
+        //{
+        //    var rec = await _otp.GetAsync(x =>
+        //        x.MobileNumber == d.MobileNumber &&
+        //        x.OtpCode == d.Otp &&
+        //        x.Purpose == "LOGIN" &&
+        //        x.IsUsed == false &&
+        //        x.Expiry > DateTime.UtcNow
+        //    );
+
+        //    if (rec == null)
+        //        throw new Exception("Invalid or expired OTP");
+
+        //    rec.IsUsed = true;
+        //    await _otp.SaveAsync();
+
+        //    var user = await _u.Query()
+        //        .Include(x => x.Admin)
+        //        .Include(x => x.Doctor)
+        //        .Include(x => x.Patient)
+        //        .FirstOrDefaultAsync(x => x.Id == rec.UserId);
+
+        //    if (user == null)
+        //        throw new Exception("User not found");
+
+        //    // 🔥 ADD THIS CHECK
+        //    if (user.IsDeleted)
+        //        throw new Exception("User account is deactivated");
+
+        //    var token = GenerateJwt(user);
+
+        //    return (token, user.Role, user.Name, user.Id);
+        //}
+
+
+        public async Task<(
+    string Token,
+    string Role,
+    string Name,
+    int UserId,
+    int? AdminId,
+    int? DoctorId,
+    int? PatientId
+)> VerifyOtp(VerifyOtpDto d)
         {
             var rec = await _otp.GetAsync(x =>
                 x.MobileNumber == d.MobileNumber &&
@@ -474,14 +493,22 @@ namespace HospitalProject.Services
             if (user == null)
                 throw new Exception("User not found");
 
-            // 🔥 ADD THIS CHECK
             if (user.IsDeleted)
                 throw new Exception("User account is deactivated");
 
             var token = GenerateJwt(user);
 
-            return (token, user.Role, user.Name, user.Id);
+            return (
+                token,
+                user.Role,
+                user.Name,
+                user.Id,
+                user.Admin?.Id,     // 👈 AdminId
+                user.Doctor?.Id,    // 👈 DoctorId
+                user.Patient?.Id    // 👈 PatientId
+            );
         }
+
 
 
 
