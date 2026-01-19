@@ -23,6 +23,7 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<HospitalService>();
 builder.Services.AddScoped<DoctorManualVerificationService>();
 builder.Services.AddScoped<ITwilioService, TwilioService>();
+builder.Services.AddHostedService<NoShowBackgroundService>();
 
 // =========================
 // JWT AUTHENTICATION

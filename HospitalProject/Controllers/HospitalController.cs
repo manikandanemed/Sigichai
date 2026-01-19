@@ -292,6 +292,10 @@ namespace HospitalProject.Controllers
             });
         }
 
+
+
+
+
         // =========================
         //  Doctor View Patient Vitals
         // =========================
@@ -315,6 +319,30 @@ namespace HospitalProject.Controllers
                 Data = data
             });
         }
+
+
+        // =========================
+        // UPDATE VITALS BY DOCTOR
+        // =========================
+
+        [Authorize(Roles = "Doctor")]
+        [HttpPost("doctor/appointment/update-vitals")]
+        public async Task<IActionResult> UpdateVitalsByDoctor(
+        UpdateVitalsDto dto)
+        {
+            int doctorUserId = int.Parse(
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!
+            );
+
+            await _service.UpdateVitalsByDoctor(doctorUserId, dto);
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Vitals updated by doctor successfully"
+            });
+        }
+
 
 
         // =========================

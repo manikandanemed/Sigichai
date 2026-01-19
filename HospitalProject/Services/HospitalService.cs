@@ -1,11 +1,12 @@
-﻿using HospitalProject.Models;
-using HospitalProject.Repositories;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
+using HospitalProject.Helper;
+using HospitalProject.Models;
+using HospitalProject.Repositories;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace HospitalProject.Services
 {
@@ -970,25 +971,64 @@ namespace HospitalProject.Services
 
         // Queue Token reset for morning afternoon evening night
 
+        //public async Task<int> CheckIn(string tempToken)
+        //{
+        //    var app = await _apps.GetAsync(x => x.TempToken == tempToken);
+        //    if (app == null)
+        //        throw new Exception("Invalid token");
+
+        //    if (app.Status == "CheckedIn")
+        //        return app.QueueToken!.Value;
+
+        //    int count = _apps.Query().Count(x =>
+        //        x.DoctorId == app.DoctorId &&
+        //        x.AppointmentDate.Date == app.AppointmentDate.Date &&
+        //        x.TimeSlot == app.TimeSlot &&   // ✅ slot based reset
+        //        x.Status == "CheckedIn");
+
+        //    app.Status = "CheckedIn";
+        //    app.QueueToken = count + 1;
+
+        //    await _apps.SaveAsync();
+        //    return app.QueueToken.Value;
+        //}
+
+        // Queue Token reset for morning afternoon evening night
+
+
         public async Task<int> CheckIn(string tempToken)
         {
+            // 1️⃣ Appointment fetch by temp token
             var app = await _apps.GetAsync(x => x.TempToken == tempToken);
             if (app == null)
                 throw new Exception("Invalid token");
 
+            // 2️⃣ Already checked-in → return existing queue token
             if (app.Status == "CheckedIn")
                 return app.QueueToken!.Value;
 
+            // 3️⃣ Appointment date validation (today only)
+            if (app.AppointmentDate.Date != DateTime.UtcNow.Date)
+                throw new Exception("Check-in allowed only on appointment date");
+
+            // 4️⃣ Time slot validation (MOST IMPORTANT)
+            if (!TimeSlotHelper.IsNowWithinSlot(app.TimeSlot))
+                throw new Exception("Check-in not allowed for this time slot");
+
+            // 5️⃣ Slot-based queue count (reset per slot)
             int count = _apps.Query().Count(x =>
                 x.DoctorId == app.DoctorId &&
                 x.AppointmentDate.Date == app.AppointmentDate.Date &&
-                x.TimeSlot == app.TimeSlot &&   // ✅ slot based reset
+                x.TimeSlot == app.TimeSlot &&
                 x.Status == "CheckedIn");
 
+            // 6️⃣ Update appointment
             app.Status = "CheckedIn";
             app.QueueToken = count + 1;
 
             await _apps.SaveAsync();
+
+            // 7️⃣ Return queue token
             return app.QueueToken.Value;
         }
 
@@ -998,9 +1038,43 @@ namespace HospitalProject.Services
 
 
         //Update vitals by admin
+        //public async Task UpdateVitalsByAdmin(
+        //int adminUserId,
+        //UpdateVitalsDto dto)
+        //{
+        //    // 1️⃣ Admin validate
+        //    var admin = await _u.GetAsync(x =>
+        //        x.Id == adminUserId &&
+        //        x.Role == "Admin" &&
+        //        x.IsDeleted == false);
+
+        //    if (admin == null)
+        //        throw new Exception("Admin not found");
+
+        //    // 2️⃣ Appointment fetch
+        //    var app = await _apps.GetAsync(a => a.Id == dto.AppointmentId);
+        //    if (app == null)
+        //        throw new Exception("Appointment not found");
+
+        //    // 3️⃣ Update vitals
+        //    app.BloodPressure = dto.BloodPressure;
+        //    app.Pulse = dto.Pulse;
+        //    app.Temperature = dto.Temperature;
+        //    app.SpO2 = dto.SpO2;
+
+        //    await _apps.SaveAsync();
+        //}
+
+
+
+
+        // =========================
+        // UPDATE VITALS BY ADMIN
+        // =========================
+
         public async Task UpdateVitalsByAdmin(
-        int adminUserId,
-        UpdateVitalsDto dto)
+    int adminUserId,
+    UpdateVitalsDto dto)
         {
             // 1️⃣ Admin validate
             var admin = await _u.GetAsync(x =>
@@ -1016,7 +1090,11 @@ namespace HospitalProject.Services
             if (app == null)
                 throw new Exception("Appointment not found");
 
-            // 3️⃣ Update vitals
+            // ✅ 3️⃣ CHECK-IN VALIDATION (IMPORTANT)
+            if (app.Status != "CheckedIn")
+                throw new Exception("Vitals can be updated only after patient check-in");
+
+            // 4️⃣ Update vitals
             app.BloodPressure = dto.BloodPressure;
             app.Pulse = dto.Pulse;
             app.Temperature = dto.Temperature;
@@ -1024,6 +1102,48 @@ namespace HospitalProject.Services
 
             await _apps.SaveAsync();
         }
+
+
+        // =========================
+        // UPDATE VITALS BY DOCTOR
+        // =========================
+
+        public async Task UpdateVitalsByDoctor(
+        int doctorUserId,
+        UpdateVitalsDto dto)
+        {
+            // 1️⃣ Doctor validate
+            var doctor = await _d.Query()
+                .Include(d => d.User)
+                .FirstOrDefaultAsync(d =>
+                    d.UserId == doctorUserId &&
+                    d.User.IsDeleted == false);
+
+            if (doctor == null)
+                throw new Exception("Doctor not found");
+
+            // 2️⃣ Appointment fetch (belongs to doctor)
+            var app = await _apps.GetAsync(a =>
+                a.Id == dto.AppointmentId &&
+                a.DoctorId == doctor.Id);
+
+            if (app == null)
+                throw new Exception("Appointment not found");
+
+            // 3️⃣ Status validation
+            if (app.Status != "CheckedIn" && app.Status != "Consulted")
+                throw new Exception("Vitals can be updated only during consultation");
+
+            // 4️⃣ Update vitals (doctor can overwrite admin values)
+            app.BloodPressure = dto.BloodPressure;
+            app.Pulse = dto.Pulse;
+            app.Temperature = dto.Temperature;
+            app.SpO2 = dto.SpO2;
+
+            await _apps.SaveAsync();
+        }
+
+
 
 
 
@@ -2406,6 +2526,33 @@ GetPatientHistory(int userId)
                     !d.User.IsDeleted
                 ))
                 .ToListAsync();
+        }
+
+        //***************************************
+        // No show status for time finish for booking
+        //***************************************
+
+        public async Task MarkNoShowAppointments()
+        {
+            var today = DateTime.UtcNow.Date;
+
+            var appointments = await _apps.Query()
+                .Where(a =>
+                    a.Status == "Booked" &&
+                    a.AppointmentDate.Date == today
+                )
+                .ToListAsync();
+
+            foreach (var app in appointments)
+            {
+                // Slot time mudinjiducha?
+                if (TimeSlotHelper.IsSlotOver(app.TimeSlot))
+                {
+                    app.Status = "NoShow";
+                }
+            }
+
+            await _apps.SaveAsync();
         }
 
 
