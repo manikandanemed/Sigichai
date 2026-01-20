@@ -1151,39 +1151,41 @@ namespace HospitalProject.Services
 
 
 
-        // Doctor View Patient Vitals
+
+        // =========================
+        // Doctor View Patient Vitals (Appointment based)
+        // =========================
 
 
         public async Task<PatientWorkspaceDto>
-       GetPatientVitalsForDoctor(
-       int doctorUserId,
-       int patientUserId)
+        GetPatientVitalsForDoctorByAppointment(
+        int doctorUserId,
+        int appointmentId)
         {
+            // 1️⃣ Doctor validate
             var doctor = await _d.GetAsync(d => d.UserId == doctorUserId);
             if (doctor == null)
                 throw new Exception("Doctor not found");
 
-            var patient = await _p.Query()
-                .Include(p => p.User)
-                .FirstOrDefaultAsync(p => p.UserId == patientUserId);
-
-            if (patient == null)
-                throw new Exception("Patient not found");
-
+            // 2️⃣ Appointment fetch (belongs to doctor)
             var app = await _apps.Query()
-                .Where(a =>
-                    a.DoctorId == doctor.Id &&
-                    a.PatientId == patient.Id &&
-                    a.AppointmentDate.Date == DateTime.Today)
-                .FirstOrDefaultAsync();
+                .Include(a => a.Patient)
+                    .ThenInclude(p => p.User)
+                .FirstOrDefaultAsync(a =>
+                    a.Id == appointmentId &&
+                    a.DoctorId == doctor.Id);
 
             if (app == null)
-                throw new Exception("No appointment");
+                throw new Exception("Appointment not found");
+
+            // 3️⃣ Patient
+            var patient = app.Patient;
 
             int age = patient.Dob.HasValue
                 ? DateTime.Today.Year - patient.Dob.Value.Year
                 : 0;
 
+            // 4️⃣ Return vitals (admin / doctor updated)
             return new PatientWorkspaceDto(
                 patient.User.Name,
                 age,
@@ -1195,6 +1197,7 @@ namespace HospitalProject.Services
                 app.SpO2
             );
         }
+
 
         // =========================
         // Public api for get user details

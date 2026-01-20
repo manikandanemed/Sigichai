@@ -296,29 +296,34 @@ namespace HospitalProject.Controllers
 
 
 
+      
+
         // =========================
-        //  Doctor View Patient Vitals
+        // Doctor View Patient Vitals (Appointment based)
         // =========================
 
+
         [Authorize(Roles = "Doctor")]
-        [HttpGet("doctor/patient/Vitals/{patientUserId}")]
-        public async Task<IActionResult> GetPatientVitals(
-    int patientUserId)
+        [HttpGet("doctor/appointment/{appointmentId}/vitals")]
+        public async Task<IActionResult> GetPatientVitalsByAppointment(
+            int appointmentId)
         {
             int doctorUserId = int.Parse(
                 User.FindFirstValue(ClaimTypes.NameIdentifier)!
             );
 
             var data = await _service
-                .GetPatientVitalsForDoctor(doctorUserId, patientUserId);
+                .GetPatientVitalsForDoctorByAppointment(
+                    doctorUserId, appointmentId);
 
             return Ok(new ApiResponse
             {
                 Success = true,
-                Message = "patient details fetched successfully",
+                Message = "Patient vitals fetched successfully",
                 Data = data
             });
         }
+
 
 
         // =========================
@@ -1097,23 +1102,23 @@ namespace HospitalProject.Controllers
         // Doctor Arrived send message to patient
         // =========================
 
-        [Authorize(Roles = "Admin")]
-        [HttpPost("admin/doctor/{doctorId}/arrived")]
-        public async Task<IActionResult> MarkDoctorArrived(int doctorId)
-        {
-            int adminUserId = int.Parse(
-                User.FindFirstValue(ClaimTypes.NameIdentifier)!
-            );
+        //[Authorize(Roles = "Admin")]
+        //[HttpPost("admin/doctor/{doctorId}/arrived")]
+        //public async Task<IActionResult> MarkDoctorArrived(int doctorId)
+        //{
+        //    int adminUserId = int.Parse(
+        //        User.FindFirstValue(ClaimTypes.NameIdentifier)!
+        //    );
 
-            await _service.MarkDoctorArrived(adminUserId, doctorId);
+        //    await _service.MarkDoctorArrived(adminUserId, doctorId);
 
             
-            return Ok(new ApiResponse
-            {
-                Success = true,
-                Message = "Doctor marked as arrived and patients notified"
-            });
-        }
+        //    return Ok(new ApiResponse
+        //    {
+        //        Success = true,
+        //        Message = "Doctor marked as arrived and patients notified"
+        //    });
+        //}
 
 
 
