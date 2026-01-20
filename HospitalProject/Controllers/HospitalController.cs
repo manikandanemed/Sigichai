@@ -598,6 +598,30 @@ namespace HospitalProject.Controllers
 
 
 
+        //********************************
+        //Doctor profile View Put Method
+        //********************************
+
+        [Authorize(Roles = "Doctor")]
+        [HttpPut("doctor/profile")]
+        public async Task<IActionResult> UpdateDoctorProfile(
+        DoctorProfileCreateDto dto)
+        {
+            int userId = int.Parse(
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!
+            );
+
+            await _service.UpdateDoctorProfile(userId, dto);
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Doctor profile updated successfully"
+            });
+        }
+
+
+
         //***********************
         //Doctor profile Upload
         //************************
@@ -1150,6 +1174,42 @@ namespace HospitalProject.Controllers
                 Data = list
             });
         }
+
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("admin/appointments/mark-noshow")]
+        public async Task<IActionResult> MarkNoShowByAdmin(
+        MarkNoShowDto dto)
+        {
+            var count = await _service.MarkNoShowBySlot(
+                dto.Date, dto.TimeSlot);
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = $"{count} appointments marked as NoShow",
+                Data = count
+            });
+        }
+
+
+        [Authorize(Roles = "Doctor")]
+        [HttpPost("doctor/appointments/mark-noshow")]
+        public async Task<IActionResult> MarkNoShowByDoctor(
+    MarkNoShowDto dto)
+        {
+            var count = await _service.MarkNoShowBySlot(
+                dto.Date, dto.TimeSlot);
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = $"{count} appointments marked as NoShow",
+                Data = count
+            });
+        }
+
+
 
 
 

@@ -1003,6 +1003,10 @@ namespace HospitalProject.Services
             if (app == null)
                 throw new Exception("Invalid token");
 
+            // ❌ NoShow cannot check-in
+            if (app.Status == "NoShow")
+                throw new Exception("Appointment marked as NoShow. Check-in not allowed");
+
             // 2️⃣ Already checked-in → return existing queue token
             if (app.Status == "CheckedIn")
                 return app.QueueToken!.Value;
@@ -1241,41 +1245,41 @@ namespace HospitalProject.Services
         // =========================
 
 
-        public async Task<List<DoctorAppointmentDto>> GetDoctorAppointments(
-    int userId,
-    string type)
-        {
-            var doctor = await _d.GetAsync(d => d.UserId == userId);
-            if (doctor == null)
-                throw new Exception("Doctor not found");
+    //    public async Task<List<DoctorAppointmentDto>> GetDoctorAppointments(
+    //int userId,
+    //string type)
+    //    {
+    //        var doctor = await _d.GetAsync(d => d.UserId == userId);
+    //        if (doctor == null)
+    //            throw new Exception("Doctor not found");
 
-            var today = DateTime.UtcNow.Date;
+    //        var today = DateTime.UtcNow.Date;
 
-            var query = _apps.Query()
-                .Include(a => a.Patient).ThenInclude(p => p.User)
-                .Include(a => a.FamilyMember)
-                .Where(a => a.DoctorId == doctor.Id);
+    //        var query = _apps.Query()
+    //            .Include(a => a.Patient).ThenInclude(p => p.User)
+    //            .Include(a => a.FamilyMember)
+    //            .Where(a => a.DoctorId == doctor.Id);
 
-            if (type == "upcoming")
-                query = query.Where(a => a.AppointmentDate.Date >= today);
-            else if (type == "past")
-                query = query.Where(a => a.AppointmentDate.Date < today);
+    //        if (type == "upcoming")
+    //            query = query.Where(a => a.AppointmentDate.Date >= today);
+    //        else if (type == "past")
+    //            query = query.Where(a => a.AppointmentDate.Date < today);
 
-            return await query
-                .OrderBy(a => a.AppointmentDate)
-                .ThenBy(a => a.TimeSlot)
-                .Select(a => new DoctorAppointmentDto(
-                    a.Id,
-                    a.Patient.User.Name,
-                    a.FamilyMember != null ? a.FamilyMember.Name : null,
-                    a.AppointmentDate,
-                    a.TimeSlot,
-                    a.Status,
-                    a.QueueToken,
-                    a.ReasonForVisit      // 👈 MUST ADD
-                ))
-                .ToListAsync();
-        }
+    //        return await query
+    //            .OrderBy(a => a.AppointmentDate)
+    //            .ThenBy(a => a.TimeSlot)
+    //            .Select(a => new DoctorAppointmentDto(
+    //                a.Id,
+    //                a.Patient.User.Name,
+    //                a.FamilyMember != null ? a.FamilyMember.Name : null,
+    //                a.AppointmentDate,
+    //                a.TimeSlot,
+    //                a.Status,
+    //                a.QueueToken,
+    //                a.ReasonForVisit      // 👈 MUST ADD
+    //            ))
+    //            .ToListAsync();
+    //    }
 
 
         //********************************
@@ -1363,6 +1367,48 @@ namespace HospitalProject.Services
         }
 
 
+        //Put method logic for doctor profile
+
+        public async Task UpdateDoctorProfile(
+    int userId,
+    DoctorProfileCreateDto dto)
+        {
+            // 1️⃣ Doctor fetch
+            var doctor = await _d.Query()
+                .Include(d => d.User)
+                .FirstOrDefaultAsync(d => d.UserId == userId);
+
+            if (doctor == null)
+                throw new Exception("Doctor not found");
+
+            // 2️⃣ Existing profile fetch
+            var profile = await _doctorProfile.GetAsync(
+                p => p.DoctorId == doctor.Id);
+
+            if (profile == null)
+                throw new Exception("Doctor profile not created yet");
+
+            // 3️⃣ Update fields
+            profile.Dob = dto.Dob;
+            profile.Experience = dto.Experience;
+            profile.Languages = dto.Languages;
+
+            profile.LicenseType = dto.LicenseType;
+            profile.LicenseNumber = dto.LicenseNumber;
+            profile.StateCouncil = dto.StateCouncil;
+
+            profile.Degree = dto.Degree;
+            profile.University = dto.University;
+            profile.GraduationYear = dto.GraduationYear;
+
+            profile.PracticeMode = dto.PracticeMode;
+            profile.ConsultationFee = dto.ConsultationFee;
+
+            await _doctorProfile.SaveAsync();
+        }
+
+
+
 
 
 
@@ -1372,39 +1418,39 @@ namespace HospitalProject.Services
 
 
 
-    //    public async Task<List<DoctorAppointmentDto>> GetDoctorQueue(
-    //int userId,
-    //DateOnly date)
-    //    {
-    //        var doctor = await _d.GetAsync(d => d.UserId == userId);
-    //        if (doctor == null)
-    //            throw new Exception("Doctor not found");
+        //    public async Task<List<DoctorAppointmentDto>> GetDoctorQueue(
+        //int userId,
+        //DateOnly date)
+        //    {
+        //        var doctor = await _d.GetAsync(d => d.UserId == userId);
+        //        if (doctor == null)
+        //            throw new Exception("Doctor not found");
 
-    //        var utcDate = DateTime.SpecifyKind(
-    //            date.ToDateTime(TimeOnly.MinValue),
-    //            DateTimeKind.Utc
-    //        );
+        //        var utcDate = DateTime.SpecifyKind(
+        //            date.ToDateTime(TimeOnly.MinValue),
+        //            DateTimeKind.Utc
+        //        );
 
-    //        return await _apps.Query()
-    //            .Include(a => a.Patient).ThenInclude(p => p.User)
-    //            .Include(a => a.FamilyMember)
-    //            .Where(a =>
-    //                a.DoctorId == doctor.Id &&
-    //                a.AppointmentDate == utcDate &&
-    //                a.Status == "CheckedIn")
-    //            .OrderBy(a => a.QueueToken)
-    //            .Select(a => new DoctorAppointmentDto(
-    //                a.Id,
-    //                a.Patient.User.Name,
-    //                a.FamilyMember != null ? a.FamilyMember.Name : null,
-    //                a.AppointmentDate,
-    //                a.TimeSlot,
-    //                a.Status,
-    //                a.QueueToken,
-    //                a.ReasonForVisit      // 👈 MUST ADD
-    //            ))
-    //            .ToListAsync();
-    //    }
+        //        return await _apps.Query()
+        //            .Include(a => a.Patient).ThenInclude(p => p.User)
+        //            .Include(a => a.FamilyMember)
+        //            .Where(a =>
+        //                a.DoctorId == doctor.Id &&
+        //                a.AppointmentDate == utcDate &&
+        //                a.Status == "CheckedIn")
+        //            .OrderBy(a => a.QueueToken)
+        //            .Select(a => new DoctorAppointmentDto(
+        //                a.Id,
+        //                a.Patient.User.Name,
+        //                a.FamilyMember != null ? a.FamilyMember.Name : null,
+        //                a.AppointmentDate,
+        //                a.TimeSlot,
+        //                a.Status,
+        //                a.QueueToken,
+        //                a.ReasonForVisit      // 👈 MUST ADD
+        //            ))
+        //            .ToListAsync();
+        //    }
 
         //Doctor create staff
         public async Task CreateStaff(
@@ -1677,20 +1723,85 @@ namespace HospitalProject.Services
 
 
 
-        
+
 
         //************************************************
         // Doctor view appointments with date status slot 
         //************************************************
 
 
+        // public async Task<List<DoctorAppointmentDto>> GetDoctorAppointmentss(
+        //int doctorUserId,
+        //DateOnly? date,
+        //string? status,
+        //string? timeSlot)
+        // {
+        //     // 🔹 Get doctor by logged-in user
+        //     var doctor = await _d.Query()
+        //         .Include(d => d.User)
+        //         .FirstOrDefaultAsync(d => d.UserId == doctorUserId);
+
+        //     if (doctor == null)
+        //         throw new Exception("Doctor not found");
+
+        //     // 🔹 IMPORTANT: declare as IQueryable
+        //     IQueryable<Appointment> query = _apps.Query()
+        //         .Include(a => a.Patient).ThenInclude(p => p.User)
+        //         .Include(a => a.FamilyMember)
+        //         .Where(a => a.DoctorId == doctor.Id);
+
+        //     // 🔹 Date filter (optional)
+        //     if (date.HasValue)
+        //     {
+        //         var utcDate = DateTime.SpecifyKind(
+        //             date.Value.ToDateTime(TimeOnly.MinValue),
+        //             DateTimeKind.Utc
+        //         );
+
+        //         query = query.Where(a =>
+        //             a.AppointmentDate.Date == utcDate.Date);
+        //     }
+
+        //     // 🔹 Status filter (optional)
+        //     if (!string.IsNullOrWhiteSpace(status))
+        //     {
+        //         query = query.Where(a =>
+        //             a.Status.ToLower() == status.ToLower());
+        //     }
+
+        //     // 🔹 Slot filter (optional)
+        //     if (!string.IsNullOrWhiteSpace(timeSlot))
+        //     {
+        //         query = query.Where(a =>
+        //             a.TimeSlot == timeSlot.Trim());
+        //     }
+
+        //     return await query
+        //         .OrderBy(a => a.AppointmentDate)
+        //         .ThenBy(a => a.QueueToken)
+        //         .Select(a => new DoctorAppointmentDto(
+        //             a.Id,
+        //             a.Patient.User.Name,
+        //             a.FamilyMember != null ? a.FamilyMember.Name : null,
+        //             a.AppointmentDate,
+        //             a.TimeSlot,
+        //             a.Status,
+        //             a.QueueToken,
+        //             a.ReasonForVisit
+        //         ))
+        //         .ToListAsync();
+        // }
+
+        //************************************************
+        // Doctor view appointments with date status slot 
+        //************************************************
         public async Task<List<DoctorAppointmentDto>> GetDoctorAppointmentss(
-       int doctorUserId,
-       DateOnly? date,
-       string? status,
-       string? timeSlot)
+    int doctorUserId,
+    DateOnly? date,
+    string? status,
+    string? timeSlot)
         {
-            // 🔹 Get doctor by logged-in user
+            // 1️⃣ Get doctor by logged-in user
             var doctor = await _d.Query()
                 .Include(d => d.User)
                 .FirstOrDefaultAsync(d => d.UserId == doctorUserId);
@@ -1698,13 +1809,13 @@ namespace HospitalProject.Services
             if (doctor == null)
                 throw new Exception("Doctor not found");
 
-            // 🔹 IMPORTANT: declare as IQueryable
+            // 2️⃣ Base query
             IQueryable<Appointment> query = _apps.Query()
                 .Include(a => a.Patient).ThenInclude(p => p.User)
                 .Include(a => a.FamilyMember)
                 .Where(a => a.DoctorId == doctor.Id);
 
-            // 🔹 Date filter (optional)
+            // 3️⃣ Date filter (optional)
             if (date.HasValue)
             {
                 var utcDate = DateTime.SpecifyKind(
@@ -1716,20 +1827,21 @@ namespace HospitalProject.Services
                     a.AppointmentDate.Date == utcDate.Date);
             }
 
-            // 🔹 Status filter (optional)
+            // 4️⃣ Status filter (optional)
             if (!string.IsNullOrWhiteSpace(status))
             {
                 query = query.Where(a =>
                     a.Status.ToLower() == status.ToLower());
             }
 
-            // 🔹 Slot filter (optional)
+            // 5️⃣ Slot filter (optional)
             if (!string.IsNullOrWhiteSpace(timeSlot))
             {
                 query = query.Where(a =>
                     a.TimeSlot == timeSlot.Trim());
             }
 
+            // 6️⃣ Projection to DTO
             return await query
                 .OrderBy(a => a.AppointmentDate)
                 .ThenBy(a => a.QueueToken)
@@ -1741,10 +1853,23 @@ namespace HospitalProject.Services
                     a.TimeSlot,
                     a.Status,
                     a.QueueToken,
+
+                    // 🔹 Vitals
+                    a.BloodPressure,
+                    a.Pulse,
+                    a.Temperature,
+                    a.SpO2,
+
+                    // 🔹 Doctor consultation
+                    a.Diagnosis,
+                    a.Prescription,
+                    a.Fees,
+
                     a.ReasonForVisit
                 ))
                 .ToListAsync();
         }
+
 
 
 
@@ -2532,27 +2657,55 @@ GetPatientHistory(int userId)
         // No show status for time finish for booking
         //***************************************
 
-        public async Task MarkNoShowAppointments()
+        //public async Task MarkNoShowAppointments()
+        //{
+        //    var today = DateTime.UtcNow.Date;
+
+        //    var appointments = await _apps.Query()
+        //        .Where(a =>
+        //            a.Status == "Booked" &&
+        //            a.AppointmentDate.Date == today
+        //        )
+        //        .ToListAsync();
+
+        //    foreach (var app in appointments)
+        //    {
+        //        // Slot time mudinjiducha?
+        //        if (TimeSlotHelper.IsSlotOver(app.TimeSlot))
+        //        {
+        //            app.Status = "NoShow";
+        //        }
+        //    }
+
+        //    await _apps.SaveAsync();
+        //}
+
+
+
+        public async Task<int> MarkNoShowBySlot(
+    DateOnly date,
+    string timeSlot)
         {
-            var today = DateTime.UtcNow.Date;
+            var utcDate = DateTime.SpecifyKind(
+                date.ToDateTime(TimeOnly.MinValue),
+                DateTimeKind.Utc
+            );
 
             var appointments = await _apps.Query()
                 .Where(a =>
-                    a.Status == "Booked" &&
-                    a.AppointmentDate.Date == today
-                )
+                    a.AppointmentDate.Date == utcDate.Date &&
+                    a.TimeSlot == timeSlot &&
+                    a.Status == "Booked")   // 👈 IMPORTANT
                 .ToListAsync();
 
             foreach (var app in appointments)
             {
-                // Slot time mudinjiducha?
-                if (TimeSlotHelper.IsSlotOver(app.TimeSlot))
-                {
-                    app.Status = "NoShow";
-                }
+                app.Status = "NoShow";
             }
 
             await _apps.SaveAsync();
+
+            return appointments.Count;
         }
 
 

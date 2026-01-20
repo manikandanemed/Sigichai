@@ -200,6 +200,18 @@
     );
 
 
+    //    public record DoctorAppointmentDto(
+    //    int AppointmentId,
+    //    string PatientName,
+    //    string? FamilyMemberName,
+    //    DateTime Date,
+    //    string TimeSlot,
+    //    string Status,
+    //    int? QueueToken,
+    //    string? ReasonForVisit   // 👈 ADD
+    //);
+
+
     public record DoctorAppointmentDto(
     int AppointmentId,
     string PatientName,
@@ -208,8 +220,21 @@
     string TimeSlot,
     string Status,
     int? QueueToken,
-    string? ReasonForVisit   // 👈 ADD
+
+    // 🔹 Vitals
+    string? BloodPressure,
+    int? Pulse,
+    decimal? Temperature,
+    int? SpO2,
+
+    // 🔹 Doctor data
+    string? Diagnosis,
+    string? Prescription,
+    decimal? Fees,
+
+    string? ReasonForVisit
 );
+
 
 
     public record AdminAppointmentDto(
@@ -515,6 +540,13 @@
         bool IsVerified,
         bool IsActive
     );
+
+    public class MarkNoShowDto
+    {
+        public DateOnly Date { get; set; }
+        public string TimeSlot { get; set; } = null!;
+    }
+
 
 
 
