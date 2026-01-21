@@ -2374,6 +2374,7 @@ GetPatientHistory(int userId)
             var query = _apps.Query()
                 .Include(a => a.Doctor).ThenInclude(d => d.User)
                 .Include(a => a.Doctor).ThenInclude(d => d.Hospital)
+                .Include(a => a.FamilyMember)   // ⭐ ADD THIS
                 .Where(a => a.PatientId == patient.Id);
 
             if (type == "upcoming")
@@ -2397,7 +2398,10 @@ GetPatientHistory(int userId)
         : "Independent Doctor",   // ✅ SAFE
     a.AppointmentDate,
     a.TimeSlot,
-    a.Status
+    a.Status,
+    a.FamilyMember != null
+        ? a.FamilyMember.Name
+        : null
 ))
 
                 .ToListAsync();

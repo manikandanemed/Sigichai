@@ -178,7 +178,8 @@
     string HospitalName,
     DateTime Date,
     string TimeSlot,
-    string Status
+    string Status,
+    string? FamilyMemberName   // ⭐ ADD
 );
 
     public record HospitalListDto(
