@@ -549,6 +549,23 @@
     }
 
 
+    public record AdminListForDoctorDto(
+    int AdminUserId,
+    string Name,
+    string MobileNumber,
+    bool IsBlocked
+    );
+
+
+    //END SESION GET BY SLOT ID
+    public record EndSessionBySlotDto(
+    int SlotId
+    );
+    
+
+
+
+
 
 
 

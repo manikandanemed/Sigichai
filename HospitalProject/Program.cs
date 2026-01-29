@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Text;
+//using HospitalProject.BackgroundServices;
 using HospitalProject.Data;
 using HospitalProject.Repositories;
 using HospitalProject.Services;
@@ -24,6 +25,8 @@ builder.Services.AddScoped<HospitalService>();
 builder.Services.AddScoped<DoctorManualVerificationService>();
 builder.Services.AddScoped<ITwilioService, TwilioService>();
 //builder.Services.AddHostedService<NoShowBackgroundService>();
+//builder.Services.AddHostedService<AutoNoShowService>();
+
 
 // =========================
 // JWT AUTHENTICATION

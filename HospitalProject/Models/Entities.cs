@@ -144,6 +144,8 @@ namespace HospitalProject.Models
 
         public DateTime AvailableDate { get; set; }
         public string TimeSlot { get; set; } = string.Empty; // "10:00 - 11:00"
+
+        public bool IsClosed { get; set; }   // ⭐ ADD THIS
     }
 
     // =========================

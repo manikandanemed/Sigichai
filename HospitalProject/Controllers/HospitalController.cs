@@ -187,9 +187,15 @@ namespace HospitalProject.Controllers
      DateOnly date)
         {
             var slots = await _service.GetAvailableSlots(doctorId, date);
+
+            var message = slots.Any()
+        ? "Available slots fetched successfully"
+        : "No available slots for the selected doctor on this date";
+
             return Ok(new ApiResponse
             {
                 Success = true,
+                Message = message,
                 Data = slots
             });
         }
@@ -1213,6 +1219,93 @@ namespace HospitalProject.Controllers
                 Data = count
             });
         }
+
+
+
+        [Authorize(Roles = "Doctor")]
+        [HttpPost("doctor/block-admin/{adminUserId}")]
+        public async Task<IActionResult> BlockAdmin(int adminUserId)
+        {
+            int doctorUserId = int.Parse(
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!
+            );
+
+            await _service.BlockAdminByDoctor(doctorUserId, adminUserId);
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Admin blocked successfully"
+            });
+        }
+
+
+
+        [Authorize(Roles = "Doctor")]
+        [HttpPost("doctor/unblock-admin/{adminUserId}")]
+        public async Task<IActionResult> UnblockAdmin(int adminUserId)
+        {
+            int doctorUserId = int.Parse(
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!
+            );
+
+            await _service.UnblockAdminByDoctor(doctorUserId, adminUserId);
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Admin unblocked successfully"
+            });
+        }
+
+
+
+        // ==================================
+        // Doctor → View Admin List
+        // ==================================
+        [Authorize(Roles = "Doctor")]
+        [HttpGet("doctor/admins")]
+        public async Task<IActionResult> GetAdminsForDoctor()
+        {
+            int doctorUserId = int.Parse(
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!
+            );
+
+            var list = await _service.GetAdminsForDoctor(doctorUserId);
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Admins fetched successfully",
+                Data = list
+            });
+        }
+
+
+        //END SESION GET BY SLOT ID
+
+        [Authorize(Roles = "Doctor,Admin")]
+        [HttpPost("session/end-by-slot")]
+        public async Task<IActionResult> EndSessionBySlot(
+        EndSessionBySlotDto dto)
+        {
+            int userId = int.Parse(
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!
+            );
+
+            var role = User.FindFirstValue(ClaimTypes.Role)!;
+
+            await _service.EndSessionBySlot(userId, role, dto.SlotId);
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Session ended successfully"
+            });
+        }
+
+
+
 
 
 

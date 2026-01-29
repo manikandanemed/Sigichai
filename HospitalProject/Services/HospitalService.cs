@@ -634,7 +634,8 @@ namespace HospitalProject.Services
             return await _slots.Query()
                 .Where(x =>
                     x.DoctorId == doctorId &&
-                    x.AvailableDate == utcDate)
+                    x.AvailableDate == utcDate &&
+                    x.IsClosed == false)
                 .ToListAsync();
         }
 
@@ -708,7 +709,8 @@ namespace HospitalProject.Services
             var slotExists = await _slots.GetAsync(x =>
                 x.DoctorId == dto.DoctorId &&
                 x.AvailableDate == utcDate &&
-                x.TimeSlot == dto.TimeSlot);
+                x.TimeSlot == dto.TimeSlot &&
+                x.IsClosed == false);   // ⭐ ADD THIS
 
             if (slotExists == null)
                 throw new Exception("Selected time not available");
@@ -800,9 +802,11 @@ namespace HospitalProject.Services
 
             // 5️⃣ Slot availability check
             var slotExists = await _slots.GetAsync(x =>
-                x.DoctorId == dto.DoctorId &&
-                x.AvailableDate == utcDate &&
-                x.TimeSlot == dto.TimeSlot);
+            x.DoctorId == dto.DoctorId &&
+            x.AvailableDate == utcDate &&
+            x.TimeSlot == dto.TimeSlot &&
+            x.IsClosed == false   // ⭐ ADD THIS
+            );
 
             if (slotExists == null)
                 throw new Exception("Selected time slot not available");
@@ -2714,6 +2718,148 @@ GetPatientHistory(int userId)
 
             return appointments.Count;
         }
+
+
+     //// automatic noshow 24 hours
+     //   public async Task MarkAutoNoShowAppointments()
+     //   {
+     //       var today = DateTime.UtcNow.Date;
+
+     //       var apps = await _apps.Query()
+     //           .Where(a =>
+     //               a.AppointmentDate.Date < today &&
+     //               a.Status == "Booked")
+     //           .ToListAsync();
+
+     //       if (!apps.Any())
+     //           return;
+
+     //       foreach (var app in apps)
+     //       {
+     //           app.Status = "NoShow";
+     //       }
+
+     //       await _apps.SaveAsync();
+     //   }
+
+
+
+
+
+        public async Task BlockAdminByDoctor(
+    int doctorUserId,
+    int adminUserId)
+        {
+            // 1️⃣ Doctor validate
+            var doctor = await _d.GetAsync(d => d.UserId == doctorUserId);
+            if (doctor == null)
+                throw new Exception("Doctor not found");
+
+            // 2️⃣ Admin validate
+            var adminUser = await _u.GetAsync(u =>
+                u.Id == adminUserId &&
+                u.Role == "Admin");
+
+            if (adminUser == null)
+                throw new Exception("Admin not found");
+
+            // 3️⃣ Block admin
+            adminUser.IsDeleted = true;
+            await _u.SaveAsync();
+        }
+
+        public async Task UnblockAdminByDoctor(
+            int doctorUserId,
+            int adminUserId)
+        {
+            // 1️⃣ Doctor validate
+            var doctor = await _d.GetAsync(d => d.UserId == doctorUserId);
+            if (doctor == null)
+                throw new Exception("Doctor not found");
+
+            // 2️⃣ Admin validate
+            var adminUser = await _u.GetAsync(u =>
+                u.Id == adminUserId &&
+                u.Role == "Admin");
+
+            if (adminUser == null)
+                throw new Exception("Admin not found");
+
+            // 3️⃣ Unblock admin
+            adminUser.IsDeleted = false;
+            await _u.SaveAsync();
+        }
+
+
+
+        public async Task<List<AdminListForDoctorDto>> GetAdminsForDoctor(
+         int doctorUserId)
+        {
+            // 1️⃣ Doctor validate
+            var doctor = await _d.GetAsync(d => d.UserId == doctorUserId);
+            if (doctor == null)
+                throw new Exception("Doctor not found");
+
+            // 2️⃣ Get all admins
+            return await _u.Query()
+                .Where(u => u.Role == "Admin")
+                .Select(u => new AdminListForDoctorDto(
+                    u.Id,                 // 👈 THIS IS admin USER ID
+                    u.Name,
+                    u.MobileNumber,
+                    u.IsDeleted            // true = blocked
+                ))
+                .ToListAsync();
+        }
+
+     
+
+     //END SESION GET BY SLOT ID
+
+        public async Task EndSessionBySlot(
+        int userId,
+        string role,
+        int slotId)
+        {
+            // 1️⃣ Get slot
+            var slot = await _slots.GetAsync(s => s.Id == slotId);
+            if (slot == null)
+                throw new Exception("Slot not found");
+
+            IQueryable<Appointment> query = _apps.Query()
+                .Where(a =>
+                    a.AppointmentDate.Date == slot.AvailableDate.Date &&
+                    a.TimeSlot == slot.TimeSlot &&
+                    a.Status == "Booked");
+
+            // 🔹 Doctor scope
+            if (role == "Doctor")
+            {
+                var doctor = await _d.GetAsync(d => d.UserId == userId);
+                if (doctor == null)
+                    throw new Exception("Doctor not found");
+
+                query = query.Where(a => a.DoctorId == doctor.Id);
+            }
+
+            // 🔹 Admin → all doctors allowed (or hospital filter if needed)
+
+            var apps = await query.ToListAsync();
+
+            foreach (var app in apps)
+            {
+                app.Status = "NoShow";
+            }
+
+            // 2️⃣ CLOSE SLOT
+            slot.IsClosed = true;
+
+            await _apps.SaveAsync();
+            await _slots.SaveAsync();
+        }
+
+
+
 
 
 

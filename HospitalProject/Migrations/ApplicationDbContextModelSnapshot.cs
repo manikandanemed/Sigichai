@@ -187,6 +187,9 @@ namespace HospitalProject.Migrations
                     b.Property<int>("DoctorId")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("IsClosed")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("TimeSlot")
                         .IsRequired()
                         .HasColumnType("text");
@@ -361,12 +364,27 @@ namespace HospitalProject.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("BloodGroup")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<DateOnly?>("Dob")
                         .HasColumnType("date");
+
+                    b.Property<string>("EmergencyContact")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Gender")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<decimal>("HeightCm")
+                        .HasColumnType("numeric");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -382,6 +400,9 @@ namespace HospitalProject.Migrations
                     b.Property<string>("Relationship")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<decimal>("WeightKg")
+                        .HasColumnType("numeric");
 
                     b.HasKey("Id");
 
