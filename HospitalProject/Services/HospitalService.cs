@@ -26,6 +26,10 @@ namespace HospitalProject.Services
         private readonly IConfiguration _config;
         private readonly IRepository<FamilyMember> _family;
         private readonly IRepository<Hospital> _hospital;
+        private readonly IRepository<MedicalRep> _medicalRep;
+        private readonly IRepository<MedicalRepSlot> _medicalRepSlots;
+        private readonly IRepository<MedicalRepAppointment> _medicalRepApps;
+
 
 
 
@@ -42,13 +46,20 @@ namespace HospitalProject.Services
             IRepository<DoctorProfile> doctorProfile,      // 👈 ADD
             IRepository<DoctorDocument> doctorDocument,    // 👈 ADD
             IRepository<DoctorStaff> doctorStaff,
+    // 🔥 ADD THESE 3
+            IRepository<MedicalRep> medicalRep,
+            IRepository<MedicalRepSlot> medicalRepSlots,
+            IRepository<MedicalRepAppointment> medicalRepApps,
             ITwilioService twilio,
             IConfiguration config)
         {
             _u = u; _p = p; _d = d; _admin = admin;
             _slots = slots; _apps = apps; _otp = otp; _family = family; _hospital = hospital;
             _doctorProfile = doctorProfile;        // 👈
-            _doctorDocument = doctorDocument;      // 👈
+            _doctorDocument = doctorDocument;                                          
+            _medicalRep = medicalRep;
+            _medicalRepSlots = medicalRepSlots;
+            _medicalRepApps = medicalRepApps;
             _doctorStaff = doctorStaff;
             _twilio = twilio; _config = config;
         }
@@ -468,7 +479,8 @@ namespace HospitalProject.Services
     int UserId,
     int? AdminId,
     int? DoctorId,
-    int? PatientId
+    int? PatientId,
+    int? MedicalRepId
 )> VerifyOtp(VerifyOtpDto d)
         {
             var rec = await _otp.GetAsync(x =>
@@ -489,6 +501,7 @@ namespace HospitalProject.Services
                 .Include(x => x.Admin)
                 .Include(x => x.Doctor)
                 .Include(x => x.Patient)
+                .Include(x => x.MedicalRep)   // 🔥 ADD THIS
                 .FirstOrDefaultAsync(x => x.Id == rec.UserId);
 
             if (user == null)
@@ -506,7 +519,8 @@ namespace HospitalProject.Services
                 user.Id,
                 user.Admin?.Id,     // 👈 AdminId
                 user.Doctor?.Id,    // 👈 DoctorId
-                user.Patient?.Id    // 👈 PatientId
+                user.Patient?.Id,    // 👈 PatientId
+                user.MedicalRep?.Id   // 🔥 THIS IS WHAT YOU WANT
             );
         }
 
@@ -1028,7 +1042,7 @@ namespace HospitalProject.Services
                 x.DoctorId == app.DoctorId &&
                 x.AppointmentDate.Date == app.AppointmentDate.Date &&
                 x.TimeSlot == app.TimeSlot &&
-                x.Status == "CheckedIn");
+               (x.Status == "CheckedIn" || x.Status == "Completed"));
 
             // 6️⃣ Update appointment
             app.Status = "CheckedIn";
@@ -2298,6 +2312,12 @@ GetPatientHistory(int userId)
             }
 
 
+            else if (u.Role == "MedicalRep")
+            {
+                // 🔥 MedicalRep – no extra claims needed
+            }
+
+
 
             else
             {
@@ -2857,6 +2877,316 @@ GetPatientHistory(int userId)
             await _apps.SaveAsync();
             await _slots.SaveAsync();
         }
+
+
+
+        public async Task RegisterMedicalRep(MedicalRepProfileDto dto)
+        {
+            if (await _u.GetAsync(x => x.MobileNumber == dto.Mobile) != null)
+                throw new Exception("Mobile already exists");
+
+            var user = new User
+            {
+                Name = dto.Name,
+                MobileNumber = dto.Mobile,
+                Password = BCrypt.Net.BCrypt.HashPassword(dto.Password),
+                Role = "MedicalRep"
+            };
+
+            await _u.AddAsync(user);
+            await _u.SaveAsync();
+
+            await _medicalRep.AddAsync(new MedicalRep
+            {
+                UserId = user.Id,
+                CompanyName = dto.CompanyName,
+                Designation = dto.Designation,
+                Area = dto.Area,
+                IdProofNumber = dto.IdProofNumber
+            });
+
+            await _medicalRep.SaveAsync();
+        }
+
+
+        public async Task AddMedicalRepSlot(MedicalRepSlotCreateDto dto)
+        {
+            var utcDate = DateTime.SpecifyKind(
+                dto.Date.ToDateTime(TimeOnly.MinValue),
+                DateTimeKind.Utc
+            );
+
+            await _medicalRepSlots.AddAsync(new MedicalRepSlot
+            {
+                DoctorId = dto.DoctorId,
+                SlotDate = utcDate,
+                TimeSlot = dto.TimeSlot,
+
+                MaxReps = dto.MaxReps,     // 🔥 eg: 20
+                BookedCount = 0,           // 🔥 start
+                IsClosed = false
+            });
+
+            await _medicalRepSlots.SaveAsync();
+        }
+
+
+
+        public async Task<List<MedicalRepSlot>> GetMedicalRepSlots(
+    int doctorId,
+    DateOnly date)
+        {
+            var utcDate = DateTime.SpecifyKind(
+                date.ToDateTime(TimeOnly.MinValue),
+                DateTimeKind.Utc
+            );
+
+            return await _medicalRepSlots.Query()
+                .Where(x =>
+                    x.DoctorId == doctorId &&
+                    x.SlotDate == utcDate &&
+                    x.IsClosed == false &&
+                    x.BookedCount < x.MaxReps   // 🔥 KEY LOGIC
+                )
+                .ToListAsync();
+        }
+
+
+
+        public async Task<string> BookMedicalRepByTime(
+     int userId,
+     MedicalRepTimeBookingDto dto)
+        {
+            var rep = await _medicalRep.GetAsync(x => x.UserId == userId);
+            if (rep == null)
+                throw new Exception("Medical rep not found");
+
+            var doctor = await _d.GetAsync(x =>
+                x.Id == dto.DoctorId &&
+                x.IsVerified == true);
+
+            if (doctor == null)
+                throw new Exception("Doctor not available");
+
+            var utcDate = DateTime.SpecifyKind(
+                dto.Date.ToDateTime(TimeOnly.MinValue),
+                DateTimeKind.Utc
+            );
+
+            var slot = await _medicalRepSlots.GetAsync(x =>
+                x.DoctorId == dto.DoctorId &&
+                x.SlotDate == utcDate &&
+                x.TimeSlot == dto.TimeSlot &&
+                x.IsClosed == false);
+
+            if (slot == null)
+                throw new Exception("Slot not available");
+
+            if (slot.BookedCount >= slot.MaxReps)
+                throw new Exception("Slot is full");
+
+            // 🔥 Increase count
+            slot.BookedCount += 1;
+            await _medicalRepSlots.SaveAsync();
+
+            var token = Guid.NewGuid().ToString("N")[..8].ToUpper();
+
+            await _medicalRepApps.AddAsync(new MedicalRepAppointment
+            {
+                MedicalRepId = rep.Id,
+                DoctorId = doctor.Id,
+                AppointmentDate = utcDate,
+                TimeSlot = dto.TimeSlot,
+                TempToken = token,
+                Status = "Booked"
+            });
+
+            await _medicalRepApps.SaveAsync();
+
+            return token;
+        }
+
+
+
+        public async Task<int> CheckInMedicalRep(string tempToken)
+        {
+            var app = await _medicalRepApps.GetAsync(x =>
+                x.TempToken == tempToken);
+
+            if (app == null)
+                throw new Exception("Invalid token");
+
+            // ❌ NoShow / Completed cannot check-in again
+            if (app.Status == "NoShow" || app.Status == "Completed")
+                throw new Exception("Check-in not allowed for this appointment");
+
+
+            if (app.Status == "CheckedIn")
+                return app.QueueToken!.Value;
+
+
+            // 3️⃣ Appointment date validation (TODAY only) ✅
+            if (app.AppointmentDate.Date != DateTime.UtcNow.Date)
+                throw new Exception("Check-in allowed only on appointment date");
+
+            // 4️⃣ Time slot validation (MOST IMPORTANT) ✅
+            if (!TimeSlotHelper.IsNowWithinSlot(app.TimeSlot))
+                throw new Exception("Check-in not allowed for this time slot");
+
+            // 5️⃣ Queue count (CheckedIn + Completed) ✅
+            int count = _medicalRepApps.Query().Count(x =>
+                x.DoctorId == app.DoctorId &&
+                x.AppointmentDate.Date == app.AppointmentDate.Date &&
+                x.TimeSlot == app.TimeSlot &&
+                (x.Status == "CheckedIn" || x.Status == "Completed"));
+
+
+            // 6️⃣ Update appointment
+            app.Status = "CheckedIn";
+            app.QueueToken = count + 1;
+
+            await _medicalRepApps.SaveAsync();
+
+            // 7️⃣ Return queue token
+            return app.QueueToken.Value;
+        }
+
+
+
+        public async Task<List<MedicalRepBookingViewDto>>
+ GetMedicalRepBookings(
+     int userId,
+     string role,
+     int? doctorId,
+     DateOnly? date,
+     string? timeSlot)
+        {
+            // 🔹 Base query
+            var query = _medicalRepApps.Query()
+                .Include(a => a.MedicalRep)
+                    .ThenInclude(r => r.User)
+                .AsQueryable();
+
+            // 🔹 Role based doctor filter
+            if (role == "Doctor")
+            {
+                var doctor = await _d.GetAsync(d => d.UserId == userId);
+                if (doctor == null)
+                    throw new Exception("Doctor not found");
+
+                query = query.Where(a => a.DoctorId == doctor.Id);
+            }
+            else if (role == "Admin" && doctorId.HasValue)
+            {
+                query = query.Where(a => a.DoctorId == doctorId.Value);
+            }
+
+            // 🔹 Date filter (optional)
+            if (date.HasValue)
+            {
+                var utcDate = DateTime.SpecifyKind(
+                    date.Value.ToDateTime(TimeOnly.MinValue),
+                    DateTimeKind.Utc);
+
+                query = query.Where(a => a.AppointmentDate == utcDate);
+            }
+
+            // 🔹 Slot filter (optional)
+            if (!string.IsNullOrWhiteSpace(timeSlot))
+            {
+                query = query.Where(a => a.TimeSlot == timeSlot);
+            }
+
+            // 🔹 Final projection
+            return await query
+                .OrderBy(a => a.QueueToken)
+                .Select(a => new MedicalRepBookingViewDto
+                {
+                    AppointmentId = a.Id,
+                    MedicalRepName = a.MedicalRep.User.Name,
+                    Mobile = a.MedicalRep.User.MobileNumber,
+                    Status = a.Status,
+                    TempToken = a.TempToken,
+                    QueueToken = a.QueueToken
+                })
+                .ToListAsync();
+        }
+
+
+
+        public async Task ConsultMedicalRep(MedicalRepConsultDto dto)
+        {
+            var app = await _medicalRepApps.GetAsync(x =>
+                x.Id == dto.AppointmentId);
+
+            if (app == null)
+                throw new Exception("Appointment not found");
+
+            // 🔒 Only CheckedIn appointment can be completed
+            if (app.Status != "CheckedIn")
+                throw new Exception("Medical rep not checked in");
+
+            // 📝 SAVE DOCTOR NOTES
+            app.DoctorNotes = dto.DoctorNotes;
+
+            // ✅ COMPLETE
+            app.Status = "Completed";
+
+            await _medicalRepApps.SaveAsync();
+        }
+
+
+        // ======================================
+        // END MEDICAL REP SESSION BY SLOT
+        // ======================================
+        public async Task EndMedicalRepSessionBySlot(
+     int userId,
+     string role,
+     int slotId)
+        {
+            // 1️⃣ Get slot
+            var slot = await _medicalRepSlots.GetAsync(s => s.Id == slotId);
+            if (slot == null)
+                throw new Exception("Medical rep slot not found");
+
+            // 2️⃣ Base query – ONLY BOOKED (🔥 FIX)
+            IQueryable<MedicalRepAppointment> query =
+                _medicalRepApps.Query()
+                .Where(a =>
+                    a.AppointmentDate.Date == slot.SlotDate.Date &&
+                    a.TimeSlot == slot.TimeSlot &&
+                    a.Status == "Booked");   // ✅ ONLY BOOKED
+
+            // 3️⃣ Doctor scope
+            if (role == "Doctor")
+            {
+                var doctor = await _d.GetAsync(d => d.UserId == userId);
+                if (doctor == null)
+                    throw new Exception("Doctor not found");
+
+                query = query.Where(a => a.DoctorId == doctor.Id);
+            }
+
+            // 4️⃣ Mark ONLY booked reps as NoShow
+            var apps = await query.ToListAsync();
+
+            foreach (var app in apps)
+            {
+                app.Status = "NoShow";
+            }
+
+            // 5️⃣ Close slot
+            slot.IsClosed = true;
+
+            await _medicalRepApps.SaveAsync();
+            await _medicalRepSlots.SaveAsync();
+        }
+
+
+
+
+
+
 
 
 

@@ -26,6 +26,9 @@ namespace HospitalProject.Models
         public Patient? Patient { get; set; }
         public Doctor? Doctor { get; set; }
         public Admin? Admin { get; set; }
+
+        public MedicalRep MedicalRep { get; set; }
+
     }
 
     // =========================
@@ -324,6 +327,70 @@ namespace HospitalProject.Models
         public string StaffRole { get; set; } = string.Empty;
         // Nurse / Reception
     }
+
+
+
+    public class MedicalRep
+    {
+        public int Id { get; set; }
+
+        public int UserId { get; set; }
+        public User User { get; set; }
+
+        public string CompanyName { get; set; }
+        public string Designation { get; set; }
+        public string Area { get; set; }
+
+        public string IdProofNumber { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        // 🔥 SOFT DELETE
+        public bool IsDeleted { get; set; } = false;
+    }
+
+
+    public class MedicalRepSlot
+    {
+        public int Id { get; set; }
+
+        public int DoctorId { get; set; }
+        public Doctor Doctor { get; set; }
+
+        public DateTime SlotDate { get; set; }
+        public string TimeSlot { get; set; } = string.Empty;
+
+        public int MaxReps { get; set; }      // 🔥 capacity
+        public int BookedCount { get; set; }  // 🔥 how many booked
+
+        public bool IsClosed { get; set; } = false;
+    }
+
+
+    public class MedicalRepAppointment
+    {
+        public int Id { get; set; }
+
+        public int MedicalRepId { get; set; }
+        public MedicalRep MedicalRep { get; set; }
+
+        public int DoctorId { get; set; }
+        public Doctor Doctor { get; set; }
+
+        public DateTime AppointmentDate { get; set; }
+        public string TimeSlot { get; set; } = string.Empty;
+
+        public string TempToken { get; set; } = string.Empty;
+        public int? QueueToken { get; set; }
+
+        public string Status { get; set; } = "Booked";
+        // Booked | CheckedIn | Consulted | Completed
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public string? DoctorNotes { get; set; }
+    }
+
+
 
 
 

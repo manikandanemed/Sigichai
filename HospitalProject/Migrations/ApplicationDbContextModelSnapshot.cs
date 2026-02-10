@@ -436,6 +436,125 @@ namespace HospitalProject.Migrations
                     b.ToTable("Hospitals");
                 });
 
+            modelBuilder.Entity("HospitalProject.Models.MedicalRep", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Area")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Designation")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("IdProofNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("MedicalReps");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.MedicalRepAppointment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("AppointmentDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("DoctorId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("DoctorNotes")
+                        .HasColumnType("text");
+
+                    b.Property<int>("MedicalRepId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("QueueToken")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TempToken")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TimeSlot")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DoctorId");
+
+                    b.HasIndex("MedicalRepId");
+
+                    b.ToTable("MedicalRepAppointments");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.MedicalRepSlot", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BookedCount")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("DoctorId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsClosed")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("MaxReps")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("SlotDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("TimeSlot")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DoctorId");
+
+                    b.ToTable("MedicalRepSlots");
+                });
+
             modelBuilder.Entity("HospitalProject.Models.OtpStore", b =>
                 {
                     b.Property<int>("Id")
@@ -708,6 +827,47 @@ namespace HospitalProject.Migrations
                     b.Navigation("Patient");
                 });
 
+            modelBuilder.Entity("HospitalProject.Models.MedicalRep", b =>
+                {
+                    b.HasOne("HospitalProject.Models.User", "User")
+                        .WithOne("MedicalRep")
+                        .HasForeignKey("HospitalProject.Models.MedicalRep", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.MedicalRepAppointment", b =>
+                {
+                    b.HasOne("HospitalProject.Models.Doctor", "Doctor")
+                        .WithMany()
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HospitalProject.Models.MedicalRep", "MedicalRep")
+                        .WithMany()
+                        .HasForeignKey("MedicalRepId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Doctor");
+
+                    b.Navigation("MedicalRep");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.MedicalRepSlot", b =>
+                {
+                    b.HasOne("HospitalProject.Models.Doctor", "Doctor")
+                        .WithMany()
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Doctor");
+                });
+
             modelBuilder.Entity("HospitalProject.Models.Patient", b =>
                 {
                     b.HasOne("HospitalProject.Models.User", "User")
@@ -734,6 +894,9 @@ namespace HospitalProject.Migrations
                     b.Navigation("Admin");
 
                     b.Navigation("Doctor");
+
+                    b.Navigation("MedicalRep")
+                        .IsRequired();
 
                     b.Navigation("Patient");
                 });

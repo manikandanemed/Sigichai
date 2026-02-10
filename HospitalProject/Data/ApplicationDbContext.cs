@@ -31,6 +31,13 @@ namespace HospitalProject.Data
         public DbSet<DoctorVerification> DoctorVerifications => Set<DoctorVerification>();
 
 
+        public DbSet<MedicalRep> MedicalReps { get; set; }
+        public DbSet<MedicalRepSlot> MedicalRepSlots { get; set; }
+     
+        public DbSet<MedicalRepAppointment> MedicalRepAppointments { get; set; }
+
+
+
 
 
         // =========================
@@ -148,6 +155,18 @@ namespace HospitalProject.Data
                 .WithMany()
                 .HasForeignKey(ds => ds.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+
+            modelBuilder.Entity<MedicalRepAppointment>()
+    .HasOne(x => x.MedicalRep)
+    .WithMany()
+    .HasForeignKey(x => x.MedicalRepId);
+
+            modelBuilder.Entity<MedicalRepAppointment>()
+                .HasOne(x => x.Doctor)
+                .WithMany()
+                .HasForeignKey(x => x.DoctorId);
+
 
 
 

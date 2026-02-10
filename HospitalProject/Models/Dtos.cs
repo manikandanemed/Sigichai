@@ -561,7 +561,76 @@
     public record EndSessionBySlotDto(
     int SlotId
     );
-    
+
+
+    public record MedicalRepProfileDto(
+    string Name, 
+    string Mobile, 
+    string Password,
+    string CompanyName,
+    string Designation,
+    string Area, 
+    string IdProofNumber
+    );
+
+
+    public record MedicalRepSlotCreateDto(
+         int DoctorId,
+         DateOnly Date,
+        string TimeSlot,
+        int MaxReps
+    );
+
+
+ 
+
+
+    public record MedicalRepTimeBookingDto
+    (
+    int DoctorId,
+    DateOnly Date,
+    string TimeSlot
+    );
+
+
+    public class MedicalRepSlotResponseDto
+    {
+        public int SlotId { get; set; }
+        public string TimeSlot { get; set; }
+    }
+
+
+    public class MedicalRepBookingViewDto
+    {
+        public int AppointmentId { get; set; }
+        public string MedicalRepName { get; set; } = "";
+        public string Mobile { get; set; } = "";
+        public string Status { get; set; } = "";
+        public string TempToken { get; set; } = "";
+        public int? QueueToken { get; set; }
+    }
+
+
+    public class MedicalRepConsultDto
+    {
+        public int AppointmentId { get; set; }
+        public string DoctorNotes { get; set; } = "";
+    }
+
+
+    public class EndMedicalRepSessionBySlotDto
+    {
+        public int SlotId { get; set; }
+    }
+
+
+
+
+
+
+
+
+
 
 
 
