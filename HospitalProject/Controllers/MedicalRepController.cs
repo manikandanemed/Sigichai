@@ -59,6 +59,25 @@ namespace HospitalProject.Controllers
             });
         }
 
+
+        // ======================================
+        // 👨‍⚕️ GET DOCTOR LIST FOR MEDICAL REP
+        // ======================================
+        [Authorize(Roles = "MedicalRep")]
+        [HttpGet("doctors")]
+        public async Task<IActionResult> GetDoctors()
+        {
+            var data = await _service.GetDoctorsForMedicalRep();
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Doctors fetched successfully",
+                Data = data
+            });
+        }
+
+
         // =====================================
         // 2️⃣ BOOK SLOT BY TIME
         // doctorId + date + timeSlot

@@ -2952,6 +2952,26 @@ GetPatientHistory(int userId)
         }
 
 
+        public async Task<List<DoctorListDto>> GetDoctorsForMedicalRep()
+        {
+            return await _d.Query()
+                .Include(d => d.User)
+                .Include(d => d.Hospital)
+                .Where(d => d.IsVerified == true)
+                .Select(d => new DoctorListDto
+                {
+                    DoctorId = d.Id,
+                    DoctorName = d.User.Name,
+                    Specialization = d.Specialization,
+                    HospitalName = d.Hospital != null
+                        ? d.Hospital.Name
+                        : ""
+                })
+                .ToListAsync();
+        }
+
+
+
 
         public async Task<string> BookMedicalRepByTime(
      int userId,
