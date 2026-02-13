@@ -633,6 +633,20 @@
 
 
 
+    public class MedicalRepAppointmentViewDto
+    {
+        public int AppointmentId { get; set; }
+        public string DoctorName { get; set; } = "";
+        public DateTime AppointmentDate { get; set; }
+        public string TimeSlot { get; set; } = "";
+        public string TempToken { get; set; } = "";
+        public string? DoctorNotes { get; set; }   // ✅ ADD THIS
+
+    }
+
+
+
+
 
 
 

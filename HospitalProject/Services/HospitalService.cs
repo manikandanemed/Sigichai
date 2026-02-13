@@ -3203,6 +3203,55 @@ GetPatientHistory(int userId)
         }
 
 
+       
+
+
+
+        public async Task<List<MedicalRepAppointmentViewDto>>
+GetMedicalRepAppointments(
+    int userId,
+    DateOnly? date)
+        {
+            var rep = await _medicalRep.GetAsync(x => x.UserId == userId);
+            if (rep == null)
+                throw new Exception("Medical rep not found");
+
+            IQueryable<MedicalRepAppointment> query =
+                _medicalRepApps.Query()
+                .Include(a => a.Doctor)
+                    .ThenInclude(d => d.User)
+                .Where(a =>
+                    a.MedicalRepId == rep.Id &&
+                    a.Status == "Booked");   // 🔥 ONLY BOOKED
+
+            // 🔹 Date filter (optional)
+            if (date.HasValue)
+            {
+                var utcDate = DateTime.SpecifyKind(
+                    date.Value.ToDateTime(TimeOnly.MinValue),
+                    DateTimeKind.Utc);
+
+                query = query.Where(a =>
+                    a.AppointmentDate.Date == utcDate.Date);
+            }
+
+            return await query
+                .OrderBy(a => a.AppointmentDate)
+                .ThenBy(a => a.TimeSlot)
+                .Select(a => new MedicalRepAppointmentViewDto
+                {
+                    AppointmentId = a.Id,
+                    DoctorName = a.Doctor.User.Name,
+                    AppointmentDate = a.AppointmentDate,
+                    TimeSlot = a.TimeSlot,
+                    TempToken = a.TempToken,
+                    DoctorNotes = a.DoctorNotes   // ✅ ADD THIS
+                })
+                .ToListAsync();
+        }
+
+
+
 
 
 

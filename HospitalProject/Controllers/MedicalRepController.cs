@@ -187,6 +187,34 @@ namespace HospitalProject.Controllers
         }
 
 
+
+        // ======================================
+        // 📋 MEDICAL REP - MY APPOINTMENTS
+        // ======================================
+   
+
+        [Authorize(Roles = "MedicalRep")]
+        [HttpGet("my-appointments")]
+        public async Task<IActionResult> GetMyAppointments(
+    [FromQuery] DateOnly? date)
+        {
+            int userId = int.Parse(
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+            var data = await _service
+                .GetMedicalRepAppointments(userId, date);
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Booked appointments fetched",
+                Data = data
+            });
+        }
+
+
+
+
         // ======================================
         // ⛔ END MEDICAL REP SESSION BY SLOT
         // Doctor / Admin
