@@ -1653,7 +1653,8 @@ namespace HospitalProject.Services
                     a.QueueToken,
                     a.Fees,
                     a.IsPaid,
-                    a.ReasonForVisit
+                    a.ReasonForVisit,
+                    a.TempToken
                 ))
                 .ToListAsync();
         }
@@ -1693,7 +1694,8 @@ namespace HospitalProject.Services
                     a.QueueToken,
                     a.Fees,
                     a.IsPaid,
-                    a.ReasonForVisit
+                    a.ReasonForVisit,
+                    a.TempToken
                 ))
                 .ToListAsync();
         }
@@ -1737,7 +1739,8 @@ namespace HospitalProject.Services
                     a.QueueToken,
                     a.Fees,
                     a.IsPaid,
-                    a.ReasonForVisit
+                    a.ReasonForVisit,
+                    a.TempToken
                 ))
                 .ToListAsync();
         }

@@ -250,7 +250,8 @@
     int? QueueToken,
     decimal Fees,
     bool IsPaid,
-    string? ReasonForVisit   // 👈
+    string? ReasonForVisit,
+    string? TempToken
 );
 
 
