@@ -745,7 +745,7 @@ namespace HospitalProject.Controllers
         // =========================
         // CHECK-IN & QUEUE
         // =========================
-
+        [Authorize(Roles = "Patient,Admin")]
         [HttpPost("appointment/checkin/{token}")]
         public async Task<IActionResult> CheckIn(string token)
         {

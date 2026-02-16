@@ -102,7 +102,7 @@ namespace HospitalProject.Controllers
 
 
         // CHECK-IN
-        [Authorize(Roles = "MedicalRep")]
+        [Authorize(Roles = "MedicalRep,Admin")]
         [HttpPost("checkin")]
         public async Task<IActionResult> CheckIn([FromQuery] string tempToken)
         {
