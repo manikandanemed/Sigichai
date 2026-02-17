@@ -646,6 +646,17 @@
     }
 
 
+    public class BookAppointmentDto
+    {
+        public int DoctorId { get; set; }
+        public DateOnly Date { get; set; }
+        public string TimeSlot { get; set; }
+        public string ReasonForVisit { get; set; }
+        public int? FamilyMemberId { get; set; }
+    }
+
+
+
 
 
 

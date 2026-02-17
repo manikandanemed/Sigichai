@@ -29,6 +29,9 @@ namespace HospitalProject.Services
         private readonly IRepository<MedicalRep> _medicalRep;
         private readonly IRepository<MedicalRepSlot> _medicalRepSlots;
         private readonly IRepository<MedicalRepAppointment> _medicalRepApps;
+        private readonly IRepository<PaymentLog> _paymentlog;
+        private readonly IPaymentService _paymentService;
+
 
 
 
@@ -46,23 +49,28 @@ namespace HospitalProject.Services
             IRepository<DoctorProfile> doctorProfile,      // 👈 ADD
             IRepository<DoctorDocument> doctorDocument,    // 👈 ADD
             IRepository<DoctorStaff> doctorStaff,
-    // 🔥 ADD THESE 3
+            // 🔥 ADD THESE 3
             IRepository<MedicalRep> medicalRep,
             IRepository<MedicalRepSlot> medicalRepSlots,
             IRepository<MedicalRepAppointment> medicalRepApps,
+            IRepository<PaymentLog> paymentlog,
+            IPaymentService paymentService, // ✅ ADD THIS
             ITwilioService twilio,
             IConfiguration config)
         {
             _u = u; _p = p; _d = d; _admin = admin;
             _slots = slots; _apps = apps; _otp = otp; _family = family; _hospital = hospital;
             _doctorProfile = doctorProfile;        // 👈
-            _doctorDocument = doctorDocument;                                          
+            _doctorDocument = doctorDocument;
             _medicalRep = medicalRep;
             _medicalRepSlots = medicalRepSlots;
             _medicalRepApps = medicalRepApps;
             _doctorStaff = doctorStaff;
             _twilio = twilio; _config = config;
+            _paymentlog = paymentlog;
+            _paymentService = paymentService; // ✅ IMPORTANT
         }
+
 
         // =========================
         // REGISTRATIONS
@@ -3251,6 +3259,65 @@ GetMedicalRepAppointments(
                     DoctorNotes = a.DoctorNotes   // ✅ ADD THIS
                 })
                 .ToListAsync();
+        }
+
+
+
+        // HospitalService.cs - இதில் ஒரு லாஜிக் கூட மிஸ் ஆகவில்லை
+        public async Task<object> BookWithPayment(int userId, BookAppointmentDto dto, bool isFamily)
+        {
+            var patient = await _p.GetAsync(x => x.UserId == userId);
+
+            var doctor = await _d.Query()
+                .Include(d => d.User)
+                .FirstOrDefaultAsync(x => x.Id == dto.DoctorId && x.IsVerified == true);
+
+            if (patient == null || doctor == null)
+                throw new Exception("Details not found");
+
+            var utcDate = DateTime.SpecifyKind(
+                dto.Date.ToDateTime(TimeOnly.MinValue),
+                DateTimeKind.Utc);
+
+            // 1️⃣ Create Appointment
+            var appointment = new Appointment
+            {
+                HospitalId = doctor.HospitalId,
+                PatientId = patient.Id,
+                DoctorId = doctor.Id,
+                AppointmentDate = utcDate,
+                TimeSlot = dto.TimeSlot.Trim(),
+                Status = "PaymentPending",
+                ReasonForVisit = dto.ReasonForVisit,
+                FamilyMemberId = isFamily ? dto.FamilyMemberId : null
+            };
+
+            await _apps.AddAsync(appointment);
+            await _apps.SaveAsync();
+
+            // 2️⃣ Create Razorpay Order
+            string orderId = await _paymentService.CreateOrder(10.00m, appointment.Id.ToString());
+
+            appointment.RazorpayOrderId = orderId;
+            await _apps.SaveAsync();
+
+            // 3️⃣ Save Payment Log
+            await _paymentlog.AddAsync(new PaymentLog
+            {
+                AppointmentId = appointment.Id,
+                RazorpayOrderId = orderId,
+                Amount = 10.00m,
+                Status = "Created"
+            });
+
+            await _paymentlog.SaveAsync();
+
+            return new
+            {
+                orderId,
+                amount = 1000,
+                keyId = _config["Razorpay:Key"]
+            };
         }
 
 

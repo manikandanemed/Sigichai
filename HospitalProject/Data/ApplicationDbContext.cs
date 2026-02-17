@@ -36,6 +36,8 @@ namespace HospitalProject.Data
      
         public DbSet<MedicalRepAppointment> MedicalRepAppointments { get; set; }
 
+        public DbSet<PaymentLog> PaymentLogs { get; set; }
+
 
 
 
@@ -158,14 +160,25 @@ namespace HospitalProject.Data
 
 
             modelBuilder.Entity<MedicalRepAppointment>()
-    .HasOne(x => x.MedicalRep)
-    .WithMany()
-    .HasForeignKey(x => x.MedicalRepId);
+           .HasOne(x => x.MedicalRep)
+           .WithMany()
+            .HasForeignKey(x => x.MedicalRepId);
 
             modelBuilder.Entity<MedicalRepAppointment>()
                 .HasOne(x => x.Doctor)
                 .WithMany()
                 .HasForeignKey(x => x.DoctorId);
+
+
+            modelBuilder.Entity<PaymentLog>()
+            .Property(p => p.Amount)
+             .HasPrecision(18, 2);
+
+            modelBuilder.Entity<PaymentLog>()
+        .HasOne(p => p.Appointment)
+        .WithMany(a => a.PaymentLogs)
+        .HasForeignKey(p => p.AppointmentId)
+        .OnDelete(DeleteBehavior.SetNull); // or Cascade
 
 
 

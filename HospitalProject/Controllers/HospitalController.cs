@@ -1305,6 +1305,47 @@ namespace HospitalProject.Controllers
         }
 
 
+        [HttpPost("book/self")]
+        public async Task<IActionResult> BookSelf(PatientTimeBookingDto dto)
+        {
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+            var request = new BookAppointmentDto
+            {
+                DoctorId = dto.DoctorId,
+                Date = dto.Date,
+                TimeSlot = dto.TimeSlot,
+                ReasonForVisit = dto.ReasonForVisit,
+                FamilyMemberId = null
+            };
+
+            var result = await _service.BookWithPayment(userId, request, false);
+
+            return Ok(result);
+        }
+
+
+        [HttpPost("book/family")]
+        public async Task<IActionResult> BookFamily(FamilyTimeBookingDto dto)
+        {
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+            var request = new BookAppointmentDto
+            {
+                DoctorId = dto.DoctorId,
+                Date = dto.Date,
+                TimeSlot = dto.TimeSlot,
+                ReasonForVisit = dto.ReasonForVisit,
+                FamilyMemberId = dto.FamilyMemberId
+            };
+
+            var result = await _service.BookWithPayment(userId, request, true);
+
+            return Ok(result);
+        }
+
+
+
 
 
 

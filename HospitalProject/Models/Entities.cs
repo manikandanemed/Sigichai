@@ -220,9 +220,34 @@ namespace HospitalProject.Models
         public decimal? Temperature { get; set; }
         public int? SpO2 { get; set; }
 
+        // 🔥 One Appointment → Many PaymentLogs
+        public ICollection<PaymentLog>? PaymentLogs { get; set; }
 
+        //Razor payment
+        public string? RazorpayOrderId { get; set; }
+        public string? RazorpayPaymentId { get; set; }
+        public string PaymentStatus { get; set; } = "Pending";
+    }
+
+
+    //Razor payment
+    public class PaymentLog
+    {
+        public int Id { get; set; }
+        public int? AppointmentId { get; set; }
+        public Appointment? Appointment { get; set; }  // Navigation property
+
+        public string RazorpayOrderId { get; set; } = string.Empty;
+        public string? RazorpayPaymentId { get; set; }
+        public decimal Amount { get; set; } // ₹10.00
+        public string Status { get; set; } = "Created"; // Created, Captured, Failed, Refunded
+        public string? RawResponse { get; set; } // Razorpay JSON
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public string? FailureReason { get; set; }
 
     }
+
 
 
     // =========================

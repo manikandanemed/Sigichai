@@ -87,6 +87,10 @@ namespace HospitalProject.Migrations
                     b.Property<string>("PaymentMode")
                         .HasColumnType("text");
 
+                    b.Property<string>("PaymentStatus")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Prescription")
                         .HasColumnType("text");
 
@@ -95,6 +99,12 @@ namespace HospitalProject.Migrations
 
                     b.Property<int?>("QueueToken")
                         .HasColumnType("integer");
+
+                    b.Property<string>("RazorpayOrderId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RazorpayPaymentId")
+                        .HasColumnType("text");
 
                     b.Property<string>("ReasonForVisit")
                         .HasColumnType("text");
@@ -463,6 +473,9 @@ namespace HospitalProject.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
@@ -644,6 +657,46 @@ namespace HospitalProject.Migrations
                         .IsUnique();
 
                     b.ToTable("Patients");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.PaymentLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<int?>("AppointmentId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("FailureReason")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RawResponse")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RazorpayOrderId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("RazorpayPaymentId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PaymentLogs");
                 });
 
             modelBuilder.Entity("HospitalProject.Models.User", b =>

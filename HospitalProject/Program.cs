@@ -26,6 +26,7 @@ builder.Services.AddScoped<DoctorManualVerificationService>();
 builder.Services.AddScoped<ITwilioService, TwilioService>();
 //builder.Services.AddHostedService<NoShowBackgroundService>();
 //builder.Services.AddHostedService<AutoNoShowService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
 
 
 // =========================
