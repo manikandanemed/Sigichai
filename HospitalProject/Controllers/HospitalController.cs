@@ -1305,10 +1305,32 @@ namespace HospitalProject.Controllers
         }
 
 
+        //[HttpPost("book/self")]
+        //public async Task<IActionResult> BookSelf(PatientTimeBookingDto dto)
+        //{
+        //    int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        //    var request = new BookAppointmentDto
+        //    {
+        //        DoctorId = dto.DoctorId,
+        //        Date = dto.Date,
+        //        TimeSlot = dto.TimeSlot,
+        //        ReasonForVisit = dto.ReasonForVisit,
+        //        FamilyMemberId = null
+        //    };
+
+        //    var result = await _service.BookWithPayment(userId, request, false);
+
+        //    return Ok(result);
+        //}
+
+
+        [Authorize(Roles = "Patient")]
         [HttpPost("book/self")]
         public async Task<IActionResult> BookSelf(PatientTimeBookingDto dto)
         {
-            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            int userId = int.Parse(
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
             var request = new BookAppointmentDto
             {
@@ -1321,8 +1343,14 @@ namespace HospitalProject.Controllers
 
             var result = await _service.BookWithPayment(userId, request, false);
 
-            return Ok(result);
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Pay online and get Temptoken",
+                Data = result   // 👈 direct service result
+            });
         }
+
 
 
         [HttpPost("book/family")]
@@ -1341,7 +1369,12 @@ namespace HospitalProject.Controllers
 
             var result = await _service.BookWithPayment(userId, request, true);
 
-            return Ok(result);
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Pay online and get Temptoken",
+                Data = result   // 👈 direct service result
+            });
         }
 
 
