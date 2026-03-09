@@ -18,6 +18,7 @@
         string Mobile,
         string Password,
         string Specialization,
+        int? SpecialityId,
         double? Lat,
         double? Lon
     );
@@ -26,9 +27,10 @@
     string Name,
     string Mobile,
     string Password,
-    string Specialization,
-    double? Lat,
-    double? Lon
+    //string Specialization,
+    int? SpecialityId
+    //double? Lat,
+    //double? Lon
 );
 
 
@@ -63,13 +65,17 @@
     );
 
     public record DoctorConsultDto(
-        int AppId,
-        string Diagnosis,
-        string Prescription,
-        decimal Fees
-    );
+      int AppId,
+      string Diagnosis,
+      string Prescription,
+      decimal Fees,
+      List<PrescriptionItemDto>? Medicines = null,
+      int ValidityDays = 30,   // 👈 default 30 days
+      int MaxRefills = 0       // 👈 default 0 = one-time use
+  );
 
     public record SlotCreateDto(
+     int HospitalId,
      DateOnly AvailableDate,
      string TimeSlot
  );
@@ -132,11 +138,11 @@
 
 
 
-    public record HospitalCreateDto(
-    string Name,
-    string Address,
-    string Phone
-);
+//    public record HospitalCreateDto(
+//    string Name,
+//    string Address,
+//    string Phone
+//);
 
 
     public record HospitalSetupDto(
@@ -197,6 +203,15 @@
     );
 
     public record SpecialityDto(
+        string Name
+    );
+
+    public record SpecialityViewDto(
+        int Id,
+        string Name
+    );
+
+    public record SpecialityCreateDto(
         string Name
     );
 
@@ -271,43 +286,34 @@
     //********************************
 
     public record DoctorProfileCreateDto(
-    DateOnly Dob,
-    int Experience,
-    string Languages,
-    string LicenseType,
-    string LicenseNumber,
-    string StateCouncil,
-    string Degree,
-    string University,
-    int GraduationYear,
-    string PracticeMode,
-    decimal ConsultationFee
-);
+     string FatherOrHusbandName,
+     DateOnly Dob,
+     string RegistrationNumber,
+     DateOnly DateOfRegistration,
+     string StateCouncil,
+     string Degree,
+     int GraduationYear,
+     string University,
+     string PermanentAddress
+ );
 
 
     //********************************
     //Doctor profile View get Method
     //********************************
     public record DoctorProfileViewDto(
-    int DoctorId,
-    string DoctorName,
-    string Specialization,
-
-    DateOnly Dob,
-    int Experience,
-    string Languages,
-
-    string LicenseType,
-    string LicenseNumber,
-    string StateCouncil,
-
-    string Degree,
-    string University,
-    int GraduationYear,
-
-    string PracticeMode,
-    decimal ConsultationFee
-);
+     int DoctorId,
+     string DoctorName,
+     string FatherOrHusbandName,
+     DateOnly Dob,
+     string RegistrationNumber,
+     DateOnly DateOfRegistration,
+     string StateCouncil,
+     string Degree,
+     int GraduationYear,
+     string University,
+     string PermanentAddress
+ );
 
 
 
@@ -589,13 +595,13 @@
     int DoctorId,
     DateOnly Date,
     string TimeSlot
-    );
+);
 
 
     public class MedicalRepSlotResponseDto
     {
         public int SlotId { get; set; }
-        public string TimeSlot { get; set; }
+        public string TimeSlot { get; set; } = "";
     }
 
 
@@ -650,27 +656,528 @@
     {
         public int DoctorId { get; set; }
         public DateOnly Date { get; set; }
-        public string TimeSlot { get; set; }
-        public string ReasonForVisit { get; set; }
+        public string TimeSlot { get; set; } = "";
+        public string ReasonForVisit { get; set; } = "";
         public int? FamilyMemberId { get; set; }
     }
 
+    public record InternalPharmacyCreateDto(
+        int HospitalId,
+        string PharmacyName,
+        string PhoneNumber,
+        string Address
+    );
+
+    public record InternalPharmacyStaffRegisterDto(
+        string Name,
+        string MobileNumber,
+        string Password
+    );
+
+    public record ApprovePharmacyStaffDto(
+        int RequestId
+    );
+
+    public record MedicineCreateDto(
+        string GenericName,
+        string BrandName,
+        string Category,
+        string Unit,
+        int ReorderLevel
+    );
+
+    public record MedicineViewDto(
+        int Id,
+        string GenericName,
+        string BrandName,
+        string Category,
+        string Unit,
+        int ReorderLevel
+    );
+
+    public record InventoryUpdateDto(
+        int MedicineId,
+        string BatchNumber,
+        DateOnly ExpiryDate,
+        int Quantity,
+        string Barcode,
+        decimal Price
+    );
+
+    public record InventoryViewDto(
+        int Id,
+        int MedicineId,
+        string MedicineName,
+        string BatchNumber,
+        DateTime ExpiryDate,
+        int Quantity,
+        string Barcode,
+        decimal Price
+    );
+
+    public record PrescriptionItemDto(
+        int MedicineId,
+        string Dosage,
+        string Duration,
+        string Instructions,
+        int QuantityPrescribed,
+        bool GenericSubstitutionAllowed = false
+    );
+
+    public record StructuredPrescriptionDto(
+        int AppointmentId,
+        string? DoctorNotes,
+        List<PrescriptionItemDto> Items
+    );
+
+    public record DispenseItemRequestDto(
+        int MedicineId,
+        int QuantityDispensed,
+        string? Barcode = null
+    );
+
+    public record DispenseRequestDto(
+        int PrescriptionId,
+        string? Remarks,
+        List<DispenseItemRequestDto> Items
+    );
+
+    public record PharmacyQueueDto(
+        int PrescriptionId,
+        int AppointmentId,
+        string PatientName,
+        string DoctorName,
+        DateTime CreatedAt,
+        string Status
+    );
+
+    public record LowStockAlertDto(
+        int MedicineId,
+        string MedicineName,
+        int CurrentStock,
+        int ReorderLevel
+    );
+
+    public record MedicineStockDto(
+        int MedicineId,
+        string GenericName,
+        string BrandName,
+        string Category,
+        string Unit,
+        int CurrentStock
+    );
+
+    public record PatientDispenseHistoryDto(
+        int DispenseId,
+        DateTime DispenseDate,
+        string PharmacistName,
+        string Remarks,
+        decimal TotalAmount,
+        List<DispenseHistoryItemDto> Items
+    );
+
+    public record DispenseHistoryItemDto(
+        string MedicineName,
+        string BatchNumber,
+        int QuantityDispensed,
+        decimal PricePerUnit
+    );
+
+    public record PharmacyNotificationDto(
+        int Id,
+        string Message,
+        DateTime CreatedAt,
+        bool IsRead
+    );
+
+    public record DrugInteractionCreateDto(
+        int MedicineIdA,
+        int MedicineIdB,
+        string Severity,
+        string Description
+    );
+
+    public record DrugInteractionViewDto(
+        int Id,
+        string MedicineNameA,
+        string MedicineNameB,
+        string Severity,
+        string Description
+    );
+
+
+    public class QrPayloadDto
+    {
+        public int PrescriptionId { get; set; }
+        public int PatientId { get; set; }
+        public string PatientName { get; set; } = string.Empty;
+        public DateTime ValidUntil { get; set; }
+        public int MaxRefills { get; set; }
+        public List<QrMedicineDto> Medicines { get; set; } = new();
+    }
+
+    public class QrMedicineDto
+    {
+        public int MedicineId { get; set; }
+        public string GenericName { get; set; } = string.Empty;
+        public string BrandName { get; set; } = string.Empty;
+        public string Dosage { get; set; } = string.Empty;
+        public string Duration { get; set; } = string.Empty;
+        public int QuantityPrescribed { get; set; }
+        public bool GenericSubstitutionAllowed { get; set; }
+    }
+
+    public record PrescriptionQrViewDto(
+        int PrescriptionId,
+        string PatientName,
+        string DoctorName,
+        DateTime GeneratedAt,
+        DateTime ValidUntil,
+        int MaxRefills,
+        int UsedRefills,
+        bool IsFullyUsed,
+        string QrImageBase64
+    );
+
+    public record QrScanResultDto(
+        bool IsValid,
+        string? InvalidReason,
+        int PrescriptionId,
+        int PatientId,
+        string PatientName,
+        string DoctorName,
+        DateTime ValidUntil,
+        int RefillsRemaining,
+        int RefillNumber,
+        List<QrMedicineDto> Medicines
+    );
+
+    public record QrScanRequestDto(
+        string QrPayload,
+        string PharmacyName
+    );
+
+    public record QrScanLogViewDto(
+        int LogId,
+        int PrescriptionId,
+        string PharmacyName,
+        string ScannedByUserName,
+        bool WasValid,
+        string? InvalidReason,
+        int RefillNumber,
+        DateTime ScannedAt
+    );
+
+    //External pharmacy
+
+    // =========================
+    // EXTERNAL PHARMACY DTOs
+    // =========================
+
+    public record ExternalPharmacyRegisterDto(
+        string PharmacyName,
+        string OwnerName,
+        string MobileNumber,
+        string Password,
+        string Address,
+        string LicenseNumber,
+        double Latitude,
+        double Longitude,
+        bool OffersHomeDelivery,
+        decimal? DeliveryRadius
+    );
+
+    public record ExternalPharmacyApproveDto(
+        int ExternalPharmacyId,
+        bool IsApproved,
+        string? RejectionReason
+    );
+
+    public record ExternalPharmacyViewDto(
+        int Id,
+        string PharmacyName,
+        string OwnerName,
+        string MobileNumber,
+        string Address,
+        string LicenseNumber,
+        double Latitude,
+        double Longitude,
+        bool OffersHomeDelivery,
+        decimal? DeliveryRadius,
+        string Status,
+        string? RejectionReason,
+        DateTime RegisteredAt,
+        bool IsActive,
+        double AverageRating,
+        int TotalRatings
+    );
+
+    public record ExternalPharmacyLoginDto(
+        string MobileNumber,
+        string Password
+    );
+
+    public record ExternalPharmacyListDto(
+        int Id,
+        string PharmacyName,
+        string Address,
+        bool OffersHomeDelivery,
+        double AverageRating,
+        string Status
+    );
+
+   //ProductAdmin 
+    public record ProductAdminRegisterDto(
+    string Name,
+    string MobileNumber,
+    string Password
+    );
+
+    // =========================
+    // PRESCRIPTION ROUTING DTOs
+    // =========================
+
+    public record SetPreferredPharmacyDto(
+        int ExternalPharmacyId
+    );
+
+    public record PrescriptionRouteViewDto(
+        int RouteId,
+        int PrescriptionId,
+        string PharmacyType,
+        string PharmacyName,
+        string Status,
+        DateTime RoutedAt,
+        DateTime? RespondedAt
+    );
+
+    public record NearbyPharmacyDto(
+        int ExternalPharmacyId,
+        string PharmacyName,
+        string Address,
+        double Latitude,
+        double Longitude,
+        double DistanceKm,
+        bool OffersHomeDelivery,
+        double AverageRating
+    );
+
+    // =========================
+    // QUOTATION DTOs
+    // =========================
+
+    public record QuotationItemDto(
+        int MedicineId,
+        bool IsAvailable,
+        decimal PricePerUnit,
+        int QuantityAvailable
+    );
+
+    public record SubmitQuotationDto(
+        int PrescriptionRouteId,
+        bool OffersDelivery,
+        decimal? DeliveryCharge,
+        string? Notes,
+        List<QuotationItemDto> Items
+    );
+
+    public record QuotationItemViewDto(
+        int MedicineId,
+        string MedicineName,
+        string BrandName,
+        bool IsAvailable,
+        decimal PricePerUnit,
+        int QuantityAvailable
+    );
+
+    public record QuotationViewDto(
+        int QuotationId,
+        int PrescriptionRouteId,
+        string PharmacyName,
+        string PharmacyAddress,
+        bool OffersDelivery,
+        decimal? DeliveryCharge,
+        decimal TotalAmount,
+        string? Notes,
+        string Status,
+        DateTime QuotedAt,
+        List<QuotationItemViewDto> Items
+    );
+
+    public record SelectQuotationDto(
+        int QuotationId
+    );
+
+
+    // =========================
+    // PHARMACY ORDER DTOs
+    // =========================
+
+    public record PlaceOrderDto(
+        int QuotationId,
+        string OrderType,        // Pickup | Delivery
+        string? DeliveryAddress,
+        string PaymentMode       // DirectToPharmacy | App
+    );
+
+    public record UpdateOrderStatusDto(
+        int OrderId,
+        string Status,           // Preparing | ReadyForPickup | OutForDelivery | Delivered | Collected
+        string? Remarks
+    );
+
+    public record OrderStatusLogDto(
+        string Status,
+        string? Remarks,
+        DateTime UpdatedAt
+    );
+
+    public record PharmacyOrderViewDto(
+        int OrderId,
+        int QuotationId,
+        string PharmacyName,
+        string OrderType,
+        string? DeliveryAddress,
+        string PaymentMode,
+        string PaymentStatus,
+        string Status,
+        decimal TotalAmount,
+        decimal? DeliveryCharge,
+        DateTime CreatedAt,
+        DateTime? DeliveredAt,
+        List<OrderStatusLogDto> StatusLogs
+    );
+
+    // =========================
+    // RATING DTOs
+    // =========================
+
+    public record SubmitRatingDto(
+        int PharmacyOrderId,
+        int Rating,        // 1 - 5
+        string? Review
+    );
+
+    public record PharmacyRatingViewDto(
+        int RatingId,
+        string PatientName,
+        int Rating,
+        string? Review,
+        DateTime RatedAt
+    );
+
+    public record PharmacyRatingSummaryDto(
+        int ExternalPharmacyId,
+        string PharmacyName,
+        double AverageRating,
+        int TotalRatings,
+        List<PharmacyRatingViewDto> RecentReviews
+    );
+
+
+    // =========================
+    // NMC AUTO FILL DTO
+    // =========================
+
+    public record NmcLookupDto(
+        string RegistrationNumber
+    );
+
+    public record NmcDoctorRecordViewDto(
+        string RegistrationNumber,
+        string Name,
+        string FatherOrHusbandName,
+        DateOnly Dob,
+        DateOnly DateOfRegistration,
+        string StateCouncil,
+        string Degree,
+        int GraduationYear,
+        string University,
+        string PermanentAddress
+    );
 
 
 
+    // =========================
+    // DOCTOR SERVICE LOCATION DTOs
+    // =========================
+
+    public record ServiceSlotDto(
+        string TimeSlot
+    );
+
+    public record DoctorServiceLocationDto(
+        int HospitalId,
+        int SpecialityId,
+        List<string> TimeSlots
+    );
+
+    public record SaveServiceLocationsDto(
+        List<DoctorServiceLocationDto> Locations
+    );
+
+    public record DoctorServiceSlotViewDto(
+        int SlotId,
+        string TimeSlot
+    );
+
+    public record DoctorServiceLocationViewDto(
+        int LocationId,
+        int HospitalId,
+        string HospitalName,
+        string State,
+        string Area,
+        int SpecialityId,
+        string SpecialityName,
+        bool IsActive,
+        List<DoctorServiceSlotViewDto> Slots
+    );
+
+    public record HospitalByStateAreaDto(
+        int HospitalId,
+        string HospitalName,
+        string State,
+        string Area
+    );
 
 
+    // =========================
+    // HOSPITAL DTOs
+    // =========================
+
+    public record HospitalCreateDto(
+        string Name,
+        string Address,
+        string Phone,
+        string State,
+        string Area
+    );
+
+    public record BulkHospitalCreateDto(
+        List<HospitalCreateDto> Hospitals
+    );
+
+    public record HospitalViewDto(
+        int Id,
+        string Name,
+        string Address,
+        string Phone,
+        string State,
+        string Area
+    );
 
 
-
-
-
-
-
-
-
-
-
+    public record DoctorProfileUpdateDto(
+    string? FatherOrHusbandName,
+    DateOnly? Dob,
+    string? RegistrationNumber,
+    DateOnly? DateOfRegistration,
+    string? StateCouncil,
+    string? Degree,
+    int? GraduationYear,
+    string? University,
+    string? PermanentAddress
+);
 
 
 }

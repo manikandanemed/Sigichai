@@ -93,6 +93,16 @@ namespace HospitalProject.Models
         // 🔥 ADD THIS (VERY IMPORTANT)
         public ICollection<DoctorAvailability> Availabilities { get; set; }
             = new List<DoctorAvailability>();
+
+        public int? SpecialityId { get; set; }
+        public Speciality? Speciality { get; set; }
+    }
+
+    public class Speciality
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public bool IsActive { get; set; } = true;
     }
 
 
@@ -145,6 +155,10 @@ namespace HospitalProject.Models
         public int DoctorId { get; set; }
         public Doctor Doctor { get; set; } = null!;
 
+        public int? HospitalId { get; set; }
+        public Hospital? Hospital { get; set; }
+
+
         public DateTime AvailableDate { get; set; }
         public string TimeSlot { get; set; } = string.Empty; // "10:00 - 11:00"
 
@@ -185,6 +199,8 @@ namespace HospitalProject.Models
 
         public int PatientId { get; set; }
         public Patient Patient { get; set; } = null!;
+        public int? DoctorServiceLocationId { get; set; }
+        public DoctorServiceLocation? DoctorServiceLocation { get; set; }
 
         public int DoctorId { get; set; }
         public Doctor Doctor { get; set; } = null!;
@@ -294,33 +310,55 @@ namespace HospitalProject.Models
         public string Name { get; set; } = string.Empty;
         public string Address { get; set; } = string.Empty;
         public string Phone { get; set; } = string.Empty;
+
+        // 👇 இதை add பண்ணுங்க
+        public string State { get; set; } = string.Empty;
+        public string Area { get; set; } = string.Empty;
     }
 
+
+
+    //public class DoctorProfile
+    //{
+    //    public int Id { get; set; }
+
+    //    public int DoctorId { get; set; }
+    //    public Doctor Doctor { get; set; } = null!;
+
+    //    // Personal
+    //    public DateOnly Dob { get; set; }
+    //    public int Experience { get; set; }
+    //    public string Languages { get; set; } = string.Empty;
+
+    //    // Professional
+    //    public string LicenseType { get; set; } = string.Empty;
+    //    public string LicenseNumber { get; set; } = string.Empty;
+    //    public string StateCouncil { get; set; } = string.Empty;
+
+    //    public string Degree { get; set; } = string.Empty;
+    //    public string University { get; set; } = string.Empty;
+    //    public int GraduationYear { get; set; }
+
+    //    public string PracticeMode { get; set; } = string.Empty; // Clinic / Online
+    //    public decimal ConsultationFee { get; set; }
+    //}
 
 
     public class DoctorProfile
     {
         public int Id { get; set; }
-
         public int DoctorId { get; set; }
         public Doctor Doctor { get; set; } = null!;
 
-        // Personal
+        public string FatherOrHusbandName { get; set; } = string.Empty;
         public DateOnly Dob { get; set; }
-        public int Experience { get; set; }
-        public string Languages { get; set; } = string.Empty;
-
-        // Professional
-        public string LicenseType { get; set; } = string.Empty;
-        public string LicenseNumber { get; set; } = string.Empty;
+        public string RegistrationNumber { get; set; } = string.Empty;
+        public DateOnly DateOfRegistration { get; set; }
         public string StateCouncil { get; set; } = string.Empty;
-
         public string Degree { get; set; } = string.Empty;
-        public string University { get; set; } = string.Empty;
         public int GraduationYear { get; set; }
-
-        public string PracticeMode { get; set; } = string.Empty; // Clinic / Online
-        public decimal ConsultationFee { get; set; }
+        public string University { get; set; } = string.Empty;
+        public string PermanentAddress { get; set; } = string.Empty;
     }
 
 
@@ -416,7 +454,427 @@ namespace HospitalProject.Models
     }
 
 
+    public class InternalPharmacy
+    {
+        public int Id { get; set; }
+
+        public int HospitalId { get; set; }
+        public Hospital Hospital { get; set; } = null!;
+
+        public string PharmacyName { get; set; } = string.Empty;
+        public string PhoneNumber { get; set; } = string.Empty;
+        public string Address { get; set; } = string.Empty;
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public bool IsActive { get; set; } = true;
+    }
 
 
+    public class InternalPharmacyStaffRequest
+    {
+        public int Id { get; set; }
 
+        public string Name { get; set; } = string.Empty;
+        public string MobileNumber { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty; // Hashed
+
+        public string Status { get; set; } = "Pending";
+        // Pending | Approved | Rejected
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    }
+
+
+    // =========================
+    // MODULE 3: PHARMACY
+    // =========================
+
+    public class Medicine
+    {
+        public int Id { get; set; }
+        public string GenericName { get; set; } = string.Empty;
+        public string BrandName { get; set; } = string.Empty;
+        public string Category { get; set; } = string.Empty; // Tablet, Syrup, etc.
+        public string Unit { get; set; } = string.Empty;     // mg, ml, etc.
+        public int ReorderLevel { get; set; } = 10;
+        public bool IsActive { get; set; } = true;
+    }
+
+    public class InternalPharmacyInventory
+    {
+        public int Id { get; set; }
+        public int MedicineId { get; set; }
+        public Medicine Medicine { get; set; } = null!;
+
+        public string BatchNumber { get; set; } = string.Empty;
+        public DateTime ExpiryDate { get; set; }
+        public int Quantity { get; set; }
+        public string Barcode { get; set; } = string.Empty;
+        public decimal Price { get; set; }
+
+        public int InternalPharmacyId { get; set; }
+        public InternalPharmacy InternalPharmacy { get; set; } = null!;
+
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+    }
+
+    public class Prescription
+    {
+        public int Id { get; set; }
+        public int AppointmentId { get; set; }
+        public Appointment Appointment { get; set; } = null!;
+
+        public int DoctorId { get; set; }
+        public Doctor Doctor { get; set; } = null!;
+
+        public int PatientId { get; set; }
+        public Patient Patient { get; set; } = null!;
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public string Status { get; set; } = "Pending"; // Pending, Dispensed, Partial, Cancelled
+        public string? DoctorNotes { get; set; }
+        public string? QRData { get; set; } // For future QR system
+
+        // two lines add
+        public int ValidityDays { get; set; } = 30;
+        public int MaxRefills { get; set; } = 0;
+
+        public ICollection<PrescriptionItem> Items { get; set; } = new List<PrescriptionItem>();
+    }
+
+    public class PrescriptionItem
+    {
+        public int Id { get; set; }
+        public int PrescriptionId { get; set; }
+        public Prescription Prescription { get; set; } = null!;
+
+        public int MedicineId { get; set; }
+        public Medicine Medicine { get; set; } = null!;
+
+        public string Dosage { get; set; } = string.Empty;     // e.g., "1-0-1"
+        public string Duration { get; set; } = string.Empty;   // e.g., "5 days"
+        public string Instructions { get; set; } = string.Empty; // e.g., "After food"
+        public int QuantityPrescribed { get; set; }
+        public int QuantityDispensed { get; set; }
+        public bool GenericSubstitutionAllowed { get; set; } = false;
+    }
+
+    public class DispenseRecord
+    {
+        public int Id { get; set; }
+        public int PrescriptionId { get; set; }
+        public Prescription Prescription { get; set; } = null!;
+
+        public int PharmacistId { get; set; } // User.Id (Role: InternalPharmacyStaff)
+        public User Pharmacist { get; set; } = null!;
+
+        public DateTime DispensedAt { get; set; } = DateTime.UtcNow;
+        public decimal TotalAmount { get; set; }
+        public string? Remarks { get; set; }
+
+        public ICollection<DispenseItem> Items { get; set; } = new List<DispenseItem>();
+    }
+
+    public class DispenseItem
+    {
+        public int Id { get; set; }
+        public int DispenseRecordId { get; set; }
+        public DispenseRecord DispenseRecord { get; set; } = null!;
+
+        public int MedicineId { get; set; }
+        public Medicine Medicine { get; set; } = null!;
+
+        public string BatchNumber { get; set; } = string.Empty;
+        public int QuantityDispensed { get; set; }
+        public decimal PricePerUnit { get; set; }
+    }
+
+    public class PharmacyNotification
+    {
+        public int Id { get; set; }
+        public int PatientId { get; set; }
+        public Patient Patient { get; set; } = null!;
+        public string Message { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public bool IsRead { get; set; } = false;
+    }
+
+    public class DrugInteraction
+    {
+        public int Id { get; set; }
+        public int MedicineIdA { get; set; }
+        public Medicine MedicineA { get; set; } = null!;
+        public int MedicineIdB { get; set; }
+        public Medicine MedicineB { get; set; } = null!;
+        public string Severity { get; set; } = "High"; // High, Medium, Low
+        public string Description { get; set; } = string.Empty;
+    }
+
+    public class PrescriptionQrCode
+    {
+        public int Id { get; set; }
+        public int PrescriptionId { get; set; }
+        public Prescription Prescription { get; set; } = null!;
+        public string QrPayload { get; set; } = string.Empty;
+        public string QrImageBase64 { get; set; } = string.Empty;
+        public DateTime ValidUntil { get; set; }
+        public int MaxRefills { get; set; } = 0;
+        public int UsedRefills { get; set; } = 0;
+        public bool IsFullyUsed { get; set; } = false;
+        public DateTime GeneratedAt { get; set; } = DateTime.UtcNow;
+    }
+
+    public class QrScanLog
+    {
+        public int Id { get; set; }
+        public int PrescriptionQrCodeId { get; set; }
+        public PrescriptionQrCode PrescriptionQrCode { get; set; } = null!;
+        public int ScannedByUserId { get; set; }
+        public User ScannedByUser { get; set; } = null!;
+        public string PharmacyName { get; set; } = string.Empty;
+        public bool WasValid { get; set; }
+        public string? InvalidReason { get; set; }
+        public DateTime ScannedAt { get; set; } = DateTime.UtcNow;
+        public int RefillNumber { get; set; } = 1;
+    }
+
+
+    //External Pharmacy
+
+    public class ExternalPharmacy
+    {
+        public int Id { get; set; }
+        public string PharmacyName { get; set; } = string.Empty;
+        public string OwnerName { get; set; } = string.Empty;
+        public string MobileNumber { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+        public string Address { get; set; } = string.Empty;
+        public string LicenseNumber { get; set; } = string.Empty;
+
+        // Location — nearby pharmacy find பண்ண
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+
+        // Home Delivery
+        public bool OffersHomeDelivery { get; set; } = false;
+        public decimal? DeliveryRadius { get; set; } // KM
+
+        // Status
+        public string Status { get; set; } = "Pending"; // Pending | Approved | Rejected
+        public string? RejectionReason { get; set; }
+        public DateTime RegisteredAt { get; set; } = DateTime.UtcNow;
+        public bool IsActive { get; set; } = false;
+
+        // Rating
+        public double AverageRating { get; set; } = 0.0;
+        public int TotalRatings { get; set; } = 0;
+    }
+
+    public class ExternalPharmacyDocument
+    {
+        public int Id { get; set; }
+        public int ExternalPharmacyId { get; set; }
+        public ExternalPharmacy ExternalPharmacy { get; set; } = null!;
+        public string DocumentType { get; set; } = string.Empty; // License, GST, Proof
+        public string FilePath { get; set; } = string.Empty;
+        public DateTime UploadedAt { get; set; } = DateTime.UtcNow;
+    }
+
+    /// <summary>
+    /// Patient-ஓட preferred external pharmacy save பண்ண
+    /// </summary>
+    public class PatientPreferredPharmacy
+    {
+        public int Id { get; set; }
+        public int PatientId { get; set; }
+        public Patient Patient { get; set; } = null!;
+        public int ExternalPharmacyId { get; set; }
+        public ExternalPharmacy ExternalPharmacy { get; set; } = null!;
+        public DateTime SetAt { get; set; } = DateTime.UtcNow;
+    }
+
+    /// <summary>
+    /// Prescription எந்த pharmacy-க்கு route ஆச்சுன்னு track பண்ண
+    /// </summary>
+    public class PrescriptionRoute
+    {
+        public int Id { get; set; }
+        public int PrescriptionId { get; set; }
+        public Prescription Prescription { get; set; } = null!;
+
+        // Internal or External
+        public string PharmacyType { get; set; } = string.Empty; // "Internal" | "External"
+        public int? InternalPharmacyId { get; set; }
+        public InternalPharmacy? InternalPharmacy { get; set; }
+        public int? ExternalPharmacyId { get; set; }
+        public ExternalPharmacy? ExternalPharmacy { get; set; }
+
+        public string Status { get; set; } = "Pending";
+        // Pending | Accepted | Rejected | Filled | Cancelled
+
+        public DateTime RoutedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? RespondedAt { get; set; }
+    }
+
+    public class PharmacyQuotation
+    {
+        public int Id { get; set; }
+
+        public int PrescriptionRouteId { get; set; }
+        public PrescriptionRoute PrescriptionRoute { get; set; } = null!;
+
+        public int ExternalPharmacyId { get; set; }
+        public ExternalPharmacy ExternalPharmacy { get; set; } = null!;
+
+        public decimal TotalAmount { get; set; }
+        public bool OffersDelivery { get; set; } = false;
+        public decimal? DeliveryCharge { get; set; }
+        public string? Notes { get; set; }
+
+        public string Status { get; set; } = "Pending";
+        // Pending | Selected | Rejected
+
+        public DateTime QuotedAt { get; set; } = DateTime.UtcNow;
+
+        public ICollection<PharmacyQuotationItem> Items { get; set; }
+            = new List<PharmacyQuotationItem>();
+    }
+
+    public class PharmacyQuotationItem
+    {
+        public int Id { get; set; }
+
+        public int QuotationId { get; set; }
+        public PharmacyQuotation Quotation { get; set; } = null!;
+
+        public int MedicineId { get; set; }
+        public Medicine Medicine { get; set; } = null!;
+
+        public bool IsAvailable { get; set; } = true;
+        public decimal PricePerUnit { get; set; }
+        public int QuantityAvailable { get; set; }
+    }
+
+    public class PharmacyOrder
+    {
+        public int Id { get; set; }
+
+        public int QuotationId { get; set; }
+        public PharmacyQuotation Quotation { get; set; } = null!;
+
+        public int PatientId { get; set; }
+        public Patient Patient { get; set; } = null!;
+
+        // Delivery or Pickup
+        public string OrderType { get; set; } = "Pickup";
+        // Pickup | Delivery
+
+        public string? DeliveryAddress { get; set; }
+
+        // Payment
+        public string PaymentMode { get; set; } = "DirectToPharmacy";
+        // DirectToPharmacy | App
+
+        public string PaymentStatus { get; set; } = "Pending";
+        // Pending | Paid
+
+        // Order Status
+        public string Status { get; set; } = "Confirmed";
+        // Confirmed | Preparing | ReadyForPickup | OutForDelivery | Delivered | Collected
+
+        public decimal TotalAmount { get; set; }
+        public decimal? DeliveryCharge { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? DeliveredAt { get; set; }
+
+        public ICollection<PharmacyOrderStatusLog> StatusLogs { get; set; }
+            = new List<PharmacyOrderStatusLog>();
+    }
+
+    public class PharmacyOrderStatusLog
+    {
+        public int Id { get; set; }
+
+        public int PharmacyOrderId { get; set; }
+        public PharmacyOrder PharmacyOrder { get; set; } = null!;
+
+        public string Status { get; set; } = string.Empty;
+        public string? Remarks { get; set; }
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+    }
+
+    public class PharmacyRating
+    {
+        public int Id { get; set; }
+
+        public int ExternalPharmacyId { get; set; }
+        public ExternalPharmacy ExternalPharmacy { get; set; } = null!;
+
+        public int PatientId { get; set; }
+        public Patient Patient { get; set; } = null!;
+
+        public int PharmacyOrderId { get; set; }
+        public PharmacyOrder PharmacyOrder { get; set; } = null!;
+
+        public int Rating { get; set; } // 1 - 5
+        public string? Review { get; set; }
+
+        public DateTime RatedAt { get; set; } = DateTime.UtcNow;
+    }
+
+
+    public class NmcDoctorRecord
+    {
+        public int Id { get; set; }
+        public string RegistrationNumber { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string FatherOrHusbandName { get; set; } = string.Empty;
+        public DateOnly Dob { get; set; }
+        public DateOnly DateOfRegistration { get; set; }
+        public string StateCouncil { get; set; } = string.Empty;
+        public string Degree { get; set; } = string.Empty;
+        public int GraduationYear { get; set; }
+        public string University { get; set; } = string.Empty;
+        public string PermanentAddress { get; set; } = string.Empty;
+    }
+
+
+    // =========================
+    // DOCTOR SERVICE LOCATION
+    // =========================
+    public class DoctorServiceLocation
+    {
+        public int Id { get; set; }
+
+        public int DoctorId { get; set; }
+        public Doctor Doctor { get; set; } = null!;
+
+        public int HospitalId { get; set; }
+        public Hospital Hospital { get; set; } = null!;
+
+        public int SpecialityId { get; set; }
+        public Speciality Speciality { get; set; } = null!;
+
+        public bool IsActive { get; set; } = true;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public ICollection<DoctorServiceSlot> Slots { get; set; }
+            = new List<DoctorServiceSlot>();
+    }
+
+    // =========================
+    // DOCTOR SERVICE SLOT
+    // =========================
+    public class DoctorServiceSlot
+    {
+        public int Id { get; set; }
+
+        public int DoctorServiceLocationId { get; set; }
+        public DoctorServiceLocation DoctorServiceLocation { get; set; } = null!;
+
+        public string TimeSlot { get; set; } = string.Empty;
+        // "08:00-11:00" | "11:00-14:00" | "14:00-17:00"
+    }
 }

@@ -14,10 +14,12 @@ namespace HospitalProject.Controllers
     public class HospitalController : ControllerBase
     {
         private readonly HospitalService _service;
+        private readonly InternalPharmacyService _pharmacyService;
 
-        public HospitalController(HospitalService service)
+        public HospitalController(HospitalService service, InternalPharmacyService pharmacyService)
         {
             _service = service;
+            _pharmacyService = pharmacyService;
         }
 
         // =========================
@@ -79,6 +81,34 @@ namespace HospitalProject.Controllers
                 Success = true,
                 Message = "Hospital doctor registered. Pending verification"
             });
+        }
+
+
+        // =====================================================================
+        // 🔐 PRODUCT ADMIN REGISTER (One time only)
+        // POST /api/hospital/register/product-admin
+        // =====================================================================
+        [HttpPost("register/product-admin")]
+        public async Task<IActionResult> RegisterProductAdmin(
+            [FromBody] ProductAdminRegisterDto dto)
+        {
+            try
+            {
+                await _service.RegisterProductAdmin(dto);
+                return Ok(new ApiResponse
+                {
+                    Success = true,
+                    Message = "ProductAdmin registered successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
         }
 
 
@@ -153,6 +183,18 @@ namespace HospitalProject.Controllers
             {
                 Success = true,
                 Message = "Admin registered"
+            });
+        }
+
+        //[Authorize(Roles = "Admin")]
+        [HttpPost("speciality/add")]
+        public async Task<IActionResult> AddSpeciality(SpecialityCreateDto dto)
+        {
+            await _service.AddSpeciality(dto);
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Speciality added successfully"
             });
         }
 
@@ -377,42 +419,66 @@ namespace HospitalProject.Controllers
 
 
 
+        // =====================================================================
+        // 🏥 PRODUCT ADMIN — Bulk Hospital Create
+        // POST /api/hospital/bulk-create
+        // =====================================================================
+        //[Authorize(Roles = "ProductAdmin")]
+        [HttpPost("bulk-create")]
+        public async Task<IActionResult> BulkCreateHospitals(
+            [FromBody] BulkHospitalCreateDto dto)
+        {
+            try
+            {
+                var result = await _service.BulkCreateHospitals(dto);
+                return Ok(new ApiResponse
+                {
+                    Success = true,
+                    Message = result
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
+        }
 
-        // =========================
-        // PUBLIC APIs (NO AUTH)
-        // =========================
-
-        //[HttpGet("public/hospitals")]
-        //public async Task<IActionResult> GetAllHospitals()
-        //{
-        //    return Ok(await _service.GetAllHospitals());
-        //}
-
-        //[HttpGet("public/hospital/{hospitalId}/doctors")]
-        //public async Task<IActionResult> GetDoctorsByHospital(int hospitalId)
-        //{
-        //    return Ok(await _service.GetDoctorsByHospital(hospitalId));
-        //}
-
-        //[HttpGet("public/specialities")]
-        //public async Task<IActionResult> GetSpecialities()
-        //{
-        //    return Ok(await _service.GetSpecialities());
-        //}
-
-
-
-        [HttpGet("public/hospitals")]
+        // =====================================================================
+        // 🌐 PUBLIC — Get All Hospitals
+        // GET /api/hospital/all-hospitals
+        // =====================================================================
+        [HttpGet("all-hospitals")]
         public async Task<IActionResult> GetAllHospitals()
         {
-            var hospitals = await _service.GetAllHospitals();
-
-            return Ok(new ApiResponse
+            try
             {
-                Success = true,
-                Data = hospitals
-            });
+                var result = await _service.GetAllHospitals();
+                return Ok(new ApiResponse
+                {
+                    Success = true,
+                    Data = result
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
         }
+
+
+
+
+
+
+
 
         [HttpGet("public/hospital/{hospitalId}/doctors")]
         public async Task<IActionResult> GetDoctorsByHospital(int hospitalId)
@@ -614,21 +680,31 @@ namespace HospitalProject.Controllers
         //********************************
 
         [Authorize(Roles = "Doctor")]
-        [HttpPut("doctor/profile")]
+        [HttpPatch("doctor/profile")]
         public async Task<IActionResult> UpdateDoctorProfile(
-        DoctorProfileCreateDto dto)
+     [FromBody] DoctorProfileUpdateDto dto)
         {
-            int userId = int.Parse(
-                User.FindFirstValue(ClaimTypes.NameIdentifier)!
-            );
-
-            await _service.UpdateDoctorProfile(userId, dto);
-
-            return Ok(new ApiResponse
+            try
             {
-                Success = true,
-                Message = "Doctor profile updated successfully"
-            });
+                var userId = int.Parse(
+                    User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+                await _service.UpdateDoctorProfile(userId, dto);
+
+                return Ok(new ApiResponse
+                {
+                    Success = true,
+                    Message = "Doctor profile updated"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
         }
 
 
@@ -817,8 +893,19 @@ namespace HospitalProject.Controllers
             return Ok(new ApiResponse
             {
                 Success = true,
-                Message = "Consultation saved",
-                
+                Message = "Consultation and Prescription saved",
+            });
+        }
+
+        [Authorize(Roles = "Doctor")]
+        [HttpGet("doctor/pharmacy/search")]
+        public async Task<IActionResult> SearchPharmacyMedicines([FromQuery] string? query)
+        {
+            var result = await _pharmacyService.GetAvailableMedicines(query);
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Data = result
             });
         }
 
@@ -1375,6 +1462,35 @@ namespace HospitalProject.Controllers
                 Message = "Pay online and get Temptoken",
                 Data = result   // 👈 direct service result
             });
+        }
+
+
+
+        // =====================================================================
+        // 👨‍⚕️ DOCTOR — NMC Auto Fill
+        // GET /api/hospital/doctor/nmc-lookup/{registrationNumber}
+        // =====================================================================
+        [Authorize(Roles = "Doctor")]
+        [HttpGet("doctor/nmc-lookup/{registrationNumber}")]
+        public async Task<IActionResult> NmcLookup(string registrationNumber)
+        {
+            try
+            {
+                var result = await _service.GetNmcRecord(registrationNumber);
+                return Ok(new ApiResponse
+                {
+                    Success = true,
+                    Data = result
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
         }
 
 

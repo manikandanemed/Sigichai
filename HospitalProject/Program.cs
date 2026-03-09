@@ -27,6 +27,14 @@ builder.Services.AddScoped<ITwilioService, TwilioService>();
 //builder.Services.AddHostedService<NoShowBackgroundService>();
 //builder.Services.AddHostedService<AutoNoShowService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<InternalPharmacyService>();
+builder.Services.AddScoped<PrescriptionQrService>();
+builder.Services.AddScoped<ExternalPharmacyService>();
+builder.Services.AddScoped<PrescriptionRoutingService>();
+builder.Services.AddScoped<PharmacyQuotationService>();
+builder.Services.AddScoped<PharmacyOrderService>();
+builder.Services.AddScoped<PharmacyRatingService>();
+builder.Services.AddScoped<DoctorServiceLocationService>();
 
 
 // =========================

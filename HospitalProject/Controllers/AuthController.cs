@@ -69,7 +69,8 @@ namespace HospitalProject.Controllers
                     adminId = result.AdminId,
                     doctorId = result.DoctorId,
                     patientId = result.PatientId,
-                    medicalRepId = result.MedicalRepId   // 🔥 ADD THIS
+                    medicalRepId = result.MedicalRepId,   // 🔥 ADD THIS
+                    internalPharmacyStaffId = result.InternalPharmacyStaffId // 🔥 ADDED
                 }
             });
         }

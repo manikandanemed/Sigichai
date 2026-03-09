@@ -66,6 +66,9 @@ namespace HospitalProject.Migrations
                     b.Property<int>("DoctorId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("DoctorServiceLocationId")
+                        .HasColumnType("integer");
+
                     b.Property<int?>("FamilyMemberId")
                         .HasColumnType("integer");
 
@@ -131,6 +134,8 @@ namespace HospitalProject.Migrations
 
                     b.HasIndex("DoctorId");
 
+                    b.HasIndex("DoctorServiceLocationId");
+
                     b.HasIndex("FamilyMemberId");
 
                     b.HasIndex("HospitalId");
@@ -138,6 +143,73 @@ namespace HospitalProject.Migrations
                     b.HasIndex("PatientId");
 
                     b.ToTable("Appointments");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.DispenseItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("BatchNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("DispenseRecordId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MedicineId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("PricePerUnit")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<int>("QuantityDispensed")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DispenseRecordId");
+
+                    b.HasIndex("MedicineId");
+
+                    b.ToTable("DispenseItems");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.DispenseRecord", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DispensedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("PharmacistId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PrescriptionId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Remarks")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PharmacistId");
+
+                    b.HasIndex("PrescriptionId");
+
+                    b.ToTable("DispenseRecords");
                 });
 
             modelBuilder.Entity("HospitalProject.Models.Doctor", b =>
@@ -166,6 +238,9 @@ namespace HospitalProject.Migrations
                     b.Property<double?>("Longitude")
                         .HasColumnType("double precision");
 
+                    b.Property<int?>("SpecialityId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Specialization")
                         .IsRequired()
                         .HasColumnType("text");
@@ -176,6 +251,8 @@ namespace HospitalProject.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("HospitalId");
+
+                    b.HasIndex("SpecialityId");
 
                     b.HasIndex("UserId")
                         .IsUnique();
@@ -197,6 +274,9 @@ namespace HospitalProject.Migrations
                     b.Property<int>("DoctorId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("HospitalId")
+                        .HasColumnType("integer");
+
                     b.Property<bool>("IsClosed")
                         .HasColumnType("boolean");
 
@@ -207,6 +287,8 @@ namespace HospitalProject.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("DoctorId");
+
+                    b.HasIndex("HospitalId");
 
                     b.ToTable("DoctorAvailabilities");
                 });
@@ -248,8 +330,8 @@ namespace HospitalProject.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal>("ConsultationFee")
-                        .HasColumnType("numeric");
+                    b.Property<DateOnly>("DateOfRegistration")
+                        .HasColumnType("date");
 
                     b.Property<string>("Degree")
                         .IsRequired()
@@ -261,25 +343,18 @@ namespace HospitalProject.Migrations
                     b.Property<int>("DoctorId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Experience")
-                        .HasColumnType("integer");
+                    b.Property<string>("FatherOrHusbandName")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("GraduationYear")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Languages")
+                    b.Property<string>("PermanentAddress")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("LicenseNumber")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("LicenseType")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("PracticeMode")
+                    b.Property<string>("RegistrationNumber")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -297,6 +372,62 @@ namespace HospitalProject.Migrations
                         .IsUnique();
 
                     b.ToTable("DoctorProfiles");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.DoctorServiceLocation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("DoctorId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("HospitalId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("SpecialityId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DoctorId");
+
+                    b.HasIndex("HospitalId");
+
+                    b.HasIndex("SpecialityId");
+
+                    b.ToTable("DoctorServiceLocations");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.DoctorServiceSlot", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DoctorServiceLocationId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("TimeSlot")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DoctorServiceLocationId");
+
+                    b.ToTable("DoctorServiceSlots");
                 });
 
             modelBuilder.Entity("HospitalProject.Models.DoctorStaff", b =>
@@ -366,6 +497,136 @@ namespace HospitalProject.Migrations
                     b.ToTable("DoctorVerifications");
                 });
 
+            modelBuilder.Entity("HospitalProject.Models.DrugInteraction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("MedicineIdA")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MedicineIdB")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Severity")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MedicineIdA");
+
+                    b.HasIndex("MedicineIdB");
+
+                    b.ToTable("DrugInteractions");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.ExternalPharmacy", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<double>("AverageRating")
+                        .HasPrecision(3, 2)
+                        .HasColumnType("double precision");
+
+                    b.Property<decimal?>("DeliveryRadius")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<double>("Latitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("LicenseNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<double>("Longitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("MobileNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("OffersHomeDelivery")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("OwnerName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PharmacyName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("RegisteredAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("RejectionReason")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("TotalRatings")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ExternalPharmacies");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.ExternalPharmacyDocument", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DocumentType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("ExternalPharmacyId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UploadedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExternalPharmacyId");
+
+                    b.ToTable("ExternalPharmacyDocuments");
+                });
+
             modelBuilder.Entity("HospitalProject.Models.FamilyMember", b =>
                 {
                     b.Property<int>("Id")
@@ -433,6 +694,10 @@ namespace HospitalProject.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Area")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -441,9 +706,125 @@ namespace HospitalProject.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.ToTable("Hospitals");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.InternalPharmacy", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("HospitalId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("PharmacyName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HospitalId");
+
+                    b.ToTable("InternalPharmacies");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.InternalPharmacyInventory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Barcode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("BatchNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("InternalPharmacyId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MedicineId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Price")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InternalPharmacyId");
+
+                    b.HasIndex("MedicineId");
+
+                    b.ToTable("InternalPharmacyInventories");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.InternalPharmacyStaffRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("MobileNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("InternalPharmacyStaffRequests");
                 });
 
             modelBuilder.Entity("HospitalProject.Models.MedicalRep", b =>
@@ -568,6 +949,91 @@ namespace HospitalProject.Migrations
                     b.ToTable("MedicalRepSlots");
                 });
 
+            modelBuilder.Entity("HospitalProject.Models.Medicine", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("BrandName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("GenericName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("ReorderLevel")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Unit")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Medicines");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.NmcDoctorRecord", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateOnly>("DateOfRegistration")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Degree")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateOnly>("Dob")
+                        .HasColumnType("date");
+
+                    b.Property<string>("FatherOrHusbandName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("GraduationYear")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PermanentAddress")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("RegistrationNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("StateCouncil")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("University")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("NmcDoctorRecords");
+                });
+
             modelBuilder.Entity("HospitalProject.Models.OtpStore", b =>
                 {
                     b.Property<int>("Id")
@@ -659,6 +1125,32 @@ namespace HospitalProject.Migrations
                     b.ToTable("Patients");
                 });
 
+            modelBuilder.Entity("HospitalProject.Models.PatientPreferredPharmacy", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ExternalPharmacyId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PatientId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("SetAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExternalPharmacyId");
+
+                    b.HasIndex("PatientId");
+
+                    b.ToTable("PatientPreferredPharmacies");
+                });
+
             modelBuilder.Entity("HospitalProject.Models.PaymentLog", b =>
                 {
                     b.Property<int>("Id")
@@ -696,7 +1188,468 @@ namespace HospitalProject.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AppointmentId");
+
                     b.ToTable("PaymentLogs");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.PharmacyNotification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("PatientId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PatientId");
+
+                    b.ToTable("PharmacyNotifications");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.PharmacyOrder", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DeliveredAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DeliveryAddress")
+                        .HasColumnType("text");
+
+                    b.Property<decimal?>("DeliveryCharge")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<string>("OrderType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("PatientId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("PaymentMode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PaymentStatus")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("QuotationId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PatientId");
+
+                    b.HasIndex("QuotationId");
+
+                    b.ToTable("PharmacyOrders");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.PharmacyOrderStatusLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("PharmacyOrderId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Remarks")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PharmacyOrderId");
+
+                    b.ToTable("PharmacyOrderStatusLogs");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.PharmacyQuotation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal?>("DeliveryCharge")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<int>("ExternalPharmacyId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("OffersDelivery")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("PrescriptionRouteId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("QuotedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExternalPharmacyId");
+
+                    b.HasIndex("PrescriptionRouteId");
+
+                    b.ToTable("PharmacyQuotations");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.PharmacyQuotationItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsAvailable")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("MedicineId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("PricePerUnit")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<int>("QuantityAvailable")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("QuotationId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MedicineId");
+
+                    b.HasIndex("QuotationId");
+
+                    b.ToTable("PharmacyQuotationItems");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.PharmacyRating", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ExternalPharmacyId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PatientId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PharmacyOrderId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("RatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Review")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExternalPharmacyId");
+
+                    b.HasIndex("PatientId");
+
+                    b.HasIndex("PharmacyOrderId");
+
+                    b.ToTable("PharmacyRatings");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.Prescription", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AppointmentId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("DoctorId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("DoctorNotes")
+                        .HasColumnType("text");
+
+                    b.Property<int>("MaxRefills")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PatientId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("QRData")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("ValidityDays")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppointmentId");
+
+                    b.HasIndex("DoctorId");
+
+                    b.HasIndex("PatientId");
+
+                    b.ToTable("Prescriptions");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.PrescriptionItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Dosage")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Duration")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("GenericSubstitutionAllowed")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Instructions")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("MedicineId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PrescriptionId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("QuantityDispensed")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("QuantityPrescribed")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MedicineId");
+
+                    b.HasIndex("PrescriptionId");
+
+                    b.ToTable("PrescriptionItems");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.PrescriptionQrCode", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("GeneratedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsFullyUsed")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("MaxRefills")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PrescriptionId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("QrImageBase64")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("QrPayload")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("UsedRefills")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("ValidUntil")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PrescriptionId");
+
+                    b.ToTable("PrescriptionQrCodes");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.PrescriptionRoute", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("ExternalPharmacyId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("InternalPharmacyId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("PharmacyType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("PrescriptionId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("RespondedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("RoutedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExternalPharmacyId");
+
+                    b.HasIndex("InternalPharmacyId");
+
+                    b.HasIndex("PrescriptionId");
+
+                    b.ToTable("PrescriptionRoutes");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.QrScanLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("InvalidReason")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PharmacyName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("PrescriptionQrCodeId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("RefillNumber")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("ScannedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("ScannedByUserId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("WasValid")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PrescriptionQrCodeId");
+
+                    b.HasIndex("ScannedByUserId");
+
+                    b.ToTable("QrScanLogs");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.Speciality", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Specialities");
                 });
 
             modelBuilder.Entity("HospitalProject.Models.User", b =>
@@ -765,6 +1718,11 @@ namespace HospitalProject.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("HospitalProject.Models.DoctorServiceLocation", "DoctorServiceLocation")
+                        .WithMany()
+                        .HasForeignKey("DoctorServiceLocationId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("HospitalProject.Models.FamilyMember", "FamilyMember")
                         .WithMany()
                         .HasForeignKey("FamilyMemberId")
@@ -783,9 +1741,49 @@ namespace HospitalProject.Migrations
 
                     b.Navigation("Doctor");
 
+                    b.Navigation("DoctorServiceLocation");
+
                     b.Navigation("FamilyMember");
 
                     b.Navigation("Patient");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.DispenseItem", b =>
+                {
+                    b.HasOne("HospitalProject.Models.DispenseRecord", "DispenseRecord")
+                        .WithMany("Items")
+                        .HasForeignKey("DispenseRecordId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HospitalProject.Models.Medicine", "Medicine")
+                        .WithMany()
+                        .HasForeignKey("MedicineId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("DispenseRecord");
+
+                    b.Navigation("Medicine");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.DispenseRecord", b =>
+                {
+                    b.HasOne("HospitalProject.Models.User", "Pharmacist")
+                        .WithMany()
+                        .HasForeignKey("PharmacistId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HospitalProject.Models.Prescription", "Prescription")
+                        .WithMany()
+                        .HasForeignKey("PrescriptionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Pharmacist");
+
+                    b.Navigation("Prescription");
                 });
 
             modelBuilder.Entity("HospitalProject.Models.Doctor", b =>
@@ -795,6 +1793,11 @@ namespace HospitalProject.Migrations
                         .HasForeignKey("HospitalId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("HospitalProject.Models.Speciality", "Speciality")
+                        .WithMany()
+                        .HasForeignKey("SpecialityId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("HospitalProject.Models.User", "User")
                         .WithOne("Doctor")
                         .HasForeignKey("HospitalProject.Models.Doctor", "UserId")
@@ -802,6 +1805,8 @@ namespace HospitalProject.Migrations
                         .IsRequired();
 
                     b.Navigation("Hospital");
+
+                    b.Navigation("Speciality");
 
                     b.Navigation("User");
                 });
@@ -814,7 +1819,14 @@ namespace HospitalProject.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("HospitalProject.Models.Hospital", "Hospital")
+                        .WithMany()
+                        .HasForeignKey("HospitalId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.Navigation("Doctor");
+
+                    b.Navigation("Hospital");
                 });
 
             modelBuilder.Entity("HospitalProject.Models.DoctorDocument", b =>
@@ -837,6 +1849,44 @@ namespace HospitalProject.Migrations
                         .IsRequired();
 
                     b.Navigation("Doctor");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.DoctorServiceLocation", b =>
+                {
+                    b.HasOne("HospitalProject.Models.Doctor", "Doctor")
+                        .WithMany()
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HospitalProject.Models.Hospital", "Hospital")
+                        .WithMany()
+                        .HasForeignKey("HospitalId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("HospitalProject.Models.Speciality", "Speciality")
+                        .WithMany()
+                        .HasForeignKey("SpecialityId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Doctor");
+
+                    b.Navigation("Hospital");
+
+                    b.Navigation("Speciality");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.DoctorServiceSlot", b =>
+                {
+                    b.HasOne("HospitalProject.Models.DoctorServiceLocation", "DoctorServiceLocation")
+                        .WithMany("Slots")
+                        .HasForeignKey("DoctorServiceLocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DoctorServiceLocation");
                 });
 
             modelBuilder.Entity("HospitalProject.Models.DoctorStaff", b =>
@@ -869,6 +1919,36 @@ namespace HospitalProject.Migrations
                     b.Navigation("Doctor");
                 });
 
+            modelBuilder.Entity("HospitalProject.Models.DrugInteraction", b =>
+                {
+                    b.HasOne("HospitalProject.Models.Medicine", "MedicineA")
+                        .WithMany()
+                        .HasForeignKey("MedicineIdA")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("HospitalProject.Models.Medicine", "MedicineB")
+                        .WithMany()
+                        .HasForeignKey("MedicineIdB")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("MedicineA");
+
+                    b.Navigation("MedicineB");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.ExternalPharmacyDocument", b =>
+                {
+                    b.HasOne("HospitalProject.Models.ExternalPharmacy", "ExternalPharmacy")
+                        .WithMany()
+                        .HasForeignKey("ExternalPharmacyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ExternalPharmacy");
+                });
+
             modelBuilder.Entity("HospitalProject.Models.FamilyMember", b =>
                 {
                     b.HasOne("HospitalProject.Models.Patient", "Patient")
@@ -878,6 +1958,36 @@ namespace HospitalProject.Migrations
                         .IsRequired();
 
                     b.Navigation("Patient");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.InternalPharmacy", b =>
+                {
+                    b.HasOne("HospitalProject.Models.Hospital", "Hospital")
+                        .WithMany()
+                        .HasForeignKey("HospitalId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Hospital");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.InternalPharmacyInventory", b =>
+                {
+                    b.HasOne("HospitalProject.Models.InternalPharmacy", "InternalPharmacy")
+                        .WithMany()
+                        .HasForeignKey("InternalPharmacyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HospitalProject.Models.Medicine", "Medicine")
+                        .WithMany()
+                        .HasForeignKey("MedicineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("InternalPharmacy");
+
+                    b.Navigation("Medicine");
                 });
 
             modelBuilder.Entity("HospitalProject.Models.MedicalRep", b =>
@@ -932,14 +2042,280 @@ namespace HospitalProject.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("HospitalProject.Models.PatientPreferredPharmacy", b =>
+                {
+                    b.HasOne("HospitalProject.Models.ExternalPharmacy", "ExternalPharmacy")
+                        .WithMany()
+                        .HasForeignKey("ExternalPharmacyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HospitalProject.Models.Patient", "Patient")
+                        .WithMany()
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ExternalPharmacy");
+
+                    b.Navigation("Patient");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.PaymentLog", b =>
+                {
+                    b.HasOne("HospitalProject.Models.Appointment", "Appointment")
+                        .WithMany("PaymentLogs")
+                        .HasForeignKey("AppointmentId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Appointment");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.PharmacyNotification", b =>
+                {
+                    b.HasOne("HospitalProject.Models.Patient", "Patient")
+                        .WithMany()
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Patient");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.PharmacyOrder", b =>
+                {
+                    b.HasOne("HospitalProject.Models.Patient", "Patient")
+                        .WithMany()
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("HospitalProject.Models.PharmacyQuotation", "Quotation")
+                        .WithMany()
+                        .HasForeignKey("QuotationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Patient");
+
+                    b.Navigation("Quotation");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.PharmacyOrderStatusLog", b =>
+                {
+                    b.HasOne("HospitalProject.Models.PharmacyOrder", "PharmacyOrder")
+                        .WithMany("StatusLogs")
+                        .HasForeignKey("PharmacyOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PharmacyOrder");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.PharmacyQuotation", b =>
+                {
+                    b.HasOne("HospitalProject.Models.ExternalPharmacy", "ExternalPharmacy")
+                        .WithMany()
+                        .HasForeignKey("ExternalPharmacyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("HospitalProject.Models.PrescriptionRoute", "PrescriptionRoute")
+                        .WithMany()
+                        .HasForeignKey("PrescriptionRouteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ExternalPharmacy");
+
+                    b.Navigation("PrescriptionRoute");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.PharmacyQuotationItem", b =>
+                {
+                    b.HasOne("HospitalProject.Models.Medicine", "Medicine")
+                        .WithMany()
+                        .HasForeignKey("MedicineId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("HospitalProject.Models.PharmacyQuotation", "Quotation")
+                        .WithMany("Items")
+                        .HasForeignKey("QuotationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Medicine");
+
+                    b.Navigation("Quotation");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.PharmacyRating", b =>
+                {
+                    b.HasOne("HospitalProject.Models.ExternalPharmacy", "ExternalPharmacy")
+                        .WithMany()
+                        .HasForeignKey("ExternalPharmacyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HospitalProject.Models.Patient", "Patient")
+                        .WithMany()
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("HospitalProject.Models.PharmacyOrder", "PharmacyOrder")
+                        .WithMany()
+                        .HasForeignKey("PharmacyOrderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ExternalPharmacy");
+
+                    b.Navigation("Patient");
+
+                    b.Navigation("PharmacyOrder");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.Prescription", b =>
+                {
+                    b.HasOne("HospitalProject.Models.Appointment", "Appointment")
+                        .WithMany()
+                        .HasForeignKey("AppointmentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("HospitalProject.Models.Doctor", "Doctor")
+                        .WithMany()
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("HospitalProject.Models.Patient", "Patient")
+                        .WithMany()
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Appointment");
+
+                    b.Navigation("Doctor");
+
+                    b.Navigation("Patient");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.PrescriptionItem", b =>
+                {
+                    b.HasOne("HospitalProject.Models.Medicine", "Medicine")
+                        .WithMany()
+                        .HasForeignKey("MedicineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HospitalProject.Models.Prescription", "Prescription")
+                        .WithMany("Items")
+                        .HasForeignKey("PrescriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Medicine");
+
+                    b.Navigation("Prescription");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.PrescriptionQrCode", b =>
+                {
+                    b.HasOne("HospitalProject.Models.Prescription", "Prescription")
+                        .WithMany()
+                        .HasForeignKey("PrescriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Prescription");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.PrescriptionRoute", b =>
+                {
+                    b.HasOne("HospitalProject.Models.ExternalPharmacy", "ExternalPharmacy")
+                        .WithMany()
+                        .HasForeignKey("ExternalPharmacyId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("HospitalProject.Models.InternalPharmacy", "InternalPharmacy")
+                        .WithMany()
+                        .HasForeignKey("InternalPharmacyId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("HospitalProject.Models.Prescription", "Prescription")
+                        .WithMany()
+                        .HasForeignKey("PrescriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ExternalPharmacy");
+
+                    b.Navigation("InternalPharmacy");
+
+                    b.Navigation("Prescription");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.QrScanLog", b =>
+                {
+                    b.HasOne("HospitalProject.Models.PrescriptionQrCode", "PrescriptionQrCode")
+                        .WithMany()
+                        .HasForeignKey("PrescriptionQrCodeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HospitalProject.Models.User", "ScannedByUser")
+                        .WithMany()
+                        .HasForeignKey("ScannedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("PrescriptionQrCode");
+
+                    b.Navigation("ScannedByUser");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.Appointment", b =>
+                {
+                    b.Navigation("PaymentLogs");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.DispenseRecord", b =>
+                {
+                    b.Navigation("Items");
+                });
+
             modelBuilder.Entity("HospitalProject.Models.Doctor", b =>
                 {
                     b.Navigation("Availabilities");
                 });
 
+            modelBuilder.Entity("HospitalProject.Models.DoctorServiceLocation", b =>
+                {
+                    b.Navigation("Slots");
+                });
+
             modelBuilder.Entity("HospitalProject.Models.Patient", b =>
                 {
                     b.Navigation("FamilyMembers");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.PharmacyOrder", b =>
+                {
+                    b.Navigation("StatusLogs");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.PharmacyQuotation", b =>
+                {
+                    b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.Prescription", b =>
+                {
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("HospitalProject.Models.User", b =>

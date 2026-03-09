@@ -1,4 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
@@ -31,6 +32,14 @@ namespace HospitalProject.Services
         private readonly IRepository<MedicalRepAppointment> _medicalRepApps;
         private readonly IRepository<PaymentLog> _paymentlog;
         private readonly IPaymentService _paymentService;
+        private readonly IRepository<InternalPharmacyStaffRequest> _staffRequest;
+        private readonly IRepository<Prescription> _prescription;
+        private readonly IRepository<Speciality> _speciality;
+        private readonly IRepository<NmcDoctorRecord> _nmcRecord;
+        private readonly PrescriptionQrService _qrService;
+        private readonly PrescriptionRoutingService _routingService;
+        private readonly IRepository<DoctorServiceLocation> _serviceLocation;
+
 
 
 
@@ -56,6 +65,13 @@ namespace HospitalProject.Services
             IRepository<PaymentLog> paymentlog,
             IPaymentService paymentService, // ✅ ADD THIS
             ITwilioService twilio,
+            IRepository<InternalPharmacyStaffRequest> staffRequest,
+            IRepository<Prescription> prescription,
+            IRepository<Speciality> speciality,
+            IRepository<NmcDoctorRecord> nmcRecord,
+            IRepository<DoctorServiceLocation> serviceLocation,
+            PrescriptionQrService qrService,
+            PrescriptionRoutingService routingService,
             IConfiguration config)
         {
             _u = u; _p = p; _d = d; _admin = admin;
@@ -69,6 +85,13 @@ namespace HospitalProject.Services
             _twilio = twilio; _config = config;
             _paymentlog = paymentlog;
             _paymentService = paymentService; // ✅ IMPORTANT
+            _staffRequest = staffRequest;
+            _prescription = prescription;
+            _speciality = speciality;
+            _nmcRecord = nmcRecord;
+            _qrService = qrService;
+            _serviceLocation = serviceLocation;
+            _routingService = routingService;
         }
 
 
@@ -154,6 +177,7 @@ namespace HospitalProject.Services
             {
                 UserId = user.Id,
                 Specialization = d.Specialization,
+                SpecialityId = d.SpecialityId,
                 HospitalId = d.HospitalId,
                 Latitude = d.Lat,
                 Longitude = d.Lon,
@@ -163,10 +187,31 @@ namespace HospitalProject.Services
             await _d.SaveAsync();
         }
 
+        public async Task RegisterProductAdmin(ProductAdminRegisterDto dto)
+        {
+            // Duplicate check
+            if (await _u.GetAsync(x => x.MobileNumber == dto.MobileNumber) != null)
+                throw new Exception("Mobile number already exists");
+
+            // Only ONE ProductAdmin allowed
+            if (await _u.GetAsync(x => x.Role == "ProductAdmin") != null)
+                throw new Exception("ProductAdmin already exists");
+
+            var user = new User
+            {
+                Name = dto.Name,
+                MobileNumber = dto.MobileNumber,
+                Password = BCrypt.Net.BCrypt.HashPassword(dto.Password),
+                Role = "ProductAdmin"
+            };
+
+            await _u.AddAsync(user);
+            await _u.SaveAsync();
+        }
 
 
-        public async Task RegisterIndependentDoctor(
-    IndependentDoctorRegDto d)
+
+        public async Task RegisterIndependentDoctor(IndependentDoctorRegDto d)
         {
             if (await _u.GetAsync(x => x.MobileNumber == d.Mobile) != null)
                 throw new Exception("Mobile already exists");
@@ -176,9 +221,7 @@ namespace HospitalProject.Services
                 Name = d.Name,
                 MobileNumber = d.Mobile,
                 Password = BCrypt.Net.BCrypt.HashPassword(d.Password),
-                Role = "Doctor",
-                Latitude = d.Lat,
-                Longitude = d.Lon
+                Role = "Doctor"
             };
 
             await _u.AddAsync(user);
@@ -187,10 +230,8 @@ namespace HospitalProject.Services
             await _d.AddAsync(new Doctor
             {
                 UserId = user.Id,
-                Specialization = d.Specialization,
-                HospitalId = null,      // 🔥 NO hospital
-                Latitude = d.Lat,
-                Longitude = d.Lon,
+                SpecialityId = d.SpecialityId,
+                HospitalId = null,
                 IsVerified = false
             });
 
@@ -279,6 +320,14 @@ namespace HospitalProject.Services
 
         public async Task<bool> Login(LoginDto d)
         {
+
+            // 🔴 1️⃣ Check if pharmacy staff request is pending
+            var pendingRequest = await _staffRequest.GetAsync(x =>
+                x.MobileNumber == d.MobileNumber &&
+                x.Status == "Pending");
+
+            if (pendingRequest != null)
+                throw new Exception("Account not approved by admin");
             var user = await _u.Query()
                 .Include(x => x.Admin)
                 .Include(x => x.Doctor)
@@ -480,16 +529,70 @@ namespace HospitalProject.Services
         //}
 
 
+        //        public async Task<(
+        //    string Token,
+        //    string Role,
+        //    string Name,
+        //    int UserId,
+        //    int? AdminId,
+        //    int? DoctorId,
+        //    int? PatientId,
+        //    int? MedicalRepId
+        //)> VerifyOtp(VerifyOtpDto d)
+        //        {
+        //            var rec = await _otp.GetAsync(x =>
+        //                x.MobileNumber == d.MobileNumber &&
+        //                x.OtpCode == d.Otp &&
+        //                x.Purpose == "LOGIN" &&
+        //                x.IsUsed == false &&
+        //                x.Expiry > DateTime.UtcNow
+        //            );
+
+        //            if (rec == null)
+        //                throw new Exception("Invalid or expired OTP");
+
+        //            rec.IsUsed = true;
+        //            await _otp.SaveAsync();
+
+        //            var user = await _u.Query()
+        //                .Include(x => x.Admin)
+        //                .Include(x => x.Doctor)
+        //                .Include(x => x.Patient)
+        //                .Include(x => x.MedicalRep)   // 🔥 ADD THIS
+        //                .FirstOrDefaultAsync(x => x.Id == rec.UserId);
+
+        //            if (user == null)
+        //                throw new Exception("User not found");
+
+        //            if (user.IsDeleted)
+        //                throw new Exception("User account is deactivated");
+
+        //            var token = GenerateJwt(user);
+
+        //            return (
+        //                token,
+        //                user.Role,
+        //                user.Name,
+        //                user.Id,
+        //                user.Admin?.Id,     // 👈 AdminId
+        //                user.Doctor?.Id,    // 👈 DoctorId
+        //                user.Patient?.Id,    // 👈 PatientId
+        //                user.MedicalRep?.Id   // 🔥 THIS IS WHAT YOU WANT
+        //            );
+        //        }
+
+
         public async Task<(
-    string Token,
-    string Role,
-    string Name,
-    int UserId,
-    int? AdminId,
-    int? DoctorId,
-    int? PatientId,
-    int? MedicalRepId
-)> VerifyOtp(VerifyOtpDto d)
+     string Token,
+     string Role,
+     string Name,
+     int UserId,
+     int? AdminId,
+     int? DoctorId,
+     int? PatientId,
+     int? MedicalRepId,
+     int? InternalPharmacyStaffId
+ )> VerifyOtp(VerifyOtpDto d)
         {
             var rec = await _otp.GetAsync(x =>
                 x.MobileNumber == d.MobileNumber &&
@@ -509,7 +612,7 @@ namespace HospitalProject.Services
                 .Include(x => x.Admin)
                 .Include(x => x.Doctor)
                 .Include(x => x.Patient)
-                .Include(x => x.MedicalRep)   // 🔥 ADD THIS
+                .Include(x => x.MedicalRep)
                 .FirstOrDefaultAsync(x => x.Id == rec.UserId);
 
             if (user == null)
@@ -520,15 +623,28 @@ namespace HospitalProject.Services
 
             var token = GenerateJwt(user);
 
+            // 🔥 Fetch approved request Id
+            int? staffRequestId = null;
+
+            if (user.Role == "InternalPharmacyStaff")
+            {
+                var request = await _staffRequest.GetAsync(x =>
+                    x.MobileNumber == user.MobileNumber &&
+                    x.Status == "Approved");
+
+                staffRequestId = request?.Id;
+            }
+
             return (
                 token,
                 user.Role,
                 user.Name,
                 user.Id,
-                user.Admin?.Id,     // 👈 AdminId
-                user.Doctor?.Id,    // 👈 DoctorId
-                user.Patient?.Id,    // 👈 PatientId
-                user.MedicalRep?.Id   // 🔥 THIS IS WHAT YOU WANT
+                user.Admin?.Id,
+                user.Doctor?.Id,
+                user.Patient?.Id,
+                user.MedicalRep?.Id,
+                staffRequestId   // ✅ Now request table Id
             );
         }
 
@@ -609,6 +725,16 @@ namespace HospitalProject.Services
             if (!doctor.IsVerified)
                 throw new Exception("Doctor not verified by medical council");
 
+
+            var serviceLocation = await _serviceLocation.Query()
+        .AnyAsync(x =>
+            x.DoctorId == doctorId &&
+            x.HospitalId == dto.HospitalId &&
+            x.IsActive);
+
+            if (!serviceLocation)
+                throw new Exception("Doctor is not assigned to this hospital");
+
             // 3️⃣ Convert DateOnly → UTC DateTime
             var utcDate = DateTime.SpecifyKind(
                 dto.AvailableDate.ToDateTime(TimeOnly.MinValue),
@@ -618,6 +744,7 @@ namespace HospitalProject.Services
             // 4️⃣ Slot already exists check
             bool exists = _slots.Query().Any(x =>
                 x.DoctorId == doctorId &&
+                x.HospitalId == dto.HospitalId &&
                 x.AvailableDate == utcDate &&
                 x.TimeSlot == dto.TimeSlot
             );
@@ -629,6 +756,7 @@ namespace HospitalProject.Services
             await _slots.AddAsync(new DoctorAvailability
             {
                 DoctorId = doctorId,
+                HospitalId = dto.HospitalId,  // 👈 add
                 AvailableDate = utcDate,   // 🔥 ONLY UTC
                 TimeSlot = dto.TimeSlot.Trim()
             });
@@ -692,6 +820,24 @@ namespace HospitalProject.Services
             return tempToken;
         }
 
+        public async Task<List<SpecialityViewDto>> GetSpecialities()
+        {
+            return await _speciality.Query()
+                .Where(x => x.IsActive)
+                .Select(x => new SpecialityViewDto(x.Id, x.Name))
+                .ToListAsync();
+        }
+
+        public async Task AddSpeciality(SpecialityCreateDto dto)
+        {
+            var exists = await _speciality.GetAsync(x => x.Name.ToLower() == dto.Name.ToLower());
+            if (exists != null) throw new Exception("Speciality already exists");
+
+            await _speciality.AddAsync(new Speciality { Name = dto.Name.Trim() });
+            await _speciality.SaveAsync();
+        }
+
+
         // =========================
         // SELF BOOKING (Doctor based)
         // =========================
@@ -705,12 +851,6 @@ namespace HospitalProject.Services
                 throw new Exception("Patient not found");
 
             // 2️⃣ Doctor check (ONLY verified doctor)
-
-
-            //var doctor = await _d.GetAsync(x =>
-            //    x.Id == dto.DoctorId &&
-            //    x.IsVerified == true);
-
             var doctor = await _d.Query()
                  .Include(d => d.User)
                  .FirstOrDefaultAsync(x =>
@@ -1065,36 +1205,58 @@ namespace HospitalProject.Services
 
 
 
+        // =====================================================================
+        // HOSPITAL — Bulk Create
+        // =====================================================================
+        public async Task<string> BulkCreateHospitals(BulkHospitalCreateDto dto)
+        {
+            if (dto.Hospitals == null || dto.Hospitals.Count == 0)
+                throw new Exception("Hospital list is empty");
+
+            foreach (var h in dto.Hospitals)
+            {
+                // Duplicate check
+                var exists = await _hospital.GetAsync(
+                    x => x.Name == h.Name.Trim() &&
+                         x.Area == h.Area.Trim() &&
+                         x.State == h.State.Trim());
+
+                if (exists != null) continue; // Already exists — skip
+
+                await _hospital.AddAsync(new Hospital
+                {
+                    Name = h.Name.Trim(),
+                    Address = h.Address.Trim(),
+                    Phone = h.Phone.Trim(),
+                    State = h.State.Trim(),
+                    Area = h.Area.Trim()
+                });
+            }
+
+            await _hospital.SaveAsync();
+            return $"{dto.Hospitals.Count} hospitals processed successfully";
+        }
 
 
-        //Update vitals by admin
-        //public async Task UpdateVitalsByAdmin(
-        //int adminUserId,
-        //UpdateVitalsDto dto)
-        //{
-        //    // 1️⃣ Admin validate
-        //    var admin = await _u.GetAsync(x =>
-        //        x.Id == adminUserId &&
-        //        x.Role == "Admin" &&
-        //        x.IsDeleted == false);
 
-        //    if (admin == null)
-        //        throw new Exception("Admin not found");
 
-        //    // 2️⃣ Appointment fetch
-        //    var app = await _apps.GetAsync(a => a.Id == dto.AppointmentId);
-        //    if (app == null)
-        //        throw new Exception("Appointment not found");
 
-        //    // 3️⃣ Update vitals
-        //    app.BloodPressure = dto.BloodPressure;
-        //    app.Pulse = dto.Pulse;
-        //    app.Temperature = dto.Temperature;
-        //    app.SpO2 = dto.SpO2;
-
-        //    await _apps.SaveAsync();
-        //}
-
+        // =====================================================================
+        // HOSPITAL — Get All
+        // =====================================================================
+        public async Task<List<HospitalViewDto>> GetAllHospitals()
+        {
+            return await _hospital.Query()
+                .Select(h => new HospitalViewDto(
+                    h.Id,
+                    h.Name,
+                    h.Address,
+                    h.Phone,
+                    h.State,
+                    h.Area
+                ))
+                .ToListAsync();
+        }
 
 
 
@@ -1274,50 +1436,48 @@ namespace HospitalProject.Services
         // =========================
 
 
-    //    public async Task<List<DoctorAppointmentDto>> GetDoctorAppointments(
-    //int userId,
-    //string type)
-    //    {
-    //        var doctor = await _d.GetAsync(d => d.UserId == userId);
-    //        if (doctor == null)
-    //            throw new Exception("Doctor not found");
+        //    public async Task<List<DoctorAppointmentDto>> GetDoctorAppointments(
+        //int userId,
+        //string type)
+        //    {
+        //        var doctor = await _d.GetAsync(d => d.UserId == userId);
+        //        if (doctor == null)
+        //            throw new Exception("Doctor not found");
 
-    //        var today = DateTime.UtcNow.Date;
+        //        var today = DateTime.UtcNow.Date;
 
-    //        var query = _apps.Query()
-    //            .Include(a => a.Patient).ThenInclude(p => p.User)
-    //            .Include(a => a.FamilyMember)
-    //            .Where(a => a.DoctorId == doctor.Id);
+        //        var query = _apps.Query()
+        //            .Include(a => a.Patient).ThenInclude(p => p.User)
+        //            .Include(a => a.FamilyMember)
+        //            .Where(a => a.DoctorId == doctor.Id);
 
-    //        if (type == "upcoming")
-    //            query = query.Where(a => a.AppointmentDate.Date >= today);
-    //        else if (type == "past")
-    //            query = query.Where(a => a.AppointmentDate.Date < today);
+        //        if (type == "upcoming")
+        //            query = query.Where(a => a.AppointmentDate.Date >= today);
+        //        else if (type == "past")
+        //            query = query.Where(a => a.AppointmentDate.Date < today);
 
-    //        return await query
-    //            .OrderBy(a => a.AppointmentDate)
-    //            .ThenBy(a => a.TimeSlot)
-    //            .Select(a => new DoctorAppointmentDto(
-    //                a.Id,
-    //                a.Patient.User.Name,
-    //                a.FamilyMember != null ? a.FamilyMember.Name : null,
-    //                a.AppointmentDate,
-    //                a.TimeSlot,
-    //                a.Status,
-    //                a.QueueToken,
-    //                a.ReasonForVisit      // 👈 MUST ADD
-    //            ))
-    //            .ToListAsync();
-    //    }
+        //        return await query
+        //            .OrderBy(a => a.AppointmentDate)
+        //            .ThenBy(a => a.TimeSlot)
+        //            .Select(a => new DoctorAppointmentDto(
+        //                a.Id,
+        //                a.Patient.User.Name,
+        //                a.FamilyMember != null ? a.FamilyMember.Name : null,
+        //                a.AppointmentDate,
+        //                a.TimeSlot,
+        //                a.Status,
+        //                a.QueueToken,
+        //                a.ReasonForVisit      // 👈 MUST ADD
+        //            ))
+        //            .ToListAsync();
+        //    }
 
 
         //********************************
         //Doctor profile Add  Method
         //********************************
 
-        public async Task AddDoctorProfile(
-    int userId,
-    DoctorProfileCreateDto dto)
+        public async Task AddDoctorProfile(int userId, DoctorProfileCreateDto dto)
         {
             var doctor = await _d.GetAsync(d => d.UserId == userId);
             if (doctor == null)
@@ -1325,24 +1485,26 @@ namespace HospitalProject.Services
 
             var existingProfile = await _doctorProfile.GetAsync(
                 x => x.DoctorId == doctor.Id);
-
             if (existingProfile != null)
                 throw new Exception("Profile already exists");
+
+            var duplicateReg = await _doctorProfile.GetAsync(
+            x => x.RegistrationNumber == dto.RegistrationNumber);
+            if (duplicateReg != null)
+                throw new Exception("Registration number already exists");
 
             var profile = new DoctorProfile
             {
                 DoctorId = doctor.Id,
+                FatherOrHusbandName = dto.FatherOrHusbandName,
                 Dob = dto.Dob,
-                Experience = dto.Experience,
-                Languages = dto.Languages,
-                LicenseType = dto.LicenseType,
-                LicenseNumber = dto.LicenseNumber,
+                RegistrationNumber = dto.RegistrationNumber,
+                DateOfRegistration = dto.DateOfRegistration,
                 StateCouncil = dto.StateCouncil,
                 Degree = dto.Degree,
-                University = dto.University,
                 GraduationYear = dto.GraduationYear,
-                PracticeMode = dto.PracticeMode,
-                ConsultationFee = dto.ConsultationFee
+                University = dto.University,
+                PermanentAddress = dto.PermanentAddress
             };
 
             await _doctorProfile.AddAsync(profile);
@@ -1357,16 +1519,13 @@ namespace HospitalProject.Services
 
         public async Task<DoctorProfileViewDto> GetDoctorProfile(int userId)
         {
-            // 1️⃣ Doctor fetch with User
             var doctor = await _d.Query()
                 .Include(d => d.User)
-                .Include(d => d.Hospital)
                 .FirstOrDefaultAsync(d => d.UserId == userId);
 
             if (doctor == null)
                 throw new Exception("Doctor not found");
 
-            // 2️⃣ Doctor profile fetch
             var profile = await _doctorProfile.GetAsync(
                 p => p.DoctorId == doctor.Id);
 
@@ -1376,33 +1535,23 @@ namespace HospitalProject.Services
             return new DoctorProfileViewDto(
                 doctor.Id,
                 doctor.User.Name,
-                doctor.Specialization,
-
+                profile.FatherOrHusbandName,
                 profile.Dob,
-                profile.Experience,
-                profile.Languages,
-
-                profile.LicenseType,
-                profile.LicenseNumber,
+                profile.RegistrationNumber,
+                profile.DateOfRegistration,
                 profile.StateCouncil,
-
                 profile.Degree,
-                profile.University,
                 profile.GraduationYear,
-
-                profile.PracticeMode,
-                profile.ConsultationFee
+                profile.University,
+                profile.PermanentAddress
             );
         }
 
 
         //Put method logic for doctor profile
 
-        public async Task UpdateDoctorProfile(
-    int userId,
-    DoctorProfileCreateDto dto)
+        public async Task UpdateDoctorProfile(int userId, DoctorProfileUpdateDto dto)
         {
-            // 1️⃣ Doctor fetch
             var doctor = await _d.Query()
                 .Include(d => d.User)
                 .FirstOrDefaultAsync(d => d.UserId == userId);
@@ -1410,28 +1559,46 @@ namespace HospitalProject.Services
             if (doctor == null)
                 throw new Exception("Doctor not found");
 
-            // 2️⃣ Existing profile fetch
             var profile = await _doctorProfile.GetAsync(
                 p => p.DoctorId == doctor.Id);
 
             if (profile == null)
                 throw new Exception("Doctor profile not created yet");
 
-            // 3️⃣ Update fields
-            profile.Dob = dto.Dob;
-            profile.Experience = dto.Experience;
-            profile.Languages = dto.Languages;
+            // 👇 if null no change
+            if (!string.IsNullOrWhiteSpace(dto.FatherOrHusbandName))
+                profile.FatherOrHusbandName = dto.FatherOrHusbandName;
 
-            profile.LicenseType = dto.LicenseType;
-            profile.LicenseNumber = dto.LicenseNumber;
-            profile.StateCouncil = dto.StateCouncil;
+            if (dto.Dob.HasValue)
+                profile.Dob = dto.Dob.Value;
 
-            profile.Degree = dto.Degree;
-            profile.University = dto.University;
-            profile.GraduationYear = dto.GraduationYear;
+            if (!string.IsNullOrWhiteSpace(dto.RegistrationNumber))
+            {
+                var duplicate = await _doctorProfile.GetAsync(
+                    x => x.RegistrationNumber == dto.RegistrationNumber &&
+                         x.DoctorId != doctor.Id);
+                if (duplicate != null)
+                    throw new Exception("Registration number already exists");
+                profile.RegistrationNumber = dto.RegistrationNumber;
+            }
 
-            profile.PracticeMode = dto.PracticeMode;
-            profile.ConsultationFee = dto.ConsultationFee;
+            if (dto.DateOfRegistration.HasValue)
+                profile.DateOfRegistration = dto.DateOfRegistration.Value;
+
+            if (!string.IsNullOrWhiteSpace(dto.StateCouncil))
+                profile.StateCouncil = dto.StateCouncil;
+
+            if (!string.IsNullOrWhiteSpace(dto.Degree))
+                profile.Degree = dto.Degree;
+
+            if (dto.GraduationYear.HasValue && dto.GraduationYear.Value > 0)
+                profile.GraduationYear = dto.GraduationYear.Value;
+
+            if (!string.IsNullOrWhiteSpace(dto.University))
+                profile.University = dto.University;
+
+            if (!string.IsNullOrWhiteSpace(dto.PermanentAddress))
+                profile.PermanentAddress = dto.PermanentAddress;
 
             await _doctorProfile.SaveAsync();
         }
@@ -1580,14 +1747,17 @@ namespace HospitalProject.Services
         public async Task Consult(DoctorConsultDto d)
         {
             // 1️⃣ Appointment check
-            var app = await _apps.GetAsync(x => x.Id == d.AppId);
+            var app = await _apps.Query()
+                .Include(a => a.Doctor)
+                .FirstOrDefaultAsync(x => x.Id == d.AppId);
+
             if (app == null)
                 throw new Exception("Appointment not found");
 
-            // 2️⃣ Doctor fetch
-            var doctor = await _d.GetAsync(x => x.Id == app.DoctorId);
+            // 2️⃣ Doctor fetch (from tracking or direct)
+            var doctor = app.Doctor;
             if (doctor == null)
-                throw new Exception("Doctor not found");
+                throw new Exception("Doctor details not found for this appointment");
 
             // 3️⃣ 🔴 DOCTOR VERIFICATION CHECK (IMPORTANT)
             if (!doctor.IsVerified)
@@ -1595,11 +1765,49 @@ namespace HospitalProject.Services
 
             // 4️⃣ Save consultation details
             app.Diagnosis = d.Diagnosis;
-            app.Prescription = d.Prescription;
+            app.Prescription = d.Prescription; // Legacy string field
             app.Fees = d.Fees;
             app.Status = "Consulted";
 
+            // 5️⃣ Handle Structured Prescription if provided
+            if (d.Medicines != null && d.Medicines.Any())
+            {
+                var prescription = new Prescription
+                {
+                    AppointmentId = app.Id,
+                    DoctorId = app.DoctorId,
+                    PatientId = app.PatientId,
+                    Status = "Pending",
+                    CreatedAt = DateTime.UtcNow,
+                    ValidityDays = d.ValidityDays,  // 👈 add
+                    MaxRefills = d.MaxRefills       // 👈 add
+                };
+
+                foreach (var item in d.Medicines)
+                {
+                    prescription.Items.Add(new PrescriptionItem
+                    {
+                        MedicineId = item.MedicineId,
+                        Dosage = item.Dosage,
+                        Duration = item.Duration,
+                        Instructions = item.Instructions,
+                        QuantityPrescribed = item.QuantityPrescribed,
+                        GenericSubstitutionAllowed = item.GenericSubstitutionAllowed
+                    });
+                }
+
+                await _prescription.AddAsync(prescription);
+                await _prescription.SaveAsync(); // 👈 முதல்ல save — Id கிடைக்கணும்
+
+                // ✅ QR Auto-generate
+                await _qrService.GenerateQrForPrescription(prescription.Id);
+
+                // ✅ Route to pharmacies
+                await _routingService.RoutePrescription(prescription.Id);
+            }
+
             await _apps.SaveAsync();
+            await _prescription.SaveAsync();
         }
 
 
@@ -1975,6 +2183,7 @@ namespace HospitalProject.Services
         {
             var doctors = await _d.Query()
                 .Include(d => d.User)
+                .Include(d => d.Speciality)
                 .Where(d =>
                     d.IsVerified == true &&
                     d.Latitude != null &&
@@ -1986,7 +2195,7 @@ namespace HospitalProject.Services
                 {
                     d.Id,
                     d.User.Name,
-                    d.Specialization,
+                    Specialization = d.Speciality != null ? d.Speciality.Name : d.Specialization,
                     Distance =
                         Math.Sqrt(
                             Math.Pow(lat - d.Latitude!.Value, 2) +
@@ -2328,6 +2537,15 @@ GetPatientHistory(int userId)
                 // 🔥 MedicalRep – no extra claims needed
             }
 
+            else if (u.Role == "InternalPharmacyStaff")
+            {
+                // 🔥 Pharmacy Staff – no extra claims needed
+            }
+
+            else if (u.Role == "ProductAdmin")
+            {
+                // 🔥 ProductAdmin – no extra claims needed
+            }
 
 
             else
@@ -2444,17 +2662,7 @@ GetPatientHistory(int userId)
 
 
 
-        public async Task<List<HospitalListDto>> GetAllHospitals()
-        {
-            return await _hospital.Query()
-                .Select(h => new HospitalListDto(
-                    h.Id,
-                    h.Name,
-                    h.Address,
-                    h.Phone
-                ))
-                .ToListAsync();
-        }
+   
 
 
         public async Task<List<DoctorPublicDto>> GetDoctorsByHospital(int hospitalId)
@@ -2462,11 +2670,12 @@ GetPatientHistory(int userId)
             return await _d.Query()
                 .Include(d => d.User)
                 .Include(d => d.Hospital)
+                .Include(d => d.Speciality)
                 .Where(d => d.HospitalId == hospitalId)
                 .Select(d => new DoctorPublicDto(
     d.Id,
     d.User.Name,
-    d.Specialization,
+    d.Speciality != null ? d.Speciality.Name : d.Specialization,
     d.Hospital != null ? d.Hospital.Name : "-"
 ))
 
@@ -2474,14 +2683,6 @@ GetPatientHistory(int userId)
         }
 
 
-        public async Task<List<SpecialityDto>> GetSpecialities()
-        {
-            return await _d.Query()
-                .Select(d => d.Specialization)
-                .Distinct()
-                .Select(s => new SpecialityDto(s))
-                .ToListAsync();
-        }
 
 
         // =========================
@@ -3319,6 +3520,34 @@ GetMedicalRepAppointments(
                 keyId = _config["Razorpay:Key"]
             };
         }
+
+
+        // =====================================================================
+        // NMC — Registration Number வச்சு Auto Fill
+        // =====================================================================
+        public async Task<NmcDoctorRecordViewDto> GetNmcRecord(string registrationNumber)
+        {
+            var record = await _nmcRecord.GetAsync(
+                x => x.RegistrationNumber == registrationNumber)
+                ?? throw new Exception("Registration number not found in NMC records");
+
+            return new NmcDoctorRecordViewDto(
+                record.RegistrationNumber,
+                record.Name,
+                record.FatherOrHusbandName,
+                record.Dob,
+                record.DateOfRegistration,
+                record.StateCouncil,
+                record.Degree,
+                record.GraduationYear,
+                record.University,
+                record.PermanentAddress
+            );
+        }
+
+
+
+       
 
 
 
