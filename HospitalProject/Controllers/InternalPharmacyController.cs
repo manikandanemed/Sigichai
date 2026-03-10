@@ -29,21 +29,31 @@ namespace HospitalProject.Controllers
         [Authorize(Roles = "Admin")]
         [HttpPost("register")]
         public async Task<IActionResult> Register(
-            InternalPharmacyCreateDto dto)
+    [FromBody] InternalPharmacyCreateDto dto)
         {
-            var userId = int.Parse(
-                User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-
-            var role = User.FindFirst(ClaimTypes.Role)!.Value;
-
-            var result = await _service.RegisterInternalPharmacy(
-                userId, role, dto);
-
-            return Ok(new ApiResponse
+            try
             {
-                Success = true,
-                Message = result
-            });
+                // HospitalId from JWT
+                var hospitalId = int.Parse(
+                    User.FindFirst("HospitalId")!.Value);
+
+                var result = await _service.RegisterInternalPharmacy(
+                    hospitalId, dto);
+
+                return Ok(new ApiResponse
+                {
+                    Success = true,
+                    Message = result
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
         }
 
         // =========================

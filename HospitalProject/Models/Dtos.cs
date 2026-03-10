@@ -662,11 +662,10 @@
     }
 
     public record InternalPharmacyCreateDto(
-        int HospitalId,
-        string PharmacyName,
-        string PhoneNumber,
-        string Address
-    );
+     string PharmacyName,
+     string PhoneNumber,
+     string Address
+ );
 
     public record InternalPharmacyStaffRegisterDto(
         string Name,

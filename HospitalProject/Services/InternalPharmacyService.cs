@@ -44,22 +44,18 @@ namespace HospitalProject.Services
 
         // 🔐 ADMIN ONLY + ONE TIME CREATE
         public async Task<string> RegisterInternalPharmacy(
-            int userId,
-            string role,
+            int hospitalId,   //  come from JWT
             InternalPharmacyCreateDto dto)
         {
-            // 1️⃣ Role Check
-            if (role != "Admin")
-                throw new Exception("Only admin can create internal pharmacy");
-
-            // 2️⃣ Already exists check
-            var exists = await _pharmacy.GetAsync(x => x.HospitalId == dto.HospitalId);
+            // one Hospital one Pharmacy check
+            var exists = await _pharmacy.GetAsync(
+                x => x.HospitalId == hospitalId);
             if (exists != null)
                 throw new Exception("Internal pharmacy already created for this hospital");
 
             var pharmacy = new InternalPharmacy
             {
-                HospitalId = dto.HospitalId,   // 👈 add
+                HospitalId = hospitalId,  // come from JWT
                 PharmacyName = dto.PharmacyName.Trim(),
                 PhoneNumber = dto.PhoneNumber.Trim(),
                 Address = dto.Address.Trim()
