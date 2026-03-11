@@ -294,7 +294,8 @@
      string Degree,
      int GraduationYear,
      string University,
-     string PermanentAddress
+     string PermanentAddress,
+     string? UprnNumber
  );
 
 
@@ -312,7 +313,8 @@
      string Degree,
      int GraduationYear,
      string University,
-     string PermanentAddress
+     string PermanentAddress,
+     string? UprnNumber
  );
 
 
@@ -1092,7 +1094,8 @@
         string Degree,
         int GraduationYear,
         string University,
-        string PermanentAddress
+        string PermanentAddress,
+        string? UprnNumber
     );
 
 
@@ -1175,7 +1178,8 @@
     string? Degree,
     int? GraduationYear,
     string? University,
-    string? PermanentAddress
+    string? PermanentAddress,
+    string? UprnNumber
 );
 
 

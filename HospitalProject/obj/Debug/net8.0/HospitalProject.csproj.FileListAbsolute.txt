@@ -1,0 +1,970 @@
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\appsettings.json
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.staticwebassets.endpoints.json
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.exe
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.deps.json
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.runtimeconfig.json
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.pdb
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\BCrypt.Net-Next.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Humanizer.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.Bcl.AsyncInterfaces.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.Bcl.Memory.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.CodeAnalysis.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.CodeAnalysis.CSharp.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.CodeAnalysis.CSharp.Workspaces.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.CodeAnalysis.Workspaces.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Design.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Relational.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.Extensions.DependencyModel.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.OpenApi.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Mono.TextTemplating.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Newtonsoft.Json.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Npgsql.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.CodeDom.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.AttributedModel.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.Convention.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.Hosting.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.Runtime.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.TypedParts.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Twilio.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\cs\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\de\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\es\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\fr\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\it\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ja\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ko\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pl\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pt-BR\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ru\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\cs\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\de\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\es\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\fr\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\it\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ja\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ko\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pl\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pt-BR\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ru\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\cs\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\de\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\es\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\fr\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\it\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ja\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ko\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pl\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pt-BR\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ru\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\cs\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\de\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\es\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\fr\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\it\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ja\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ko\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pl\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pt-BR\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ru\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.csproj.AssemblyReference.cache
+D:\Sigichai\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\rpswa.dswa.cache.json
+D:\Sigichai\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.GeneratedMSBuildEditorConfig.editorconfig
+D:\Sigichai\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.AssemblyInfoInputs.cache
+D:\Sigichai\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.AssemblyInfo.cs
+D:\Sigichai\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.csproj.CoreCompileInputs.cache
+D:\Sigichai\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.MvcApplicationPartsAssemblyInfo.cs
+D:\Sigichai\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.MvcApplicationPartsAssemblyInfo.cache
+D:\Sigichai\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.sourcelink.json
+D:\Sigichai\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\rjimswa.dswa.cache.json
+D:\Sigichai\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\rjsmrazor.dswa.cache.json
+D:\Sigichai\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\rjsmcshtml.dswa.cache.json
+D:\Sigichai\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\scopedcss\bundle\HospitalProject.styles.css
+D:\Sigichai\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.build.json
+D:\Sigichai\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.build.json.cache
+D:\Sigichai\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.development.json
+D:\Sigichai\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+D:\Sigichai\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+D:\Sigichai\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\Hospital.271CB536.Up2Date
+D:\Sigichai\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\refint\HospitalProject.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.pdb
+D:\Sigichai\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.genruntimeconfig.cache
+D:\Sigichai\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\ref\HospitalProject.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.staticwebassets.endpoints.json
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\appsettings.json
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.exe
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.deps.json
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.runtimeconfig.json
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.pdb
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\BCrypt.Net-Next.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Humanizer.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.Bcl.AsyncInterfaces.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.Bcl.Memory.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.CodeAnalysis.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.CodeAnalysis.CSharp.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.CodeAnalysis.CSharp.Workspaces.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.CodeAnalysis.Workspaces.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Design.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Relational.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.Extensions.DependencyModel.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.OpenApi.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Mono.TextTemplating.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Newtonsoft.Json.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Npgsql.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.CodeDom.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.AttributedModel.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.Convention.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.Hosting.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.Runtime.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.TypedParts.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Twilio.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\cs\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\de\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\es\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\fr\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\it\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ja\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ko\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pl\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pt-BR\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ru\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\cs\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\de\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\es\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\fr\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\it\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ja\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ko\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pl\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pt-BR\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ru\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\cs\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\de\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\es\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\fr\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\it\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ja\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ko\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pl\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pt-BR\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ru\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\cs\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\de\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\es\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\fr\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\it\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ja\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ko\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pl\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pt-BR\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ru\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.csproj.AssemblyReference.cache
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\rpswa.dswa.cache.json
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.GeneratedMSBuildEditorConfig.editorconfig
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.AssemblyInfoInputs.cache
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.AssemblyInfo.cs
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.csproj.CoreCompileInputs.cache
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.MvcApplicationPartsAssemblyInfo.cs
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.MvcApplicationPartsAssemblyInfo.cache
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.sourcelink.json
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\rjimswa.dswa.cache.json
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\rjsmrazor.dswa.cache.json
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\rjsmcshtml.dswa.cache.json
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\scopedcss\bundle\HospitalProject.styles.css
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.build.json
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.build.json.cache
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.development.json
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\Hospital.271CB536.Up2Date
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\refint\HospitalProject.dll
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.pdb
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.genruntimeconfig.cache
+D:\Sigichai\HospitalProjectSolution(addmedicalrep)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\ref\HospitalProject.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\appsettings.json
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.staticwebassets.endpoints.json
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.exe
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.deps.json
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.runtimeconfig.json
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.pdb
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\BCrypt.Net-Next.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Humanizer.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.Bcl.AsyncInterfaces.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.Bcl.Memory.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.CodeAnalysis.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.CodeAnalysis.CSharp.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.CodeAnalysis.CSharp.Workspaces.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.CodeAnalysis.Workspaces.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Design.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Relational.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.Extensions.DependencyModel.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.OpenApi.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Mono.TextTemplating.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Newtonsoft.Json.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Npgsql.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.CodeDom.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.AttributedModel.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.Convention.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.Hosting.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.Runtime.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.TypedParts.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Twilio.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\cs\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\de\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\es\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\fr\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\it\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ja\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ko\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pl\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pt-BR\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ru\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\cs\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\de\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\es\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\fr\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\it\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ja\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ko\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pl\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pt-BR\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ru\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\cs\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\de\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\es\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\fr\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\it\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ja\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ko\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pl\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pt-BR\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ru\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\cs\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\de\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\es\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\fr\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\it\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ja\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ko\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pl\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pt-BR\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ru\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.csproj.AssemblyReference.cache
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\rpswa.dswa.cache.json
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.GeneratedMSBuildEditorConfig.editorconfig
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.AssemblyInfoInputs.cache
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.AssemblyInfo.cs
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.csproj.CoreCompileInputs.cache
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.MvcApplicationPartsAssemblyInfo.cs
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.MvcApplicationPartsAssemblyInfo.cache
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.sourcelink.json
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\rjimswa.dswa.cache.json
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\rjsmrazor.dswa.cache.json
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\rjsmcshtml.dswa.cache.json
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\scopedcss\bundle\HospitalProject.styles.css
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.build.json
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.build.json.cache
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.development.json
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\Hospital.271CB536.Up2Date
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\refint\HospitalProject.dll
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.pdb
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.genruntimeconfig.cache
+D:\Sigichai\HospitalProjectSolution(migtest)\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\ref\HospitalProject.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\BouncyCastle.Crypto.dll
+D:\Sigichai\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Razorpay.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.staticwebassets.endpoints.json
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\appsettings.json
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.exe
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.deps.json
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.runtimeconfig.json
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.pdb
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\BCrypt.Net-Next.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Humanizer.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.Bcl.AsyncInterfaces.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.Bcl.Memory.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.CodeAnalysis.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.CodeAnalysis.CSharp.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.CodeAnalysis.CSharp.Workspaces.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.CodeAnalysis.Workspaces.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Design.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Relational.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.Extensions.DependencyModel.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.OpenApi.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Mono.TextTemplating.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Newtonsoft.Json.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Npgsql.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\BouncyCastle.Crypto.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Razorpay.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.CodeDom.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.AttributedModel.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.Convention.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.Hosting.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.Runtime.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.TypedParts.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Twilio.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\cs\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\de\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\es\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\fr\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\it\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ja\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ko\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pl\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pt-BR\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ru\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\cs\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\de\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\es\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\fr\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\it\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ja\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ko\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pl\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pt-BR\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ru\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\cs\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\de\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\es\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\fr\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\it\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ja\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ko\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pl\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pt-BR\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ru\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\cs\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\de\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\es\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\fr\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\it\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ja\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ko\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pl\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pt-BR\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ru\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.csproj.AssemblyReference.cache
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\rpswa.dswa.cache.json
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.GeneratedMSBuildEditorConfig.editorconfig
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.AssemblyInfoInputs.cache
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.AssemblyInfo.cs
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.csproj.CoreCompileInputs.cache
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.MvcApplicationPartsAssemblyInfo.cs
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.MvcApplicationPartsAssemblyInfo.cache
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.sourcelink.json
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\rjimswa.dswa.cache.json
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\rjsmrazor.dswa.cache.json
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\rjsmcshtml.dswa.cache.json
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\scopedcss\bundle\HospitalProject.styles.css
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.build.json
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.build.json.cache
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.development.json
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\Hospital.271CB536.Up2Date
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\refint\HospitalProject.dll
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.pdb
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.genruntimeconfig.cache
+D:\Sigichai\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\ref\HospitalProject.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\appsettings.json
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.staticwebassets.endpoints.json
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.exe
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.deps.json
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.runtimeconfig.json
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.pdb
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\BCrypt.Net-Next.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Humanizer.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.Bcl.AsyncInterfaces.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.Bcl.Memory.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.CodeAnalysis.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.CodeAnalysis.CSharp.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.CodeAnalysis.CSharp.Workspaces.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.CodeAnalysis.Workspaces.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Design.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Relational.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.Extensions.DependencyModel.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.OpenApi.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Mono.TextTemplating.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Newtonsoft.Json.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Npgsql.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\BouncyCastle.Crypto.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Razorpay.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.CodeDom.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.AttributedModel.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.Convention.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.Hosting.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.Runtime.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.TypedParts.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Twilio.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\cs\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\de\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\es\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\fr\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\it\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ja\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ko\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pl\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pt-BR\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ru\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\cs\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\de\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\es\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\fr\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\it\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ja\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ko\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pl\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pt-BR\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ru\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\cs\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\de\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\es\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\fr\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\it\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ja\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ko\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pl\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pt-BR\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ru\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\cs\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\de\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\es\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\fr\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\it\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ja\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ko\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pl\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pt-BR\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ru\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.csproj.AssemblyReference.cache
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\rpswa.dswa.cache.json
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.GeneratedMSBuildEditorConfig.editorconfig
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.AssemblyInfoInputs.cache
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.AssemblyInfo.cs
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.csproj.CoreCompileInputs.cache
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.MvcApplicationPartsAssemblyInfo.cs
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.MvcApplicationPartsAssemblyInfo.cache
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.sourcelink.json
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\rjimswa.dswa.cache.json
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\rjsmrazor.dswa.cache.json
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\rjsmcshtml.dswa.cache.json
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\scopedcss\bundle\HospitalProject.styles.css
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.build.json
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.build.json.cache
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.development.json
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\Hospital.271CB536.Up2Date
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\refint\HospitalProject.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.pdb
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.genruntimeconfig.cache
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\ref\HospitalProject.dll
+D:\Sigichai\sigichai with phargt(add internal pharmacy and internal pharmacy staff)\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\appsettings.json
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.staticwebassets.endpoints.json
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.exe
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.deps.json
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.runtimeconfig.json
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.pdb
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\BCrypt.Net-Next.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Humanizer.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.Bcl.AsyncInterfaces.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.Bcl.Memory.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.CodeAnalysis.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.CodeAnalysis.CSharp.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.CodeAnalysis.CSharp.Workspaces.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.CodeAnalysis.Workspaces.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Design.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Relational.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.Extensions.DependencyModel.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.OpenApi.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Mono.TextTemplating.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Newtonsoft.Json.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Npgsql.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\BouncyCastle.Crypto.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Razorpay.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.CodeDom.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.AttributedModel.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.Convention.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.Hosting.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.Runtime.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.TypedParts.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Twilio.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\cs\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\de\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\es\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\fr\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\it\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ja\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ko\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pl\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pt-BR\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ru\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\cs\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\de\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\es\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\fr\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\it\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ja\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ko\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pl\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pt-BR\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ru\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\cs\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\de\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\es\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\fr\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\it\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ja\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ko\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pl\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pt-BR\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ru\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\cs\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\de\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\es\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\fr\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\it\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ja\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ko\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pl\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pt-BR\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ru\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.csproj.AssemblyReference.cache
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\rpswa.dswa.cache.json
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.GeneratedMSBuildEditorConfig.editorconfig
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.AssemblyInfoInputs.cache
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.AssemblyInfo.cs
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.csproj.CoreCompileInputs.cache
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.MvcApplicationPartsAssemblyInfo.cs
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.MvcApplicationPartsAssemblyInfo.cache
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.sourcelink.json
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\rjimswa.dswa.cache.json
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\rjsmrazor.dswa.cache.json
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\rjsmcshtml.dswa.cache.json
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\scopedcss\bundle\HospitalProject.styles.css
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.build.json
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.build.json.cache
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.development.json
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\Hospital.271CB536.Up2Date
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\refint\HospitalProject.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.pdb
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.genruntimeconfig.cache
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\ref\HospitalProject.dll
+D:\Sigichai\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.staticwebassets.endpoints.json
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\appsettings.json
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.exe
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.deps.json
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.runtimeconfig.json
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.pdb
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\BCrypt.Net-Next.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Humanizer.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.Bcl.AsyncInterfaces.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.Bcl.Memory.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.CodeAnalysis.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.CodeAnalysis.CSharp.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.CodeAnalysis.CSharp.Workspaces.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.CodeAnalysis.Workspaces.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Design.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Relational.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.Extensions.DependencyModel.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.OpenApi.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Mono.TextTemplating.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Newtonsoft.Json.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Npgsql.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\BouncyCastle.Crypto.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Razorpay.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.CodeDom.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.AttributedModel.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.Convention.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.Hosting.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.Runtime.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.TypedParts.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Twilio.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\cs\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\de\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\es\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\fr\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\it\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ja\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ko\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pl\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pt-BR\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ru\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\cs\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\de\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\es\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\fr\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\it\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ja\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ko\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pl\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pt-BR\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ru\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\cs\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\de\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\es\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\fr\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\it\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ja\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ko\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pl\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pt-BR\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ru\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\cs\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\de\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\es\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\fr\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\it\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ja\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ko\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pl\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pt-BR\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ru\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.csproj.AssemblyReference.cache
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\rpswa.dswa.cache.json
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.GeneratedMSBuildEditorConfig.editorconfig
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.AssemblyInfoInputs.cache
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.AssemblyInfo.cs
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.csproj.CoreCompileInputs.cache
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.MvcApplicationPartsAssemblyInfo.cs
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.MvcApplicationPartsAssemblyInfo.cache
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.sourcelink.json
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\rjimswa.dswa.cache.json
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\rjsmrazor.dswa.cache.json
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\rjsmcshtml.dswa.cache.json
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\scopedcss\bundle\HospitalProject.styles.css
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.build.json
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.build.json.cache
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.development.json
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\Hospital.271CB536.Up2Date
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\refint\HospitalProject.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.pdb
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.genruntimeconfig.cache
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\ref\HospitalProject.dll
+D:\Sigichai\sigichai internalphargy\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.staticwebassets.endpoints.json
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\appsettings.json
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.exe
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.deps.json
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.runtimeconfig.json
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.pdb
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\BCrypt.Net-Next.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Humanizer.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.Bcl.AsyncInterfaces.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.Bcl.Memory.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.CodeAnalysis.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.CodeAnalysis.CSharp.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.CodeAnalysis.CSharp.Workspaces.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.CodeAnalysis.Workspaces.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Design.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Relational.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.Extensions.DependencyModel.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.OpenApi.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Mono.TextTemplating.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Newtonsoft.Json.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Npgsql.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\BouncyCastle.Crypto.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Razorpay.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.CodeDom.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.AttributedModel.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.Convention.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.Hosting.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.Runtime.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Composition.TypedParts.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Twilio.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\cs\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\de\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\es\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\fr\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\it\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ja\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ko\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pl\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pt-BR\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ru\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\cs\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\de\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\es\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\fr\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\it\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ja\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ko\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pl\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pt-BR\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ru\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\cs\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\de\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\es\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\fr\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\it\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ja\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ko\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pl\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pt-BR\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ru\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\cs\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\de\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\es\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\fr\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\it\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ja\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ko\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pl\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\pt-BR\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\ru\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.csproj.AssemblyReference.cache
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\rpswa.dswa.cache.json
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.GeneratedMSBuildEditorConfig.editorconfig
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.AssemblyInfoInputs.cache
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.AssemblyInfo.cs
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.csproj.CoreCompileInputs.cache
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.MvcApplicationPartsAssemblyInfo.cs
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.MvcApplicationPartsAssemblyInfo.cache
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.sourcelink.json
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\rjimswa.dswa.cache.json
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\rjsmrazor.dswa.cache.json
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\rjsmcshtml.dswa.cache.json
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\scopedcss\bundle\HospitalProject.styles.css
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.build.json
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.build.json.cache
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.development.json
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\Hospital.271CB536.Up2Date
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\refint\HospitalProject.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.pdb
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\HospitalProject.genruntimeconfig.cache
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Debug\net8.0\ref\HospitalProject.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\Microsoft.Win32.SystemEvents.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\QRCoder.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\System.Drawing.Common.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\runtimes\win\lib\net6.0\Microsoft.Win32.SystemEvents.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\runtimes\unix\lib\net6.0\System.Drawing.Common.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\runtimes\win\lib\net6.0\System.Drawing.Common.dll

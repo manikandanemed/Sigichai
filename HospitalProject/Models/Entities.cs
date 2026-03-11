@@ -357,6 +357,7 @@ namespace HospitalProject.Models
         public string StateCouncil { get; set; } = string.Empty;
         public string Degree { get; set; } = string.Empty;
         public int GraduationYear { get; set; }
+        public string? UprnNumber { get; set; }
         public string University { get; set; } = string.Empty;
         public string PermanentAddress { get; set; } = string.Empty;
     }
@@ -838,6 +839,7 @@ namespace HospitalProject.Models
         public int GraduationYear { get; set; }
         public string University { get; set; } = string.Empty;
         public string PermanentAddress { get; set; } = string.Empty;
+        public string? UprnNumber { get; set; }
     }
 
 

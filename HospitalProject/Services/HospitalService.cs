@@ -1504,7 +1504,8 @@ namespace HospitalProject.Services
                 Degree = dto.Degree,
                 GraduationYear = dto.GraduationYear,
                 University = dto.University,
-                PermanentAddress = dto.PermanentAddress
+                PermanentAddress = dto.PermanentAddress,
+                UprnNumber = dto.UprnNumber
             };
 
             await _doctorProfile.AddAsync(profile);
@@ -1543,7 +1544,8 @@ namespace HospitalProject.Services
                 profile.Degree,
                 profile.GraduationYear,
                 profile.University,
-                profile.PermanentAddress
+                profile.PermanentAddress,
+                profile.UprnNumber
             );
         }
 
@@ -1568,6 +1570,9 @@ namespace HospitalProject.Services
             // 👇 if null no change
             if (!string.IsNullOrWhiteSpace(dto.FatherOrHusbandName))
                 profile.FatherOrHusbandName = dto.FatherOrHusbandName;
+
+            if (!string.IsNullOrWhiteSpace(dto.UprnNumber))
+                profile.UprnNumber = dto.UprnNumber;
 
             if (dto.Dob.HasValue)
                 profile.Dob = dto.Dob.Value;
@@ -3541,7 +3546,8 @@ GetMedicalRepAppointments(
                 record.Degree,
                 record.GraduationYear,
                 record.University,
-                record.PermanentAddress
+                record.PermanentAddress,
+                record.UprnNumber
             );
         }
 

@@ -366,6 +366,9 @@ namespace HospitalProject.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("UprnNumber")
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.HasIndex("DoctorId")
@@ -1027,6 +1030,9 @@ namespace HospitalProject.Migrations
 
                     b.Property<string>("University")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("UprnNumber")
                         .HasColumnType("text");
 
                     b.HasKey("Id");

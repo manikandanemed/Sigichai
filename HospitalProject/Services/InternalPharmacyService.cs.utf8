@@ -1,0 +1,364 @@
+﻿using HospitalProject.Models;
+using HospitalProject.Repositories;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
+
+namespace HospitalProject.Services
+{
+    public class InternalPharmacyService
+    {
+        private readonly IRepository<InternalPharmacy> _pharmacy;
+        private readonly IRepository<InternalPharmacyStaffRequest> _staffRequest;
+        private readonly IRepository<User> _user;
+        private readonly IRepository<Medicine> _medicine;
+        private readonly IRepository<InternalPharmacyInventory> _inventory;
+        private readonly IRepository<Prescription> _prescription;
+        private readonly IRepository<DispenseRecord> _dispense;
+
+        public InternalPharmacyService(
+            IRepository<InternalPharmacy> pharmacy,
+            IRepository<InternalPharmacyStaffRequest> staffRequest,
+            IRepository<User> user,
+            IRepository<Medicine> medicine,
+            IRepository<InternalPharmacyInventory> inventory,
+            IRepository<Prescription> prescription,
+            IRepository<DispenseRecord> dispense)
+        {
+            _pharmacy = pharmacy;
+            _staffRequest = staffRequest;
+            _user = user;
+            _medicine = medicine;
+            _inventory = inventory;
+            _prescription = prescription;
+            _dispense = dispense;
+        }
+
+        // 🔐 ADMIN ONLY + ONE TIME CREATE
+        public async Task<string> RegisterInternalPharmacy(
+            int userId,
+            string role,
+            InternalPharmacyCreateDto dto)
+        {
+            // 1️⃣ Role Check
+            if (role != "Admin")
+                throw new Exception("Only admin can create internal pharmacy");
+
+            // 2️⃣ Already exists check
+            var exists = await _pharmacy.GetAsync(x => true);
+
+            if (exists != null)
+                throw new Exception("Internal pharmacy already created");
+
+            // 3️⃣ Create
+            var pharmacy = new InternalPharmacy
+            {
+                PharmacyName = dto.PharmacyName.Trim(),
+                PhoneNumber = dto.PhoneNumber.Trim(),
+                Address = dto.Address.Trim()
+            };
+
+            await _pharmacy.AddAsync(pharmacy);
+            await _pharmacy.SaveAsync();
+
+            return "Internal pharmacy created successfully";
+        }
+
+        public async Task<InternalPharmacy?> GetPharmacy()
+        {
+            return await _pharmacy.GetAsync(x => true);
+        }
+
+
+        // =========================
+        // STAFF REGISTER (PUBLIC)
+        // =========================
+        public async Task<string> RegisterStaff(
+            InternalPharmacyStaffRegisterDto dto)
+        {
+            // 1️⃣ Already user check
+            var userExists = await _user.GetAsync(x =>
+                x.MobileNumber == dto.MobileNumber);
+
+            if (userExists != null)
+                throw new Exception("Mobile already registered");
+
+            // 2️⃣ Already pending check
+            var pending = await _staffRequest.GetAsync(x =>
+                x.MobileNumber == dto.MobileNumber &&
+                x.Status == "Pending");
+
+            if (pending != null)
+                throw new Exception("Request already pending");
+
+            await _staffRequest.AddAsync(new InternalPharmacyStaffRequest
+            {
+                Name = dto.Name,
+                MobileNumber = dto.MobileNumber,
+                Password = BCrypt.Net.BCrypt.HashPassword(dto.Password),
+                Status = "Pending"
+            });
+
+            await _staffRequest.SaveAsync();
+
+            return "Registration request sent for admin approval";
+        }
+
+        // =========================
+        // ADMIN APPROVE
+        // =========================
+        public async Task<string> ApproveStaff(
+            int adminUserId,
+            string role,
+            int requestId)
+        {
+            if (role != "Admin")
+                throw new Exception("Only admin can approve");
+
+            var request = await _staffRequest.GetAsync(x =>
+                x.Id == requestId &&
+                x.Status == "Pending");
+
+            if (request == null)
+                throw new Exception("Request not found");
+
+            // Create user
+            await _user.AddAsync(new User
+            {
+                Name = request.Name,
+                MobileNumber = request.MobileNumber,
+                Password = request.Password,
+                Role = "InternalPharmacyStaff"
+            });
+
+            await _user.SaveAsync();
+
+            request.Status = "Approved";
+            await _staffRequest.SaveAsync();
+
+            return "Pharmacy staff approved successfully";
+        }
+
+        // =========================
+        // MEDICINE MASTER
+        // =========================
+        public async Task AddMedicine(MedicineCreateDto dto)
+        {
+            var medicine = new Medicine
+            {
+                GenericName = dto.GenericName.Trim(),
+                BrandName = dto.BrandName.Trim(),
+                Category = dto.Category.Trim(),
+                Unit = dto.Unit.Trim(),
+                ReorderLevel = dto.ReorderLevel
+            };
+            await _medicine.AddAsync(medicine);
+            await _medicine.SaveAsync();
+        }
+
+        public async Task<List<Medicine>> GetAllMedicines()
+        {
+            return await _medicine.Query().ToListAsync();
+        }
+
+        // =========================
+        // INVENTORY MANAGEMENT
+        // =========================
+        public async Task UpdateInventory(InventoryUpdateDto dto)
+        {
+            var pharmacy = await _pharmacy.GetAsync(x => true);
+            if (pharmacy == null) throw new Exception("Pharmacy not initialized");
+
+            var inventory = new InternalPharmacyInventory
+            {
+                MedicineId = dto.MedicineId,
+                BatchNumber = dto.BatchNumber.Trim(),
+                ExpiryDate = dto.ExpiryDate.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc),
+                Quantity = dto.Quantity,
+                Barcode = dto.Barcode.Trim(),
+                Price = dto.Price,
+                InternalPharmacyId = pharmacy.Id
+            };
+            await _inventory.AddAsync(inventory);
+            await _inventory.SaveAsync();
+        }
+
+        public async Task<List<InventoryViewDto>> GetInventory()
+        {
+            return await _inventory.Query()
+                .Include(x => x.Medicine)
+                .Select(x => new InventoryViewDto(
+                    x.Id, x.MedicineId, x.Medicine.BrandName, x.BatchNumber,
+                    x.ExpiryDate, x.Quantity, x.Barcode, x.Price))
+                .ToListAsync();
+        }
+
+        // =========================
+        // PHARMACY QUEUE
+        // =========================
+        public async Task<List<PharmacyQueueDto>> GetPendingPrescriptions()
+        {
+            return await _prescription.Query()
+                .Include(x => x.Patient).ThenInclude(p => p.User)
+                .Include(x => x.Doctor).ThenInclude(d => d.User)
+                .Where(x => x.Status == "Pending" || x.Status == "Partial")
+                .OrderBy(x => x.CreatedAt)
+                .Select(x => new PharmacyQueueDto(
+                    x.Id, x.AppointmentId, x.Patient.User.Name, x.Doctor.User.Name,
+                    x.CreatedAt, x.Status))
+                .ToListAsync();
+        }
+
+        // =========================
+        // DISPENSING LOGIC
+        // =========================
+        public async Task Dispense(int pharmacistUserId, DispenseRequestDto dto)
+        {
+            var prescription = await _prescription.Query()
+                .Include(x => x.Items)
+                .FirstOrDefaultAsync(x => x.Id == dto.PrescriptionId);
+
+            if (prescription == null) throw new Exception("Prescription not found");
+
+            var dispenseRecord = new DispenseRecord
+            {
+                PrescriptionId = dto.PrescriptionId,
+                PharmacistId = pharmacistUserId,
+                Remarks = dto.Remarks,
+                TotalAmount = 0
+            };
+
+            foreach (var item in dto.Items)
+            {
+                var presItem = prescription.Items.FirstOrDefault(x => x.MedicineId == item.MedicineId);
+                if (presItem == null) continue;
+
+                // FEFO: First Expiry First Out
+                var batches = await _inventory.Query()
+                    .Where(x => x.MedicineId == item.MedicineId && x.ExpiryDate > DateTime.UtcNow && x.Quantity > 0)
+                    .OrderBy(x => x.ExpiryDate)
+                    .ToListAsync();
+
+                int remainingToDispense = item.QuantityDispensed;
+                foreach (var batch in batches)
+                {
+                    if (remainingToDispense <= 0) break;
+
+                    int take = Math.Min(batch.Quantity, remainingToDispense);
+                    batch.Quantity -= take;
+                    remainingToDispense -= take;
+
+                    dispenseRecord.Items.Add(new DispenseItem
+                    {
+                        MedicineId = item.MedicineId,
+                        BatchNumber = batch.BatchNumber,
+                        QuantityDispensed = take,
+                        PricePerUnit = batch.Price
+                    });
+
+                    dispenseRecord.TotalAmount += (take * batch.Price);
+                }
+
+                if (remainingToDispense > 0)
+                {
+                    // Logic for partial dispensing or out of stock
+                }
+
+                presItem.QuantityDispensed += (item.QuantityDispensed - remainingToDispense);
+            }
+
+            // Update prescription status
+            bool allFullyDispensed = prescription.Items.All(x => x.QuantityDispensed >= x.QuantityPrescribed);
+            prescription.Status = allFullyDispensed ? "Dispensed" : "Partial";
+
+            await _dispense.AddAsync(dispenseRecord);
+            await _prescription.SaveAsync();
+            await _inventory.SaveAsync();
+        }
+
+        public async Task<List<LowStockAlertDto>> GetLowStockAlerts()
+        {
+            // 1️⃣ Get raw grouped data from DB
+            var data = await _inventory.Query()
+                .Include(x => x.Medicine)
+                .GroupBy(x => new 
+                { 
+                    x.MedicineId, 
+                    x.Medicine.BrandName, 
+                    x.Medicine.ReorderLevel 
+                })
+                .Select(g => new 
+                {
+                    g.Key.MedicineId,
+                    MedicineName = g.Key.BrandName,
+                    CurrentStock = g.Sum(x => x.Quantity),
+                    ReorderLevel = g.Key.ReorderLevel
+                })
+                .ToListAsync();
+
+            // 2️⃣ Filter and project in memory to avoid translation issues
+            return data
+                .Where(x => x.CurrentStock < x.ReorderLevel)
+                .Select(x => new LowStockAlertDto(
+                    x.MedicineId,
+                    x.MedicineName,
+                    x.CurrentStock,
+                    x.ReorderLevel
+                ))
+                .ToList();
+        }
+
+        public async Task<List<MedicineStockDto>> GetAvailableMedicines(string? query = null)
+        {
+            var medsQuery = _medicine.Query();
+            if (!string.IsNullOrEmpty(query))
+            {
+                medsQuery = medsQuery.Where(x =>
+                    x.BrandName.Contains(query) ||
+                    x.GenericName.Contains(query));
+            }
+
+            var meds = await medsQuery.ToListAsync();
+
+            var stocks = await _inventory.Query()
+                .Where(x => x.ExpiryDate > DateTime.UtcNow)
+                .GroupBy(x => x.MedicineId)
+                .Select(g => new { MedicineId = g.Key, TotalStock = g.Sum(x => x.Quantity) })
+                .ToListAsync();
+
+            var stockMap = stocks.ToDictionary(x => x.MedicineId, x => x.TotalStock);
+
+            return meds.Select(m => new MedicineStockDto(
+                m.Id,
+                m.GenericName,
+                m.BrandName,
+                m.Category,
+                m.Unit,
+                stockMap.ContainsKey(m.Id) ? stockMap[m.Id] : 0
+            )).ToList();
+        }
+
+        public async Task<List<PatientDispenseHistoryDto>> GetPatientDispenseHistory(int patientId)
+        {
+            return await _dispense.Query()
+                .Include(x => x.Prescription)
+                .Include(x => x.Pharmacist)
+                .Include(x => x.Items).ThenInclude(i => i.Medicine)
+                .Where(x => x.Prescription.PatientId == patientId)
+                .OrderByDescending(x => x.Id)
+                .Select(x => new PatientDispenseHistoryDto(
+                    x.Id,
+                    DateTime.UtcNow, 
+                    x.Pharmacist.Name,
+                    x.Remarks ?? string.Empty,
+                    x.TotalAmount,
+                    x.Items.Select(i => new DispenseHistoryItemDto(
+                        i.Medicine.BrandName,
+                        i.BatchNumber,
+                        i.QuantityDispensed,
+                        i.PricePerUnit
+                    )).ToList()
+                ))
+                .ToListAsync();
+        }
+    }
+}
