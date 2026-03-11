@@ -1518,7 +1518,7 @@ namespace HospitalProject.Services
         //Doctor profile View get Method
         //********************************
 
-        public async Task<DoctorProfileViewDto> GetDoctorProfile(int userId)
+        public async Task<DoctorProfileViewDto?> GetDoctorProfile(int userId)
         {
             var doctor = await _d.Query()
                 .Include(d => d.User)
@@ -1530,8 +1530,9 @@ namespace HospitalProject.Services
             var profile = await _doctorProfile.GetAsync(
                 p => p.DoctorId == doctor.Id);
 
+            // 👇 Profile இல்லன்னா null return பண்றோம்
             if (profile == null)
-                throw new Exception("Doctor profile not created");
+                return null;
 
             return new DoctorProfileViewDto(
                 doctor.Id,

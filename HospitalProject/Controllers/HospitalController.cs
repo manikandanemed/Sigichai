@@ -655,22 +655,61 @@ namespace HospitalProject.Controllers
         //Doctor profile View get Method
         //********************************
 
+        //[Authorize(Roles = "Doctor")]
+        //[HttpGet("doctor/profile")]
+        //public async Task<IActionResult> GetDoctorProfile()
+        //{
+        //    int userId = int.Parse(
+        //        User.FindFirstValue(ClaimTypes.NameIdentifier)!
+        //    );
+
+        //    var data = await _service.GetDoctorProfile(userId);
+
+        //    return Ok(new ApiResponse
+        //    {
+        //        Success = true,
+        //        Message = "Doctor profile fetched successfully",
+        //        Data = data
+        //    });
+        //}
+
+
+
         [Authorize(Roles = "Doctor")]
         [HttpGet("doctor/profile")]
         public async Task<IActionResult> GetDoctorProfile()
         {
-            int userId = int.Parse(
-                User.FindFirstValue(ClaimTypes.NameIdentifier)!
-            );
-
-            var data = await _service.GetDoctorProfile(userId);
-
-            return Ok(new ApiResponse
+            try
             {
-                Success = true,
-                Message = "Doctor profile fetched successfully",
-                Data = data
-            });
+                var userId = int.Parse(
+                    User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+                var result = await _service.GetDoctorProfile(userId);
+
+                // 👇 Profile இல்லன்னா empty response
+                if (result == null)
+                    return Ok(new ApiResponse
+                    {
+                        Success = true,
+                        Message = "Doctor profile not created yet",
+                        Data = null
+                    });
+
+                return Ok(new ApiResponse
+                {
+                    Success = true,
+                    Message = "Doctor profile fetched successfully",
+                    Data = result
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
         }
 
 
