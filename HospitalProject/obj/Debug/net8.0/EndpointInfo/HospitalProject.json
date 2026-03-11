@@ -3262,6 +3262,10 @@
           "permanentAddress": {
             "type": "string",
             "nullable": true
+          },
+          "uprnNumber": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -3305,6 +3309,10 @@
             "nullable": true
           },
           "permanentAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "uprnNumber": {
             "type": "string",
             "nullable": true
           }
