@@ -26,9 +26,9 @@
     public record IndependentDoctorRegDto(
     string Name,
     string Mobile,
-    string Password,
+    string Password
     //string Specialization,
-    int? SpecialityId
+    //int? SpecialityId
     //double? Lat,
     //double? Lon
 );

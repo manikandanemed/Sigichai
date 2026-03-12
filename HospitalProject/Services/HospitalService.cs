@@ -230,7 +230,7 @@ namespace HospitalProject.Services
             await _d.AddAsync(new Doctor
             {
                 UserId = user.Id,
-                SpecialityId = d.SpecialityId,
+                SpecialityId = null,
                 HospitalId = null,
                 IsVerified = false
             });
