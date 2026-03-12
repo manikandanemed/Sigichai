@@ -62,7 +62,7 @@ namespace HospitalProject.Controllers
         // =========================
         // Admin approve / reject
         // =========================
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPost("approve/{doctorId}")]
         public async Task<IActionResult> Approve(
             int doctorId,

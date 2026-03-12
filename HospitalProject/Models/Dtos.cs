@@ -75,10 +75,13 @@
   );
 
     public record SlotCreateDto(
-     int HospitalId,
-     DateOnly AvailableDate,
-     string TimeSlot
- );
+      string State,
+      string Area,
+      int HospitalId,
+      List<int> SpecialityIds,  // [1, 2, 3]
+      DateOnly AvailableDate,
+      string TimeSlot
+  );
 
     public record PatientTimeBookingDto(
      int HospitalId,
@@ -1170,6 +1173,7 @@
 
 
     public record DoctorProfileUpdateDto(
+    string? Name,
     string? FatherOrHusbandName,
     DateOnly? Dob,
     string? RegistrationNumber,
@@ -1181,6 +1185,28 @@
     string? PermanentAddress,
     string? UprnNumber
 );
+
+
+    // =========================
+    // DOCTOR SLOT VIEW DTOs
+    // =========================
+
+    public record DoctorSlotSpecialityDto(
+        int SpecialityId,
+        string SpecialityName
+    );
+
+    public record DoctorSlotViewDto(
+        int SlotId,
+        int HospitalId,
+        string HospitalName,
+        string State,
+        string Area,
+        DateTime AvailableDate,
+        string TimeSlot,
+        bool IsClosed,
+        List<DoctorSlotSpecialityDto> Specialities
+    );
 
 
 }

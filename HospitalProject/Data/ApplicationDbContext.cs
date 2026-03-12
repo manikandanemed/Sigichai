@@ -75,6 +75,8 @@ namespace HospitalProject.Data
         public DbSet<DoctorServiceLocation> DoctorServiceLocations => Set<DoctorServiceLocation>();
         public DbSet<DoctorServiceSlot> DoctorServiceSlots => Set<DoctorServiceSlot>();
 
+        public DbSet<DoctorAvailabilitySpeciality> DoctorAvailabilitySpecialities => Set<DoctorAvailabilitySpeciality>();
+
 
 
 
@@ -490,6 +492,19 @@ namespace HospitalProject.Data
                 .WithMany()
                 .HasForeignKey(a => a.HospitalId)
                 .OnDelete(DeleteBehavior.SetNull);
+
+
+            modelBuilder.Entity<DoctorAvailabilitySpeciality>()
+                .HasOne(s => s.DoctorAvailability)
+                .WithMany(a => a.Specialities)
+                .HasForeignKey(s => s.DoctorAvailabilityId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<DoctorAvailabilitySpeciality>()
+                .HasOne(s => s.Speciality)
+                .WithMany()
+                .HasForeignKey(s => s.SpecialityId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

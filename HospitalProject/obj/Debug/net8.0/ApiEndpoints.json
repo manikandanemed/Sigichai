@@ -702,6 +702,22 @@
   },
   {
     "ContainingType": "HospitalProject.Controllers.HospitalController",
+    "Method": "GetDoctorSlots",
+    "RelativePath": "api/hospital/doctor/my-slots",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "date",
+        "Type": "System.Nullable\u00601[[System.DateOnly, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HospitalProject.Controllers.HospitalController",
     "Method": "NmcLookup",
     "RelativePath": "api/hospital/doctor/nmc-lookup/{registrationNumber}",
     "HttpMethod": "GET",

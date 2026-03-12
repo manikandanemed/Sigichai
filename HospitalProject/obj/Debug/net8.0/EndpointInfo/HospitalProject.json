@@ -1891,6 +1891,28 @@
         }
       }
     },
+    "/api/hospital/doctor/my-slots": {
+      "get": {
+        "tags": [
+          "Hospital"
+        ],
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/internal-pharmacy/register": {
       "post": {
         "tags": [
@@ -3273,6 +3295,10 @@
       "DoctorProfileUpdateDto": {
         "type": "object",
         "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
           "fatherOrHusbandName": {
             "type": "string",
             "nullable": true
@@ -4102,9 +4128,25 @@
       "SlotCreateDto": {
         "type": "object",
         "properties": {
+          "state": {
+            "type": "string",
+            "nullable": true
+          },
+          "area": {
+            "type": "string",
+            "nullable": true
+          },
           "hospitalId": {
             "type": "integer",
             "format": "int32"
+          },
+          "specialityIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
           },
           "availableDate": {
             "type": "string",

@@ -151,18 +151,31 @@ namespace HospitalProject.Models
     public class DoctorAvailability
     {
         public int Id { get; set; }
-
         public int DoctorId { get; set; }
         public Doctor Doctor { get; set; } = null!;
 
         public int? HospitalId { get; set; }
         public Hospital? Hospital { get; set; }
 
-
         public DateTime AvailableDate { get; set; }
-        public string TimeSlot { get; set; } = string.Empty; // "10:00 - 11:00"
+        public string TimeSlot { get; set; } = string.Empty;
+        public bool IsClosed { get; set; }
 
-        public bool IsClosed { get; set; }   // ⭐ ADD THIS
+        // 👇 add பண்ணுங்க
+        public ICollection<DoctorAvailabilitySpeciality> Specialities { get; set; }
+            = new List<DoctorAvailabilitySpeciality>();
+    }
+
+    // 👇 புது entity add பண்ணுங்க
+    public class DoctorAvailabilitySpeciality
+    {
+        public int Id { get; set; }
+
+        public int DoctorAvailabilityId { get; set; }
+        public DoctorAvailability DoctorAvailability { get; set; } = null!;
+
+        public int SpecialityId { get; set; }
+        public Speciality Speciality { get; set; } = null!;
     }
 
     // =========================

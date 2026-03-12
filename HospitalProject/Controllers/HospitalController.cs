@@ -839,20 +839,47 @@ namespace HospitalProject.Controllers
         // Doctor / Admin only
         // =========================
 
+        //[Authorize(Roles = "Doctor,Admin")]
+        //[HttpPost("doctor/{doctorId}/slots")]
+        //public async Task<IActionResult> AddDoctorSlot(
+        //    int doctorId,
+        //    SlotCreateDto dto)
+        //{
+        //    await _service.AddDoctorSlot(doctorId, dto);
+
+        //    return Ok(new ApiResponse
+        //    {
+        //        Success = true,
+        //        Message = "Slot added"
+        //    });
+
+        //}
+
+
         [Authorize(Roles = "Doctor,Admin")]
         [HttpPost("doctor/{doctorId}/slots")]
         public async Task<IActionResult> AddDoctorSlot(
-            int doctorId,
-            SlotCreateDto dto)
+    int doctorId,
+    SlotCreateDto dto)
         {
-            await _service.AddDoctorSlot(doctorId, dto);
-           
-            return Ok(new ApiResponse
+            try
             {
-                Success = true,
-                Message = "Slot added"
-            });
+                await _service.AddDoctorSlot(doctorId, dto);
 
+                return Ok(new ApiResponse
+                {
+                    Success = true,
+                    Message = "Slot added"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
         }
 
 
@@ -1516,6 +1543,48 @@ namespace HospitalProject.Controllers
             try
             {
                 var result = await _service.GetNmcRecord(registrationNumber);
+                return Ok(new ApiResponse
+                {
+                    Success = true,
+                    Data = result
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
+        }
+
+
+
+        // =====================================================================
+        // 👨‍⚕️ DOCTOR — My Slots View
+        // GET /api/hospital/doctor/my-slots?date=2026-03-15
+        // =====================================================================
+        [Authorize(Roles = "Doctor")]
+        [HttpGet("doctor/my-slots")]
+        public async Task<IActionResult> GetDoctorSlots(
+            [FromQuery] DateOnly? date)
+        {
+            try
+            {
+                var userId = int.Parse(
+                    User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+                var doctor = await _service.GetDoctorByUserId(userId);
+                if (doctor == null)
+                    return BadRequest(new ApiResponse
+                    {
+                        Success = false,
+                        Message = "Doctor not found"
+                    });
+
+                var result = await _service.GetDoctorSlots(doctor.Id, date);
+
                 return Ok(new ApiResponse
                 {
                     Success = true,

@@ -714,6 +714,7 @@ namespace HospitalProject.Services
         // =========================
         // SLOT ADD (Doctor / Admin)
         // =========================
+
         public async Task AddDoctorSlot(int doctorId, SlotCreateDto dto)
         {
             // 1️⃣ Doctor exists check
@@ -721,27 +722,42 @@ namespace HospitalProject.Services
             if (doctor == null)
                 throw new Exception("Doctor not found");
 
-            // 2️⃣ 🔴 DOCTOR VERIFICATION CHECK (IMPORTANT)
+            // 2️⃣ Doctor verification check
             if (!doctor.IsVerified)
                 throw new Exception("Doctor not verified by medical council");
 
+            // 3️⃣ Hospital valid-ஆ check
+            var hospital = await _hospital.GetAsync(h =>
+                h.Id == dto.HospitalId &&
+                h.State == dto.State &&
+                h.Area == dto.Area)
+                ?? throw new Exception("Hospital not found for given State and Area");
 
+            // 4️⃣ Doctor இந்த Hospital-ல் assigned-ஆ check
             var serviceLocation = await _serviceLocation.Query()
-        .AnyAsync(x =>
-            x.DoctorId == doctorId &&
-            x.HospitalId == dto.HospitalId &&
-            x.IsActive);
+                .AnyAsync(x =>
+                    x.DoctorId == doctorId &&
+                    x.HospitalId == dto.HospitalId &&
+                    x.IsActive);
 
-            if (!serviceLocation)
-                throw new Exception("Doctor is not assigned to this hospital");
+            //if (!serviceLocation)
+            //    throw new Exception("Doctor is not assigned to this hospital");
 
-            // 3️⃣ Convert DateOnly → UTC DateTime
+            // 5️⃣ Speciality valid-ஆ check
+            foreach (var specialityId in dto.SpecialityIds)
+            {
+                var speciality = await _speciality.GetAsync(
+                    s => s.Id == specialityId && s.IsActive)
+                    ?? throw new Exception($"Speciality {specialityId} not found");
+            }
+
+            // 6️⃣ Convert DateOnly → UTC DateTime
             var utcDate = DateTime.SpecifyKind(
                 dto.AvailableDate.ToDateTime(TimeOnly.MinValue),
                 DateTimeKind.Utc
             );
 
-            // 4️⃣ Slot already exists check
+            // 7️⃣ Slot already exists check
             bool exists = _slots.Query().Any(x =>
                 x.DoctorId == doctorId &&
                 x.HospitalId == dto.HospitalId &&
@@ -752,15 +768,24 @@ namespace HospitalProject.Services
             if (exists)
                 throw new Exception("Slot already exists");
 
-            // 5️⃣ Add slot
-            await _slots.AddAsync(new DoctorAvailability
+            // 8️⃣ ஒரே ஒரு Slot create — Multiple Specialities link
+            var slot = new DoctorAvailability
             {
                 DoctorId = doctorId,
-                HospitalId = dto.HospitalId,  // 👈 add
-                AvailableDate = utcDate,   // 🔥 ONLY UTC
+                HospitalId = dto.HospitalId,
+                AvailableDate = utcDate,
                 TimeSlot = dto.TimeSlot.Trim()
-            });
+            };
 
+            foreach (var specialityId in dto.SpecialityIds)
+            {
+                slot.Specialities.Add(new DoctorAvailabilitySpeciality
+                {
+                    SpecialityId = specialityId
+                });
+            }
+
+            await _slots.AddAsync(slot);
             await _slots.SaveAsync();
         }
 
@@ -1562,18 +1587,18 @@ namespace HospitalProject.Services
             if (doctor == null)
                 throw new Exception("Doctor not found");
 
+            // 👇 User Name update பண்றோம்
+            if (!string.IsNullOrWhiteSpace(dto.Name))
+                doctor.User.Name = dto.Name;
+
             var profile = await _doctorProfile.GetAsync(
                 p => p.DoctorId == doctor.Id);
 
             if (profile == null)
                 throw new Exception("Doctor profile not created yet");
 
-            // 👇 if null no change
             if (!string.IsNullOrWhiteSpace(dto.FatherOrHusbandName))
                 profile.FatherOrHusbandName = dto.FatherOrHusbandName;
-
-            if (!string.IsNullOrWhiteSpace(dto.UprnNumber))
-                profile.UprnNumber = dto.UprnNumber;
 
             if (dto.Dob.HasValue)
                 profile.Dob = dto.Dob.Value;
@@ -1606,7 +1631,11 @@ namespace HospitalProject.Services
             if (!string.IsNullOrWhiteSpace(dto.PermanentAddress))
                 profile.PermanentAddress = dto.PermanentAddress;
 
-            await _doctorProfile.SaveAsync();
+            if (!string.IsNullOrWhiteSpace(dto.UprnNumber))
+                profile.UprnNumber = dto.UprnNumber;
+
+            await _u.SaveAsync();          // User Name save
+            await _doctorProfile.SaveAsync(); // Profile save
         }
 
 
@@ -3554,7 +3583,56 @@ GetMedicalRepAppointments(
 
 
 
-       
+        // =====================================================================
+        // DOCTOR — My Slots View
+        // =====================================================================
+        public async Task<List<DoctorSlotViewDto>> GetDoctorSlots(
+            int doctorId, DateOnly? date)
+        {
+            var query = _slots.Query()
+                .Include(s => s.Hospital)
+                .Include(s => s.Specialities)
+                    .ThenInclude(sp => sp.Speciality)
+                .Where(s => s.DoctorId == doctorId);
+
+            // Date filter — குடுத்தா அன்னைக்கு மட்டும்
+            if (date.HasValue)
+            {
+                var utcDate = DateTime.SpecifyKind(
+                    date.Value.ToDateTime(TimeOnly.MinValue),
+                    DateTimeKind.Utc);
+                query = query.Where(s => s.AvailableDate == utcDate);
+            }
+
+            return await query
+                .OrderBy(s => s.AvailableDate)
+                .ThenBy(s => s.TimeSlot)
+                .Select(s => new DoctorSlotViewDto(
+                    s.Id,
+                    s.HospitalId ?? 0,
+                    s.Hospital != null ? s.Hospital.Name : "N/A",
+                    s.Hospital != null ? s.Hospital.State : "N/A",
+                    s.Hospital != null ? s.Hospital.Area : "N/A",
+                    s.AvailableDate,
+                    s.TimeSlot,
+                    s.IsClosed,
+                    s.Specialities.Select(sp => new DoctorSlotSpecialityDto(
+                        sp.SpecialityId,
+                        sp.Speciality.Name
+                    )).ToList()
+                ))
+                .ToListAsync();
+        }
+
+
+        public async Task<Doctor?> GetDoctorByUserId(int userId)
+        {
+            return await _d.GetAsync(d => d.UserId == userId);
+        }
+
+
+
+
 
 
 
