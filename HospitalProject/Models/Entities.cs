@@ -157,7 +157,6 @@ namespace HospitalProject.Models
         public int? HospitalId { get; set; }
         public Hospital? Hospital { get; set; }
 
-        public DateTime AvailableDate { get; set; }
         public string TimeSlot { get; set; } = string.Empty;
         public bool IsClosed { get; set; }
 

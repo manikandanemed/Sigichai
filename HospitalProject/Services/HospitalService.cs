@@ -740,8 +740,8 @@ namespace HospitalProject.Services
                     x.HospitalId == dto.HospitalId &&
                     x.IsActive);
 
-            //if (!serviceLocation)
-            //    throw new Exception("Doctor is not assigned to this hospital");
+            if (!serviceLocation)
+                throw new Exception("Doctor is not assigned to this hospital");
 
             // 5️⃣ Speciality valid-ஆ check
             foreach (var specialityId in dto.SpecialityIds)
@@ -751,29 +751,21 @@ namespace HospitalProject.Services
                     ?? throw new Exception($"Speciality {specialityId} not found");
             }
 
-            // 6️⃣ Convert DateOnly → UTC DateTime
-            var utcDate = DateTime.SpecifyKind(
-                dto.AvailableDate.ToDateTime(TimeOnly.MinValue),
-                DateTimeKind.Utc
-            );
-
-            // 7️⃣ Slot already exists check
+            // 6️⃣ Slot already exists check
             bool exists = _slots.Query().Any(x =>
                 x.DoctorId == doctorId &&
                 x.HospitalId == dto.HospitalId &&
-                x.AvailableDate == utcDate &&
                 x.TimeSlot == dto.TimeSlot
             );
 
             if (exists)
-                throw new Exception("Slot already exists");
+                throw new Exception("Slot already exists for this hospital and timeslot");
 
-            // 8️⃣ ஒரே ஒரு Slot create — Multiple Specialities link
+            // 7️⃣ Slot create
             var slot = new DoctorAvailability
             {
                 DoctorId = doctorId,
                 HospitalId = dto.HospitalId,
-                AvailableDate = utcDate,
                 TimeSlot = dto.TimeSlot.Trim()
             };
 
@@ -809,41 +801,14 @@ namespace HospitalProject.Services
             return await _slots.Query()
                 .Where(x =>
                     x.DoctorId == doctorId &&
-                    x.AvailableDate == utcDate &&
+                    //x.AvailableDate == utcDate &&
                     x.IsClosed == false)
                 .ToListAsync();
         }
 
 
 
-        // =========================
-        // BOOK APPOINTMENT
-        // =========================
-        public async Task<string> BookAppointment(int userId, int slotId)
-        {
-            var patient = await _p.GetAsync(x => x.UserId == userId);
-            if (patient == null)
-                throw new Exception("Patient not found");
-
-            var slot = await _slots.GetAsync(x => x.Id == slotId);
-            if (slot == null)
-                throw new Exception("Slot not found");
-
-            string tempToken = Guid.NewGuid().ToString("N")[..8].ToUpper();
-
-            await _apps.AddAsync(new Appointment
-            {
-                PatientId = patient.Id,
-                DoctorId = slot.DoctorId,
-                AppointmentDate = slot.AvailableDate,
-                TimeSlot = slot.TimeSlot,
-                TempToken = tempToken,
-                Status = "Booked"
-            });
-
-            await _apps.SaveAsync();
-            return tempToken;
-        }
+        
 
         public async Task<List<SpecialityViewDto>> GetSpecialities()
         {
@@ -867,8 +832,8 @@ namespace HospitalProject.Services
         // SELF BOOKING (Doctor based)
         // =========================
         public async Task<string> BookPatientByTime(
-            int userId,
-            PatientTimeBookingDto dto)
+     int userId,
+     PatientTimeBookingDto dto)
         {
             // 1️⃣ Patient check
             var patient = await _p.GetAsync(x => x.UserId == userId);
@@ -877,12 +842,10 @@ namespace HospitalProject.Services
 
             // 2️⃣ Doctor check (ONLY verified doctor)
             var doctor = await _d.Query()
-                 .Include(d => d.User)
-                 .FirstOrDefaultAsync(x =>
-                 x.Id == dto.DoctorId &&
-                 x.IsVerified == true);
-
-
+                .Include(d => d.User)
+                .FirstOrDefaultAsync(x =>
+                    x.Id == dto.DoctorId &&
+                    x.IsVerified == true);
             if (doctor == null)
                 throw new Exception("Doctor not available");
 
@@ -892,25 +855,36 @@ namespace HospitalProject.Services
                 DateTimeKind.Utc
             );
 
-            // 4️⃣ Slot availability check
+            // 4️⃣ Slot availability check — AvailableDate இல்லை, TimeSlot மட்டும் check
             var slotExists = await _slots.GetAsync(x =>
                 x.DoctorId == dto.DoctorId &&
-                x.AvailableDate == utcDate &&
+                x.HospitalId == dto.HospitalId &&
                 x.TimeSlot == dto.TimeSlot &&
-                x.IsClosed == false);   // ⭐ ADD THIS
+                x.IsClosed == false);
 
             if (slotExists == null)
                 throw new Exception("Selected time not available");
 
-            // 5️⃣ Generate temp token
+            // 5️⃣ Same date + same slot already booked check
+            var alreadyBooked = await _apps.GetAsync(x =>
+                x.DoctorId == dto.DoctorId &&
+                x.HospitalId == dto.HospitalId &&
+                x.AppointmentDate == utcDate &&
+                x.TimeSlot == dto.TimeSlot &&
+                x.Status != "Cancelled");
+
+            if (alreadyBooked != null)
+                throw new Exception("Slot already booked for this date");
+
+            // 6️⃣ Generate temp token
             var token = Guid.NewGuid()
                 .ToString("N")[..8]
                 .ToUpper();
 
-            // 6️⃣ Create appointment
+            // 7️⃣ Create appointment
             await _apps.AddAsync(new Appointment
             {
-                HospitalId = doctor.HospitalId, // ✅ NULL or value – both OK
+                HospitalId = dto.HospitalId,
                 PatientId = patient.Id,
                 DoctorId = doctor.Id,
                 AppointmentDate = utcDate,
@@ -919,15 +893,10 @@ namespace HospitalProject.Services
                 Status = "Booked",
                 ReasonForVisit = dto.ReasonForVisit
             });
-
             await _apps.SaveAsync();
 
-            // =========================
-            // 🔔 SEND SMS TO PATIENT
-            // =========================
-
+            // 8️⃣ SMS to Patient
             var patientUser = await _u.GetAsync(u => u.Id == userId);
-
             if (patientUser != null)
             {
                 await _twilio.SendOtpAsync(
@@ -943,15 +912,15 @@ namespace HospitalProject.Services
 
             return token;
         }
-            
 
 
         // =========================
         // FAMILY BOOKING (Doctor based)
         // =========================
+
         public async Task<string> BookFamilyByTime(
-            int userId,
-            FamilyTimeBookingDto dto)
+    int userId,
+    FamilyTimeBookingDto dto)
         {
             // 1️⃣ Logged-in patient check
             var patient = await _p.GetAsync(x => x.UserId == userId);
@@ -962,22 +931,15 @@ namespace HospitalProject.Services
             var family = await _family.GetAsync(x =>
                 x.Id == dto.FamilyMemberId &&
                 x.PatientId == patient.Id);
-
             if (family == null)
                 throw new Exception("Invalid family member");
 
             // 3️⃣ Doctor check (ONLY verified)
-            //var doctor = await _d.GetAsync(x =>
-            //    x.Id == dto.DoctorId &&
-            //    x.IsVerified == true);
-
             var doctor = await _d.Query()
-           .Include(d => d.User)          // 👈 IMPORTANT
-           .FirstOrDefaultAsync(x =>
-            x.Id == dto.DoctorId &&
-            x.IsVerified == true);
-
-
+                .Include(d => d.User)
+                .FirstOrDefaultAsync(x =>
+                    x.Id == dto.DoctorId &&
+                    x.IsVerified == true);
             if (doctor == null)
                 throw new Exception("Doctor not available");
 
@@ -987,26 +949,36 @@ namespace HospitalProject.Services
                 DateTimeKind.Utc
             );
 
-            // 5️⃣ Slot availability check
+            // 5️⃣ Slot availability check — AvailableDate இல்லை
             var slotExists = await _slots.GetAsync(x =>
-            x.DoctorId == dto.DoctorId &&
-            x.AvailableDate == utcDate &&
-            x.TimeSlot == dto.TimeSlot &&
-            x.IsClosed == false   // ⭐ ADD THIS
-            );
+                x.DoctorId == dto.DoctorId &&
+                x.HospitalId == dto.HospitalId &&
+                x.TimeSlot == dto.TimeSlot &&
+                x.IsClosed == false);
 
             if (slotExists == null)
                 throw new Exception("Selected time slot not available");
 
-            // 6️⃣ Generate temp token
+            // 6️⃣ Same date + same slot already booked check
+            var alreadyBooked = await _apps.GetAsync(x =>
+                x.DoctorId == dto.DoctorId &&
+                x.HospitalId == dto.HospitalId &&
+                x.AppointmentDate == utcDate &&
+                x.TimeSlot == dto.TimeSlot &&
+                x.Status != "Cancelled");
+
+            if (alreadyBooked != null)
+                throw new Exception("Slot already booked for this date");
+
+            // 7️⃣ Generate temp token
             var tempToken = Guid.NewGuid()
                 .ToString("N")[..8]
                 .ToUpper();
 
-            // 7️⃣ Create appointment
+            // 8️⃣ Create appointment
             await _apps.AddAsync(new Appointment
             {
-                HospitalId = doctor.HospitalId, // ✅ optional
+                HospitalId = dto.HospitalId,
                 PatientId = patient.Id,
                 FamilyMemberId = family.Id,
                 DoctorId = doctor.Id,
@@ -1019,18 +991,14 @@ namespace HospitalProject.Services
 
             await _apps.SaveAsync();
 
-
-            // =========================
-            // 🔔 SEND SMS TO PATIENT
-            // =========================
-
+            // 9️⃣ SMS to Patient
             var patientUser = await _u.GetAsync(u => u.Id == userId);
-
             if (patientUser != null)
             {
                 await _twilio.SendOtpAsync(
                     patientUser.MobileNumber,
-                    $"Appointment booked for {family.Name}.\n" +
+                    $"Family appointment booked.\n" +
+                    $"Member: {family.Name}\n" +
                     $"Doctor: {doctor.User.Name}\n" +
                     $"Date: {dto.Date}\n" +
                     $"Time: {dto.TimeSlot}\n" +
@@ -3079,14 +3047,14 @@ GetPatientHistory(int userId)
                 .ToListAsync();
         }
 
-     
 
-     //END SESION GET BY SLOT ID
+
+        //END SESION GET BY SLOT ID
 
         public async Task EndSessionBySlot(
-        int userId,
-        string role,
-        int slotId)
+     int userId,
+     string role,
+     int slotId)
         {
             // 1️⃣ Get slot
             var slot = await _slots.GetAsync(s => s.Id == slotId);
@@ -3095,8 +3063,9 @@ GetPatientHistory(int userId)
 
             IQueryable<Appointment> query = _apps.Query()
                 .Where(a =>
-                    a.AppointmentDate.Date == slot.AvailableDate.Date &&
                     a.TimeSlot == slot.TimeSlot &&
+                    a.HospitalId == slot.HospitalId &&
+                    a.DoctorId == slot.DoctorId &&
                     a.Status == "Booked");
 
             // 🔹 Doctor scope
@@ -3105,14 +3074,10 @@ GetPatientHistory(int userId)
                 var doctor = await _d.GetAsync(d => d.UserId == userId);
                 if (doctor == null)
                     throw new Exception("Doctor not found");
-
                 query = query.Where(a => a.DoctorId == doctor.Id);
             }
 
-            // 🔹 Admin → all doctors allowed (or hospital filter if needed)
-
             var apps = await query.ToListAsync();
-
             foreach (var app in apps)
             {
                 app.Status = "NoShow";
@@ -3500,25 +3465,48 @@ GetMedicalRepAppointments(
 
 
         // HospitalService.cs - இதில் ஒரு லாஜிக் கூட மிஸ் ஆகவில்லை
-        public async Task<object> BookWithPayment(int userId, BookAppointmentDto dto, bool isFamily)
+        public async Task<object> BookWithPayment(
+    int userId, BookAppointmentDto dto, bool isFamily)
         {
             var patient = await _p.GetAsync(x => x.UserId == userId);
-
             var doctor = await _d.Query()
                 .Include(d => d.User)
-                .FirstOrDefaultAsync(x => x.Id == dto.DoctorId && x.IsVerified == true);
+                .FirstOrDefaultAsync(x =>
+                    x.Id == dto.DoctorId &&
+                    x.IsVerified == true);
 
             if (patient == null || doctor == null)
                 throw new Exception("Details not found");
+
+            // Slot availability check
+            var slotExists = await _slots.GetAsync(x =>
+                x.DoctorId == dto.DoctorId &&
+                x.HospitalId == dto.HospitalId &&
+                x.TimeSlot == dto.TimeSlot &&
+                x.IsClosed == false);
+
+            if (slotExists == null)
+                throw new Exception("Selected time not available");
 
             var utcDate = DateTime.SpecifyKind(
                 dto.Date.ToDateTime(TimeOnly.MinValue),
                 DateTimeKind.Utc);
 
+            // Already booked check
+            var alreadyBooked = await _apps.GetAsync(x =>
+                x.DoctorId == dto.DoctorId &&
+                x.HospitalId == dto.HospitalId &&
+                x.AppointmentDate == utcDate &&
+                x.TimeSlot == dto.TimeSlot &&
+                x.Status != "Cancelled");
+
+            if (alreadyBooked != null)
+                throw new Exception("Slot already booked for this date");
+
             // 1️⃣ Create Appointment
             var appointment = new Appointment
             {
-                HospitalId = doctor.HospitalId,
+                HospitalId = dto.HospitalId,   // 👈 dto-ல் இருந்து
                 PatientId = patient.Id,
                 DoctorId = doctor.Id,
                 AppointmentDate = utcDate,
@@ -3532,7 +3520,8 @@ GetMedicalRepAppointments(
             await _apps.SaveAsync();
 
             // 2️⃣ Create Razorpay Order
-            string orderId = await _paymentService.CreateOrder(10.00m, appointment.Id.ToString());
+            string orderId = await _paymentService.CreateOrder(
+                10.00m, appointment.Id.ToString());
 
             appointment.RazorpayOrderId = orderId;
             await _apps.SaveAsync();
@@ -3545,7 +3534,6 @@ GetMedicalRepAppointments(
                 Amount = 10.00m,
                 Status = "Created"
             });
-
             await _paymentlog.SaveAsync();
 
             return new
@@ -3586,34 +3574,20 @@ GetMedicalRepAppointments(
         // =====================================================================
         // DOCTOR — My Slots View
         // =====================================================================
-        public async Task<List<DoctorSlotViewDto>> GetDoctorSlots(
-            int doctorId, DateOnly? date)
+        public async Task<List<DoctorSlotViewDto>> GetDoctorSlots(int doctorId)
         {
-            var query = _slots.Query()
+            return await _slots.Query()
                 .Include(s => s.Hospital)
                 .Include(s => s.Specialities)
                     .ThenInclude(sp => sp.Speciality)
-                .Where(s => s.DoctorId == doctorId);
-
-            // Date filter — குடுத்தா அன்னைக்கு மட்டும்
-            if (date.HasValue)
-            {
-                var utcDate = DateTime.SpecifyKind(
-                    date.Value.ToDateTime(TimeOnly.MinValue),
-                    DateTimeKind.Utc);
-                query = query.Where(s => s.AvailableDate == utcDate);
-            }
-
-            return await query
-                .OrderBy(s => s.AvailableDate)
-                .ThenBy(s => s.TimeSlot)
+                .Where(s => s.DoctorId == doctorId)
+                .OrderBy(s => s.TimeSlot)
                 .Select(s => new DoctorSlotViewDto(
                     s.Id,
                     s.HospitalId ?? 0,
                     s.Hospital != null ? s.Hospital.Name : "N/A",
                     s.Hospital != null ? s.Hospital.State : "N/A",
                     s.Hospital != null ? s.Hospital.Area : "N/A",
-                    s.AvailableDate,
                     s.TimeSlot,
                     s.IsClosed,
                     s.Specialities.Select(sp => new DoctorSlotSpecialityDto(

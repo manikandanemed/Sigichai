@@ -1567,8 +1567,7 @@ namespace HospitalProject.Controllers
         // =====================================================================
         [Authorize(Roles = "Doctor")]
         [HttpGet("doctor/my-slots")]
-        public async Task<IActionResult> GetDoctorSlots(
-            [FromQuery] DateOnly? date)
+        public async Task<IActionResult> GetDoctorSlots()
         {
             try
             {
@@ -1583,7 +1582,7 @@ namespace HospitalProject.Controllers
                         Message = "Doctor not found"
                     });
 
-                var result = await _service.GetDoctorSlots(doctor.Id, date);
+                var result = await _service.GetDoctorSlots(doctor.Id);
 
                 return Ok(new ApiResponse
                 {

@@ -74,14 +74,14 @@
       int MaxRefills = 0       // 👈 default 0 = one-time use
   );
 
+    // Date REMOVE
     public record SlotCreateDto(
-      string State,
-      string Area,
-      int HospitalId,
-      List<int> SpecialityIds,  // [1, 2, 3]
-      DateOnly AvailableDate,
-      string TimeSlot
-  );
+        string State,
+        string Area,
+        int HospitalId,
+        List<int> SpecialityIds,
+        string TimeSlot
+    );
 
     public record PatientTimeBookingDto(
      int HospitalId,
@@ -659,6 +659,7 @@
 
     public class BookAppointmentDto
     {
+        public int HospitalId { get; set; }    // 👈 add
         public int DoctorId { get; set; }
         public DateOnly Date { get; set; }
         public string TimeSlot { get; set; } = "";
@@ -1197,16 +1198,15 @@
     );
 
     public record DoctorSlotViewDto(
-        int SlotId,
-        int HospitalId,
-        string HospitalName,
-        string State,
-        string Area,
-        DateTime AvailableDate,
-        string TimeSlot,
-        bool IsClosed,
-        List<DoctorSlotSpecialityDto> Specialities
-    );
+     int SlotId,
+     int HospitalId,
+     string HospitalName,
+     string State,
+     string Area,
+     string TimeSlot,
+     bool IsClosed,
+     List<DoctorSlotSpecialityDto> Specialities
+ );
 
 
 }

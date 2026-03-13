@@ -1896,16 +1896,6 @@
         "tags": [
           "Hospital"
         ],
-        "parameters": [
-          {
-            "name": "date",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "date"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -4147,10 +4137,6 @@
               "format": "int32"
             },
             "nullable": true
-          },
-          "availableDate": {
-            "type": "string",
-            "format": "date"
           },
           "timeSlot": {
             "type": "string",
