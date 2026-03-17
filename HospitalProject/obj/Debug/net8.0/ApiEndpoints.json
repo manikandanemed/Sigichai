@@ -517,11 +517,6 @@
         "Name": "doctorId",
         "Type": "System.Int32",
         "IsRequired": true
-      },
-      {
-        "Name": "date",
-        "Type": "System.DateOnly",
-        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -542,6 +537,53 @@
       {
         "Name": "dto",
         "Type": "HospitalProject.Models.SlotCreateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HospitalProject.Controllers.HospitalController",
+    "Method": "UpdateSlot",
+    "RelativePath": "api/hospital/doctor/{doctorId}/slots/{slotId}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "doctorId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "slotId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "HospitalProject.Models.SlotUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HospitalProject.Controllers.HospitalController",
+    "Method": "DeleteSlot",
+    "RelativePath": "api/hospital/doctor/{doctorId}/slots/{slotId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "doctorId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "slotId",
+        "Type": "System.Int32",
         "IsRequired": true
       }
     ],

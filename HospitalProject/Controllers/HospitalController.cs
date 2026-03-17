@@ -224,22 +224,29 @@ namespace HospitalProject.Controllers
         }
 
         [HttpGet("doctor/{doctorId}/slots")]
-        public async Task<IActionResult> GetSlots(
-     int doctorId,
-     DateOnly date)
+        public async Task<IActionResult> GetSlots(int doctorId)
         {
-            var slots = await _service.GetAvailableSlots(doctorId, date);
-
-            var message = slots.Any()
-        ? "Available slots fetched successfully"
-        : "No available slots for the selected doctor on this date";
-
-            return Ok(new ApiResponse
+            try
             {
-                Success = true,
-                Message = message,
-                Data = slots
-            });
+                var slots = await _service.GetAvailableSlots(doctorId);
+
+                return Ok(new ApiResponse
+                {
+                    Success = true,
+                    Message = slots.Any()
+                        ? "Available slots fetched successfully"
+                        : "No slots found",
+                    Data = slots
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
         }
 
 
@@ -1600,6 +1607,62 @@ namespace HospitalProject.Controllers
             }
         }
 
+
+
+        // =====================================================================
+        // 👨‍⚕️ DOCTOR — Update Slot
+        // PUT /api/hospital/doctor/{doctorId}/slots/{slotId}
+        // =====================================================================
+        [Authorize(Roles = "Doctor,Admin")]
+        [HttpPut("doctor/{doctorId}/slots/{slotId}")]
+        public async Task<IActionResult> UpdateSlot(
+            int doctorId, int slotId, [FromBody] SlotUpdateDto dto)
+        {
+            try
+            {
+                await _service.UpdateSlot(doctorId, slotId, dto);
+                return Ok(new ApiResponse
+                {
+                    Success = true,
+                    Message = "Slot updated successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
+        }
+
+        // =====================================================================
+        // 👨‍⚕️ DOCTOR — Delete Slot
+        // DELETE /api/hospital/doctor/{doctorId}/slots/{slotId}
+        // =====================================================================
+        [Authorize(Roles = "Doctor,Admin")]
+        [HttpDelete("doctor/{doctorId}/slots/{slotId}")]
+        public async Task<IActionResult> DeleteSlot(int doctorId, int slotId)
+        {
+            try
+            {
+                await _service.DeleteSlot(doctorId, slotId);
+                return Ok(new ApiResponse
+                {
+                    Success = true,
+                    Message = "Slot deleted successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
+        }
 
 
 

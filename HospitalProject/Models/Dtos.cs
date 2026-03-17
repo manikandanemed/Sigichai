@@ -1206,7 +1206,15 @@
      string TimeSlot,
      bool IsClosed,
      List<DoctorSlotSpecialityDto> Specialities
- );
+    );
+
+
+    public record SlotUpdateDto(
+    List<int> SpecialityIds,
+    string TimeSlot
+    );
+
+
 
 
 }

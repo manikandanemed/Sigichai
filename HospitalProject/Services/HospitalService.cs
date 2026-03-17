@@ -734,14 +734,14 @@ namespace HospitalProject.Services
                 ?? throw new Exception("Hospital not found for given State and Area");
 
             // 4️⃣ Doctor இந்த Hospital-ல் assigned-ஆ check
-            var serviceLocation = await _serviceLocation.Query()
-                .AnyAsync(x =>
-                    x.DoctorId == doctorId &&
-                    x.HospitalId == dto.HospitalId &&
-                    x.IsActive);
+            //var serviceLocation = await _serviceLocation.Query()
+            //    .AnyAsync(x =>
+            //        x.DoctorId == doctorId &&
+            //        x.HospitalId == dto.HospitalId &&
+            //        x.IsActive);
 
-            if (!serviceLocation)
-                throw new Exception("Doctor is not assigned to this hospital");
+            //if (!serviceLocation)
+            //    throw new Exception("Doctor is not assigned to this hospital");
 
             // 5️⃣ Speciality valid-ஆ check
             foreach (var specialityId in dto.SpecialityIds)
@@ -789,26 +789,21 @@ namespace HospitalProject.Services
         // =========================
 
 
-        public async Task<List<DoctorAvailability>> GetAvailableSlots(
-   int doctorId,
-   DateOnly date)
+        public async Task<List<DoctorAvailability>> GetAvailableSlots(int doctorId)
         {
-            var utcDate = DateTime.SpecifyKind(
-                date.ToDateTime(TimeOnly.MinValue),
-                DateTimeKind.Utc
-            );
-
             return await _slots.Query()
+                .Include(s => s.Specialities)
+                    .ThenInclude(sp => sp.Speciality)
+                .Include(s => s.Hospital)
                 .Where(x =>
                     x.DoctorId == doctorId &&
-                    //x.AvailableDate == utcDate &&
                     x.IsClosed == false)
                 .ToListAsync();
         }
 
 
 
-        
+
 
         public async Task<List<SpecialityViewDto>> GetSpecialities()
         {
@@ -3576,26 +3571,116 @@ GetMedicalRepAppointments(
         // =====================================================================
         public async Task<List<DoctorSlotViewDto>> GetDoctorSlots(int doctorId)
         {
-            return await _slots.Query()
+            var slots = await _slots.Query()
                 .Include(s => s.Hospital)
                 .Include(s => s.Specialities)
                     .ThenInclude(sp => sp.Speciality)
-                .Where(s => s.DoctorId == doctorId)
+                .Where(s => s.DoctorId == doctorId &&
+                            s.IsClosed == false)  // 👈 இதை add பண்ணுங்க
                 .OrderBy(s => s.TimeSlot)
-                .Select(s => new DoctorSlotViewDto(
-                    s.Id,
-                    s.HospitalId ?? 0,
-                    s.Hospital != null ? s.Hospital.Name : "N/A",
-                    s.Hospital != null ? s.Hospital.State : "N/A",
-                    s.Hospital != null ? s.Hospital.Area : "N/A",
-                    s.TimeSlot,
-                    s.IsClosed,
-                    s.Specialities.Select(sp => new DoctorSlotSpecialityDto(
-                        sp.SpecialityId,
-                        sp.Speciality.Name
-                    )).ToList()
-                ))
                 .ToListAsync();
+
+            return slots.Select(s => new DoctorSlotViewDto(
+                s.Id,
+                s.HospitalId ?? 0,
+                s.Hospital != null ? s.Hospital.Name : "N/A",
+                s.Hospital != null ? s.Hospital.State : "N/A",
+                s.Hospital != null ? s.Hospital.Area : "N/A",
+                s.TimeSlot,
+                s.IsClosed,
+                s.Specialities.Select(sp => new DoctorSlotSpecialityDto(
+                    sp.SpecialityId,
+                    sp.Speciality.Name
+                )).ToList()
+            )).ToList();
+        }
+
+
+        // =====================================================================
+        // SLOT UPDATE
+        // =====================================================================
+        public async Task UpdateSlot(int doctorId, int slotId, SlotUpdateDto dto)
+        {
+            var slot = await _slots.Query()
+                .Include(s => s.Specialities)
+                .FirstOrDefaultAsync(s =>
+                    s.Id == slotId &&
+                    s.DoctorId == doctorId)
+                ?? throw new Exception("Slot not found");
+
+            // TimeSlot update
+            if (!string.IsNullOrWhiteSpace(dto.TimeSlot))
+            {
+                // Duplicate check
+                bool exists = _slots.Query().Any(x =>
+                    x.DoctorId == doctorId &&
+                    x.HospitalId == slot.HospitalId &&
+                    x.TimeSlot == dto.TimeSlot &&
+                    x.Id != slotId);
+
+                if (exists)
+                    throw new Exception("Slot already exists for this timeslot");
+
+                slot.TimeSlot = dto.TimeSlot.Trim();
+            }
+
+            // Specialities update
+            if (dto.SpecialityIds != null && dto.SpecialityIds.Count > 0)
+            {
+                // Validate specialities
+                foreach (var specialityId in dto.SpecialityIds)
+                {
+                    var speciality = await _speciality.GetAsync(
+                        s => s.Id == specialityId && s.IsActive)
+                        ?? throw new Exception($"Speciality {specialityId} not found");
+                }
+
+                // பழைய specialities remove — புது ones add
+                slot.Specialities.Clear();
+
+                foreach (var specialityId in dto.SpecialityIds)
+                {
+                    slot.Specialities.Add(new DoctorAvailabilitySpeciality
+                    {
+                        SpecialityId = specialityId
+                    });
+                }
+            }
+
+            await _slots.SaveAsync();
+        }
+
+        // =====================================================================
+        // SLOT DELETE
+        // =====================================================================
+        public async Task DeleteSlot(int doctorId, int slotId)
+        {
+            var slot = await _slots.Query()
+                .Include(s => s.Specialities)
+                .FirstOrDefaultAsync(s =>
+                    s.Id == slotId &&
+                    s.DoctorId == doctorId)
+                ?? throw new Exception("Slot not found");
+
+            // Future appointments இருக்கா check
+            var hasAppointments = await _apps.Query()
+                .AnyAsync(a =>
+                    a.DoctorId == doctorId &&
+                    a.HospitalId == slot.HospitalId &&
+                    a.TimeSlot == slot.TimeSlot &&
+                    a.AppointmentDate >= DateTime.UtcNow &&
+                    a.Status == "Booked");
+
+            if (hasAppointments)
+                throw new Exception(
+                    "Cannot delete slot — active appointments exist");
+
+            slot.Specialities.Clear();
+            await _slots.SaveAsync();
+
+            // Soft delete — IsClosed = true
+            slot.IsClosed = true;
+            await _slots.SaveAsync();
         }
 
 
