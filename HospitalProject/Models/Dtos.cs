@@ -80,6 +80,7 @@
         string Area,
         int HospitalId,
         List<int> SpecialityIds,
+        DateOnly AvailableDate,  // 👈 add
         string TimeSlot
     );
 
@@ -1203,6 +1204,7 @@
      string HospitalName,
      string State,
      string Area,
+     DateOnly AvailableDate,  // 👈 add
      string TimeSlot,
      bool IsClosed,
      List<DoctorSlotSpecialityDto> Specialities
@@ -1211,6 +1213,7 @@
 
     public record SlotUpdateDto(
     List<int> SpecialityIds,
+    DateOnly? AvailableDate,  // 👈 add
     string TimeSlot
     );
 

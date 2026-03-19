@@ -717,23 +717,19 @@ namespace HospitalProject.Services
 
         public async Task AddDoctorSlot(int doctorId, SlotCreateDto dto)
         {
-            // 1️⃣ Doctor exists check
             var doctor = await _d.GetAsync(d => d.Id == doctorId);
             if (doctor == null)
                 throw new Exception("Doctor not found");
 
-            // 2️⃣ Doctor verification check
             if (!doctor.IsVerified)
                 throw new Exception("Doctor not verified by medical council");
 
-            // 3️⃣ Hospital valid-ஆ check
             var hospital = await _hospital.GetAsync(h =>
                 h.Id == dto.HospitalId &&
                 h.State == dto.State &&
                 h.Area == dto.Area)
                 ?? throw new Exception("Hospital not found for given State and Area");
 
-            // 4️⃣ Doctor இந்த Hospital-ல் assigned-ஆ check
             //var serviceLocation = await _serviceLocation.Query()
             //    .AnyAsync(x =>
             //        x.DoctorId == doctorId &&
@@ -743,7 +739,6 @@ namespace HospitalProject.Services
             //if (!serviceLocation)
             //    throw new Exception("Doctor is not assigned to this hospital");
 
-            // 5️⃣ Speciality valid-ஆ check
             foreach (var specialityId in dto.SpecialityIds)
             {
                 var speciality = await _speciality.GetAsync(
@@ -751,21 +746,36 @@ namespace HospitalProject.Services
                     ?? throw new Exception($"Speciality {specialityId} not found");
             }
 
-            // 6️⃣ Slot already exists check
+            // Slot already exists check — Date + TimeSlot + Hospital
             bool exists = _slots.Query().Any(x =>
                 x.DoctorId == doctorId &&
                 x.HospitalId == dto.HospitalId &&
+                x.AvailableDate == dto.AvailableDate &&
                 x.TimeSlot == dto.TimeSlot
             );
 
             if (exists)
-                throw new Exception("Slot already exists for this hospital and timeslot");
+                throw new Exception("Slot already exists for this date and timeslot");
 
-            // 7️⃣ Slot create
+
+            // 👇 Medical rep slot not equal to patient slot
+            var medRepSlotExists = await _medicalRepSlots.Query()
+                .AnyAsync(x =>
+                    x.DoctorId == doctorId &&
+                    x.SlotDate.Date == dto.AvailableDate
+                        .ToDateTime(TimeOnly.MinValue).Date &&
+                    x.TimeSlot == dto.TimeSlot &&
+                    x.IsClosed == false);
+
+            if (medRepSlotExists)
+                throw new Exception(
+                    "Cannot create Patient slot — Medical Rep slot exists for this date and time");
+
             var slot = new DoctorAvailability
             {
                 DoctorId = doctorId,
                 HospitalId = dto.HospitalId,
+                AvailableDate = dto.AvailableDate,  // 👈 add
                 TimeSlot = dto.TimeSlot.Trim()
             };
 
@@ -3116,6 +3126,8 @@ GetPatientHistory(int userId)
         }
 
 
+
+
         public async Task AddMedicalRepSlot(MedicalRepSlotCreateDto dto)
         {
             var utcDate = DateTime.SpecifyKind(
@@ -3123,14 +3135,25 @@ GetPatientHistory(int userId)
                 DateTimeKind.Utc
             );
 
+            // 👇 Patient slot conflict check
+            var patientSlotExists = await _slots.Query()
+                .AnyAsync(x =>
+                    x.DoctorId == dto.DoctorId &&
+                    x.AvailableDate == dto.Date &&
+                    x.TimeSlot == dto.TimeSlot &&
+                    x.IsClosed == false);
+
+            if (patientSlotExists)
+                throw new Exception(
+                    "Cannot create Medical Rep slot — Patient slot exists for this date and time");
+
             await _medicalRepSlots.AddAsync(new MedicalRepSlot
             {
                 DoctorId = dto.DoctorId,
                 SlotDate = utcDate,
                 TimeSlot = dto.TimeSlot,
-
-                MaxReps = dto.MaxReps,     // 🔥 eg: 20
-                BookedCount = 0,           // 🔥 start
+                MaxReps = dto.MaxReps,
+                BookedCount = 0,
                 IsClosed = false
             });
 
@@ -3414,11 +3437,11 @@ GetPatientHistory(int userId)
 
 
 
-        public async Task<List<MedicalRepAppointmentViewDto>>
-GetMedicalRepAppointments(
-    int userId,
-    DateOnly? date)
-        {
+         public async Task<List<MedicalRepAppointmentViewDto>>
+            GetMedicalRepAppointments(
+            int userId,
+            DateOnly? date)
+            {
             var rep = await _medicalRep.GetAsync(x => x.UserId == userId);
             if (rep == null)
                 throw new Exception("Medical rep not found");
@@ -3459,7 +3482,7 @@ GetMedicalRepAppointments(
 
 
 
-        // HospitalService.cs - இதில் ஒரு லாஜிக் கூட மிஸ் ஆகவில்லை
+        // HospitalService.cs 
         public async Task<object> BookWithPayment(
     int userId, BookAppointmentDto dto, bool isFamily)
         {
@@ -3569,15 +3592,24 @@ GetMedicalRepAppointments(
         // =====================================================================
         // DOCTOR — My Slots View
         // =====================================================================
-        public async Task<List<DoctorSlotViewDto>> GetDoctorSlots(int doctorId)
+
+        public async Task<List<DoctorSlotViewDto>> GetDoctorSlots(
+    int doctorId, DateOnly? date)
         {
-            var slots = await _slots.Query()
+            var query = _slots.Query()
                 .Include(s => s.Hospital)
                 .Include(s => s.Specialities)
                     .ThenInclude(sp => sp.Speciality)
                 .Where(s => s.DoctorId == doctorId &&
-                            s.IsClosed == false)  // 👈 இதை add பண்ணுங்க
-                .OrderBy(s => s.TimeSlot)
+                            s.IsClosed == false);
+
+            // Date filter
+            if (date.HasValue)
+                query = query.Where(s => s.AvailableDate == date.Value);
+
+            var slots = await query
+                .OrderBy(s => s.AvailableDate)
+                .ThenBy(s => s.TimeSlot)
                 .ToListAsync();
 
             return slots.Select(s => new DoctorSlotViewDto(
@@ -3586,6 +3618,7 @@ GetMedicalRepAppointments(
                 s.Hospital != null ? s.Hospital.Name : "N/A",
                 s.Hospital != null ? s.Hospital.State : "N/A",
                 s.Hospital != null ? s.Hospital.Area : "N/A",
+                s.AvailableDate,  // 👈 add
                 s.TimeSlot,
                 s.IsClosed,
                 s.Specialities.Select(sp => new DoctorSlotSpecialityDto(
@@ -3608,18 +3641,22 @@ GetMedicalRepAppointments(
                     s.DoctorId == doctorId)
                 ?? throw new Exception("Slot not found");
 
+            // Date update
+            if (dto.AvailableDate.HasValue)
+                slot.AvailableDate = dto.AvailableDate.Value;
+
             // TimeSlot update
             if (!string.IsNullOrWhiteSpace(dto.TimeSlot))
             {
-                // Duplicate check
                 bool exists = _slots.Query().Any(x =>
                     x.DoctorId == doctorId &&
                     x.HospitalId == slot.HospitalId &&
+                    x.AvailableDate == slot.AvailableDate &&
                     x.TimeSlot == dto.TimeSlot &&
                     x.Id != slotId);
 
                 if (exists)
-                    throw new Exception("Slot already exists for this timeslot");
+                    throw new Exception("Slot already exists for this date and timeslot");
 
                 slot.TimeSlot = dto.TimeSlot.Trim();
             }
@@ -3627,7 +3664,6 @@ GetMedicalRepAppointments(
             // Specialities update
             if (dto.SpecialityIds != null && dto.SpecialityIds.Count > 0)
             {
-                // Validate specialities
                 foreach (var specialityId in dto.SpecialityIds)
                 {
                     var speciality = await _speciality.GetAsync(
@@ -3635,9 +3671,7 @@ GetMedicalRepAppointments(
                         ?? throw new Exception($"Speciality {specialityId} not found");
                 }
 
-                // பழைய specialities remove — புது ones add
                 slot.Specialities.Clear();
-
                 foreach (var specialityId in dto.SpecialityIds)
                 {
                     slot.Specialities.Add(new DoctorAvailabilitySpeciality
@@ -3653,32 +3687,30 @@ GetMedicalRepAppointments(
         // =====================================================================
         // SLOT DELETE
         // =====================================================================
-        public async Task DeleteSlot(int doctorId, int slotId)
+        public async Task DeleteSlot(int doctorId, int slotId, DateOnly date)
         {
             var slot = await _slots.Query()
                 .Include(s => s.Specialities)
                 .FirstOrDefaultAsync(s =>
                     s.Id == slotId &&
-                    s.DoctorId == doctorId)
-                ?? throw new Exception("Slot not found");
+                    s.DoctorId == doctorId &&
+                    s.AvailableDate == date)  // 👈 date check
+                ?? throw new Exception("Slot not found for given date");
 
-            // Future appointments இருக்கா check
+            // Future appointments check
             var hasAppointments = await _apps.Query()
                 .AnyAsync(a =>
                     a.DoctorId == doctorId &&
                     a.HospitalId == slot.HospitalId &&
                     a.TimeSlot == slot.TimeSlot &&
+                    a.AppointmentDate.Date == date.ToDateTime(TimeOnly.MinValue).Date &&
                     a.AppointmentDate >= DateTime.UtcNow &&
                     a.Status == "Booked");
 
             if (hasAppointments)
-                throw new Exception(
-                    "Cannot delete slot — active appointments exist");
+                throw new Exception("Cannot delete slot — active appointments exist");
 
             slot.Specialities.Clear();
-            await _slots.SaveAsync();
-
-            // Soft delete — IsClosed = true
             slot.IsClosed = true;
             await _slots.SaveAsync();
         }

@@ -157,15 +157,17 @@ namespace HospitalProject.Models
         public int? HospitalId { get; set; }
         public Hospital? Hospital { get; set; }
 
+        public DateOnly AvailableDate { get; set; } // 👈 add
+
         public string TimeSlot { get; set; } = string.Empty;
         public bool IsClosed { get; set; }
 
-        // 👇 add பண்ணுங்க
+        // 👇 add
         public ICollection<DoctorAvailabilitySpeciality> Specialities { get; set; }
             = new List<DoctorAvailabilitySpeciality>();
     }
 
-    // 👇 புது entity add பண்ணுங்க
+    // 👇 entity add
     public class DoctorAvailabilitySpeciality
     {
         public int Id { get; set; }

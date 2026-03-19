@@ -268,6 +268,9 @@ namespace HospitalProject.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<DateOnly>("AvailableDate")
+                        .HasColumnType("date");
+
                     b.Property<int>("DoctorId")
                         .HasColumnType("integer");
 

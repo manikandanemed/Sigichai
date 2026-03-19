@@ -1572,9 +1572,11 @@ namespace HospitalProject.Controllers
         // 👨‍⚕️ DOCTOR — My Slots View
         // GET /api/hospital/doctor/my-slots?date=2026-03-15
         // =====================================================================
+
         [Authorize(Roles = "Doctor")]
         [HttpGet("doctor/my-slots")]
-        public async Task<IActionResult> GetDoctorSlots()
+        public async Task<IActionResult> GetDoctorSlots(
+    [FromQuery] DateOnly? date)  // 👈 date filter optional
         {
             try
             {
@@ -1589,7 +1591,7 @@ namespace HospitalProject.Controllers
                         Message = "Doctor not found"
                     });
 
-                var result = await _service.GetDoctorSlots(doctor.Id);
+                var result = await _service.GetDoctorSlots(doctor.Id, date);
 
                 return Ok(new ApiResponse
                 {
@@ -1641,13 +1643,18 @@ namespace HospitalProject.Controllers
         // 👨‍⚕️ DOCTOR — Delete Slot
         // DELETE /api/hospital/doctor/{doctorId}/slots/{slotId}
         // =====================================================================
+
+
         [Authorize(Roles = "Doctor,Admin")]
         [HttpDelete("doctor/{doctorId}/slots/{slotId}")]
-        public async Task<IActionResult> DeleteSlot(int doctorId, int slotId)
+        public async Task<IActionResult> DeleteSlot(
+    int doctorId,
+    int slotId,
+    [FromQuery] DateOnly date)  // 👈 date add
         {
             try
             {
-                await _service.DeleteSlot(doctorId, slotId);
+                await _service.DeleteSlot(doctorId, slotId, date);
                 return Ok(new ApiResponse
                 {
                     Success = true,

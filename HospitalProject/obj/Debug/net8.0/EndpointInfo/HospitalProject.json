@@ -1888,6 +1888,16 @@
         "tags": [
           "Hospital"
         ],
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -1966,6 +1976,14 @@
             "schema": {
               "type": "integer",
               "format": "int32"
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
             }
           }
         ],
@@ -4211,6 +4229,10 @@
             },
             "nullable": true
           },
+          "availableDate": {
+            "type": "string",
+            "format": "date"
+          },
           "timeSlot": {
             "type": "string",
             "nullable": true
@@ -4227,6 +4249,11 @@
               "type": "integer",
               "format": "int32"
             },
+            "nullable": true
+          },
+          "availableDate": {
+            "type": "string",
+            "format": "date",
             "nullable": true
           },
           "timeSlot": {
