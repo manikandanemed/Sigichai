@@ -715,82 +715,100 @@ namespace HospitalProject.Services
         // SLOT ADD (Doctor / Admin)
         // =========================
 
-        public async Task AddDoctorSlot(int doctorId, SlotCreateDto dto)
+        public async Task AddDoctorSlot(int doctorId, BulkSlotCreateDto dto)
         {
+            // 1️⃣ Doctor exists check
             var doctor = await _d.GetAsync(d => d.Id == doctorId);
             if (doctor == null)
                 throw new Exception("Doctor not found");
 
+            // 2️⃣ Doctor verification check
             if (!doctor.IsVerified)
                 throw new Exception("Doctor not verified by medical council");
 
-            var hospital = await _hospital.GetAsync(h =>
-                h.Id == dto.HospitalId &&
-                h.State == dto.State &&
-                h.Area == dto.Area)
-                ?? throw new Exception("Hospital not found for given State and Area");
-
-            //var serviceLocation = await _serviceLocation.Query()
-            //    .AnyAsync(x =>
-            //        x.DoctorId == doctorId &&
-            //        x.HospitalId == dto.HospitalId &&
-            //        x.IsActive);
-
-            //if (!serviceLocation)
-            //    throw new Exception("Doctor is not assigned to this hospital");
-
-            foreach (var specialityId in dto.SpecialityIds)
+            // 3️⃣ Loop — ஒவ்வொரு location-க்கும்
+            foreach (var location in dto.Locations)
             {
-                var speciality = await _speciality.GetAsync(
-                    s => s.Id == specialityId && s.IsActive)
-                    ?? throw new Exception($"Speciality {specialityId} not found");
-            }
+                // Hospital check — இல்லன்னா auto create
+                var hospital = await _hospital.GetAsync(
+                    h => h.PlaceId == location.PlaceId);
 
-            // Slot already exists check — Date + TimeSlot + Hospital
-            bool exists = _slots.Query().Any(x =>
-                x.DoctorId == doctorId &&
-                x.HospitalId == dto.HospitalId &&
-                x.AvailableDate == dto.AvailableDate &&
-                x.TimeSlot == dto.TimeSlot
-            );
-
-            if (exists)
-                throw new Exception("Slot already exists for this date and timeslot");
-
-
-            // 👇 Medical rep slot not equal to patient slot
-            var medRepSlotExists = await _medicalRepSlots.Query()
-                .AnyAsync(x =>
-                    x.DoctorId == doctorId &&
-                    x.SlotDate.Date == dto.AvailableDate
-                        .ToDateTime(TimeOnly.MinValue).Date &&
-                    x.TimeSlot == dto.TimeSlot &&
-                    x.IsClosed == false);
-
-            if (medRepSlotExists)
-                throw new Exception(
-                    "Cannot create Patient slot — Medical Rep slot exists for this date and time");
-
-            var slot = new DoctorAvailability
-            {
-                DoctorId = doctorId,
-                HospitalId = dto.HospitalId,
-                AvailableDate = dto.AvailableDate,  // 👈 add
-                TimeSlot = dto.TimeSlot.Trim()
-            };
-
-            foreach (var specialityId in dto.SpecialityIds)
-            {
-                slot.Specialities.Add(new DoctorAvailabilitySpeciality
+                if (hospital == null)
                 {
-                    SpecialityId = specialityId
-                });
+                    hospital = new Hospital
+                    {
+                        Name = location.PlaceName,
+                        Address = location.FormattedAddress,
+                        Phone = "",
+                        State = location.State,
+                        Area = location.Area,
+                        FormattedAddress = location.FormattedAddress,
+                        Latitude = location.Latitude,
+                        Longitude = location.Longitude,
+                        PlaceId = location.PlaceId
+                    };
+                    await _hospital.AddAsync(hospital);
+                    await _hospital.SaveAsync();
+                }
+
+                // Speciality valid-ஆ check
+                foreach (var specialityId in location.SpecialityIds)
+                {
+                    var speciality = await _speciality.GetAsync(
+                        s => s.Id == specialityId && s.IsActive)
+                        ?? throw new Exception(
+                            $"Speciality {specialityId} not found");
+                }
+
+                // Slots loop
+                foreach (var slotItem in location.Slots)
+                {
+                    // MedicalRep conflict check
+                    var medRepSlotExists = await _medicalRepSlots.Query()
+                        .AnyAsync(x =>
+                            x.DoctorId == doctorId &&
+                            x.SlotDate.Date == slotItem.AvailableDate
+                                .ToDateTime(TimeOnly.MinValue).Date &&
+                            x.TimeSlot == slotItem.TimeSlot &&
+                            x.IsClosed == false);
+
+                    if (medRepSlotExists)
+                        throw new Exception(
+                            $"Medical Rep slot exists for {slotItem.AvailableDate} {slotItem.TimeSlot}");
+
+                    // Slot already exists check
+                    bool exists = _slots.Query().Any(x =>
+                        x.DoctorId == doctorId &&
+                        x.HospitalId == hospital.Id &&
+                        x.AvailableDate == slotItem.AvailableDate &&
+                        x.TimeSlot == slotItem.TimeSlot
+                    );
+
+                    if (exists) continue; // Skip — already exists
+
+                    // Slot create
+                    var slot = new DoctorAvailability
+                    {
+                        DoctorId = doctorId,
+                        HospitalId = hospital.Id,
+                        AvailableDate = slotItem.AvailableDate,
+                        TimeSlot = slotItem.TimeSlot.Trim()
+                    };
+
+                    foreach (var specialityId in location.SpecialityIds)
+                    {
+                        slot.Specialities.Add(new DoctorAvailabilitySpeciality
+                        {
+                            SpecialityId = specialityId
+                        });
+                    }
+
+                    await _slots.AddAsync(slot);
+                }
             }
 
-            await _slots.AddAsync(slot);
             await _slots.SaveAsync();
         }
-
 
 
 
@@ -1206,6 +1224,7 @@ namespace HospitalProject.Services
         // =====================================================================
         // HOSPITAL — Bulk Create
         // =====================================================================
+
         public async Task<string> BulkCreateHospitals(BulkHospitalCreateDto dto)
         {
             if (dto.Hospitals == null || dto.Hospitals.Count == 0)
@@ -1213,13 +1232,22 @@ namespace HospitalProject.Services
 
             foreach (var h in dto.Hospitals)
             {
-                // Duplicate check
-                var exists = await _hospital.GetAsync(
-                    x => x.Name == h.Name.Trim() &&
-                         x.Area == h.Area.Trim() &&
-                         x.State == h.State.Trim());
-
-                if (exists != null) continue; // Already exists — skip
+                // Duplicate check — PlaceId வச்சு check பண்றோம்
+                if (!string.IsNullOrWhiteSpace(h.PlaceId))
+                {
+                    var existsByPlaceId = await _hospital.GetAsync(
+                        x => x.PlaceId == h.PlaceId);
+                    if (existsByPlaceId != null) continue;
+                }
+                else
+                {
+                    // PlaceId இல்லன்னா Name + Area + State வச்சு check
+                    var exists = await _hospital.GetAsync(
+                        x => x.Name == h.Name.Trim() &&
+                             x.Area == h.Area.Trim() &&
+                             x.State == h.State.Trim());
+                    if (exists != null) continue;
+                }
 
                 await _hospital.AddAsync(new Hospital
                 {
@@ -1227,7 +1255,11 @@ namespace HospitalProject.Services
                     Address = h.Address.Trim(),
                     Phone = h.Phone.Trim(),
                     State = h.State.Trim(),
-                    Area = h.Area.Trim()
+                    Area = h.Area.Trim(),
+                    FormattedAddress = h.FormattedAddress,
+                    Latitude = h.Latitude,
+                    Longitude = h.Longitude,
+                    PlaceId = h.PlaceId
                 });
             }
 
@@ -1242,6 +1274,7 @@ namespace HospitalProject.Services
         // =====================================================================
         // HOSPITAL — Get All
         // =====================================================================
+
         public async Task<List<HospitalViewDto>> GetAllHospitals()
         {
             return await _hospital.Query()
@@ -1251,7 +1284,11 @@ namespace HospitalProject.Services
                     h.Address,
                     h.Phone,
                     h.State,
-                    h.Area
+                    h.Area,
+                    h.FormattedAddress,
+                    h.Latitude,
+                    h.Longitude,
+                    h.PlaceId
                 ))
                 .ToListAsync();
         }

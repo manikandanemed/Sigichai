@@ -325,9 +325,14 @@ namespace HospitalProject.Models
         public string Address { get; set; } = string.Empty;
         public string Phone { get; set; } = string.Empty;
 
-        // 👇 இதை add பண்ணுங்க
+        // add
         public string State { get; set; } = string.Empty;
         public string Area { get; set; } = string.Empty;
+
+        public string? FormattedAddress { get; set; }
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
+        public string? PlaceId { get; set; }
     }
 
 

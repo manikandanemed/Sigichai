@@ -536,7 +536,7 @@
       },
       {
         "Name": "dto",
-        "Type": "HospitalProject.Models.SlotCreateDto",
+        "Type": "HospitalProject.Models.BulkSlotCreateDto",
         "IsRequired": true
       }
     ],

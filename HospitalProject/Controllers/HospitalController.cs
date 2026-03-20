@@ -867,7 +867,7 @@ namespace HospitalProject.Controllers
         [HttpPost("doctor/{doctorId}/slots")]
         public async Task<IActionResult> AddDoctorSlot(
     int doctorId,
-    SlotCreateDto dto)
+    [FromBody] BulkSlotCreateDto dto)
         {
             try
             {
@@ -876,7 +876,7 @@ namespace HospitalProject.Controllers
                 return Ok(new ApiResponse
                 {
                     Success = true,
-                    Message = "Slot added"
+                    Message = "Slots added successfully"
                 });
             }
             catch (Exception ex)
@@ -888,7 +888,6 @@ namespace HospitalProject.Controllers
                 });
             }
         }
-
 
 
         // =========================

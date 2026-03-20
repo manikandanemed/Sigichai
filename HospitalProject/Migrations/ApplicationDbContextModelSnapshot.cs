@@ -724,12 +724,24 @@ namespace HospitalProject.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("FormattedAddress")
+                        .HasColumnType("text");
+
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("double precision");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Phone")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PlaceId")
                         .HasColumnType("text");
 
                     b.Property<string>("State")

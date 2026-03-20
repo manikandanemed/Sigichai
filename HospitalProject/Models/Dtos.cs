@@ -76,13 +76,21 @@
 
     // Date REMOVE
     public record SlotCreateDto(
-        string State,
-        string Area,
-        int HospitalId,
-        List<int> SpecialityIds,
-        DateOnly AvailableDate,  // 👈 add
-        string TimeSlot
-    );
+     string PlaceName,
+     string FormattedAddress,
+     double Latitude,
+     double Longitude,
+     string PlaceId,
+     string State,
+     string Area,
+     List<int> SpecialityIds,
+     List<SlotItemDto> Slots
+ );
+
+
+    public record BulkSlotCreateDto(
+    List<SlotCreateDto> Locations
+);
 
     public record PatientTimeBookingDto(
      int HospitalId,
@@ -1153,25 +1161,33 @@
     // =========================
 
     public record HospitalCreateDto(
-        string Name,
-        string Address,
-        string Phone,
-        string State,
-        string Area
-    );
+     string Name,
+     string Address,
+     string Phone,
+     string State,
+     string Area,
+     string? FormattedAddress,  // 👈 add
+     double? Latitude,          // 👈 add
+     double? Longitude,         // 👈 add
+     string? PlaceId            // 👈 add
+ );
 
     public record BulkHospitalCreateDto(
         List<HospitalCreateDto> Hospitals
     );
 
     public record HospitalViewDto(
-        int Id,
-        string Name,
-        string Address,
-        string Phone,
-        string State,
-        string Area
-    );
+    int Id,
+    string Name,
+    string Address,
+    string Phone,
+    string State,
+    string Area,
+    string? FormattedAddress,  // 👈 add
+    double? Latitude,          // 👈 add
+    double? Longitude,         // 👈 add
+    string? PlaceId            // 👈 add
+);
 
 
     public record DoctorProfileUpdateDto(
@@ -1216,6 +1232,12 @@
     DateOnly? AvailableDate,  // 👈 add
     string TimeSlot
     );
+
+
+    public record SlotItemDto(
+    DateOnly AvailableDate,
+    string TimeSlot
+);
 
 
 

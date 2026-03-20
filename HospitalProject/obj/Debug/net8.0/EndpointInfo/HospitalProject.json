@@ -828,17 +828,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SlotCreateDto"
+                "$ref": "#/components/schemas/BulkSlotCreateDto"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/SlotCreateDto"
+                "$ref": "#/components/schemas/BulkSlotCreateDto"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/SlotCreateDto"
+                "$ref": "#/components/schemas/BulkSlotCreateDto"
               }
             }
           }
@@ -3223,6 +3223,19 @@
         },
         "additionalProperties": false
       },
+      "BulkSlotCreateDto": {
+        "type": "object",
+        "properties": {
+          "locations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SlotCreateDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ConfirmPaymentDto": {
         "type": "object",
         "properties": {
@@ -3694,6 +3707,24 @@
             "nullable": true
           },
           "area": {
+            "type": "string",
+            "nullable": true
+          },
+          "formattedAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "latitude": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "longitude": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "placeId": {
             "type": "string",
             "nullable": true
           }
@@ -4209,6 +4240,26 @@
       "SlotCreateDto": {
         "type": "object",
         "properties": {
+          "placeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "formattedAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "latitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "longitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "placeId": {
+            "type": "string",
+            "nullable": true
+          },
           "state": {
             "type": "string",
             "nullable": true
@@ -4216,10 +4267,6 @@
           "area": {
             "type": "string",
             "nullable": true
-          },
-          "hospitalId": {
-            "type": "integer",
-            "format": "int32"
           },
           "specialityIds": {
             "type": "array",
@@ -4229,6 +4276,19 @@
             },
             "nullable": true
           },
+          "slots": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SlotItemDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SlotItemDto": {
+        "type": "object",
+        "properties": {
           "availableDate": {
             "type": "string",
             "format": "date"
