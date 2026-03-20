@@ -340,7 +340,10 @@ namespace HospitalProject.Services
             if (user == null || !BCrypt.Net.BCrypt.Verify(d.Password, user.Password))
                 throw new Exception("Invalid credentials");
 
-            var otp = new Random().Next(1000, 9999).ToString();
+            //var otp = new Random().Next(1000, 9999).ToString();
+
+            // ✅ New (Fixed OTP)
+            var otp = "1234";
 
             await _otp.AddAsync(new OtpStore
             {
@@ -458,10 +461,8 @@ namespace HospitalProject.Services
             await _doctorStaff.SaveAsync();
 
             // 5️⃣ OTP for first login
-            //var otp = new Random().Next(1000, 9999).ToString();
+            var otp = new Random().Next(1000, 9999).ToString();
 
-            // ✅ New (Fixed OTP)
-            var otp = "1234";
 
             await _otp.AddAsync(new OtpStore
             {
