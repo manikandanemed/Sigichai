@@ -1484,6 +1484,40 @@ namespace HospitalProject.Controllers
         //}
 
 
+        // =====================================================================
+        // 👤 PATIENT — Nearby Hospitals
+        // GET /api/hospital/nearby-hospitals?lat=xx&lon=xx
+        // =====================================================================
+
+        [Authorize(Roles = "Patient")]
+        [HttpGet("nearby-hospitals")]
+        public async Task<IActionResult> GetNearbyHospitals(
+       [FromQuery] double lat,
+       [FromQuery] double lon,
+       [FromQuery] int? specialityId)  // 👈 optional filter
+        {
+            try
+            {
+                var result = await _service.GetNearbyHospitals(
+                    lat, lon, specialityId);
+
+                return Ok(new ApiResponse
+                {
+                    Success = true,
+                    Data = result
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
+        }
+
+
         [Authorize(Roles = "Patient")]
         [HttpPost("book/self")]
         public async Task<IActionResult> BookSelf(PatientTimeBookingDto dto)

@@ -108,9 +108,9 @@ namespace HospitalProject.Services
                 Name = d.Name,
                 MobileNumber = d.Mobile,
                 Password = BCrypt.Net.BCrypt.HashPassword(d.Password),
-                Role = "Patient",
-                Latitude = d.Lat,
-                Longitude = d.Lon
+                Role = "Patient"
+                //Latitude = d.Lat,
+                //Longitude = d.Lon
             };
 
             await _u.AddAsync(user);
@@ -763,12 +763,16 @@ namespace HospitalProject.Services
                 // Slots loop
                 foreach (var slotItem in location.Slots)
                 {
+                    // 👇 UTC convert
+                    var utcDate = DateTime.SpecifyKind(
+                        slotItem.AvailableDate.ToDateTime(TimeOnly.MinValue),
+                        DateTimeKind.Utc);
+
                     // MedicalRep conflict check
                     var medRepSlotExists = await _medicalRepSlots.Query()
                         .AnyAsync(x =>
                             x.DoctorId == doctorId &&
-                            x.SlotDate.Date == slotItem.AvailableDate
-                                .ToDateTime(TimeOnly.MinValue).Date &&
+                            x.SlotDate.Date == utcDate.Date &&
                             x.TimeSlot == slotItem.TimeSlot &&
                             x.IsClosed == false);
 
@@ -780,18 +784,17 @@ namespace HospitalProject.Services
                     bool exists = _slots.Query().Any(x =>
                         x.DoctorId == doctorId &&
                         x.HospitalId == hospital.Id &&
-                        x.AvailableDate == slotItem.AvailableDate &&
+                        x.AvailableDate == utcDate &&  // 👈 utcDate
                         x.TimeSlot == slotItem.TimeSlot
                     );
 
-                    if (exists) continue; // Skip — already exists
+                    if (exists) continue;
 
-                    // Slot create
                     var slot = new DoctorAvailability
                     {
                         DoctorId = doctorId,
                         HospitalId = hospital.Id,
-                        AvailableDate = slotItem.AvailableDate,
+                        AvailableDate = utcDate,  // 👈 utcDate
                         TimeSlot = slotItem.TimeSlot.Trim()
                     };
 
@@ -3174,11 +3177,11 @@ GetPatientHistory(int userId)
 
             // 👇 Patient slot conflict check
             var patientSlotExists = await _slots.Query()
-                .AnyAsync(x =>
-                    x.DoctorId == dto.DoctorId &&
-                    x.AvailableDate == dto.Date &&
-                    x.TimeSlot == dto.TimeSlot &&
-                    x.IsClosed == false);
+            .AnyAsync(x =>
+            x.DoctorId == dto.DoctorId &&
+            x.AvailableDate == utcDate &&  // 👈 fix
+            x.TimeSlot == dto.TimeSlot &&
+            x.IsClosed == false);
 
             if (patientSlotExists)
                 throw new Exception(
@@ -3518,6 +3521,99 @@ GetPatientHistory(int userId)
         }
 
 
+        // =====================================================================
+        // NEARBY HOSPITALS — Patient Location வச்சு
+        // =====================================================================
+        public async Task<List<NearbyHospitalDto>> GetNearbyHospitals(
+    double lat, double lon, int? specialityId)
+        {
+            var hospitals = await _hospital.Query()
+                .Where(h => h.Latitude != null && h.Longitude != null)
+                .ToListAsync();
+
+            var result = new List<NearbyHospitalDto>();
+
+            foreach (var h in hospitals)
+            {
+                // Doctor + Slot query
+                var slotsQuery = _slots.Query()
+                    .Include(s => s.Doctor)
+                        .ThenInclude(d => d.User)
+                    .Include(s => s.Specialities)
+                        .ThenInclude(sp => sp.Speciality)
+                    .Where(s =>
+                        s.HospitalId == h.Id &&
+                        s.IsClosed == false &&
+                        s.Doctor.IsVerified == true);
+
+                // Speciality filter
+                if (specialityId.HasValue)
+                {
+                    slotsQuery = slotsQuery.Where(s =>
+                        s.Specialities.Any(sp =>
+                            sp.SpecialityId == specialityId.Value));
+                }
+
+                var slots = await slotsQuery.ToListAsync();
+
+                // Doctors-ஐ group பண்றோம்
+                var doctors = slots
+                    .GroupBy(s => s.DoctorId)
+                    .Select(g => new NearbyDoctorDto(
+                        g.First().DoctorId,
+                        g.First().Doctor.User.Name,
+                        g.First().Specialities
+                            .Select(sp => sp.Speciality.Name)
+                            .ToList(),
+                       g.Select(s => new NearbySlotDto(
+                       s.Id,
+                       DateOnly.FromDateTime(s.AvailableDate),  // 👈 fix
+                       s.TimeSlot
+                       )).ToList()
+                    ))
+                    .ToList();
+
+                // Speciality filter-ல் doctor இல்லன்னா skip
+                if (specialityId.HasValue && !doctors.Any())
+                    continue;
+
+                result.Add(new NearbyHospitalDto(
+                    h.Id,
+                    h.Name,
+                    h.FormattedAddress ?? h.Address,
+                    h.Latitude!.Value,
+                    h.Longitude!.Value,
+                    CalculateDistance(lat, lon, h.Latitude.Value, h.Longitude.Value),
+                    doctors
+                ));
+            }
+
+            return result
+                .OrderBy(h => h.DistanceKm)
+                .ToList();
+        }
+
+        // =====================================================================
+        // 🔧 PRIVATE — Haversine Distance Calculator (KM)
+        // =====================================================================
+        private static double CalculateDistance(
+            double lat1, double lon1, double lat2, double lon2)
+        {
+            const double R = 6371;
+            var dLat = ToRad(lat2 - lat1);
+            var dLon = ToRad(lon2 - lon1);
+
+            var a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
+                    Math.Cos(ToRad(lat1)) * Math.Cos(ToRad(lat2)) *
+                    Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
+
+            var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+            return Math.Round(R * c, 2);
+        }
+
+        private static double ToRad(double deg) => deg * Math.PI / 180;
+
+
 
         // HospitalService.cs 
         public async Task<object> BookWithPayment(
@@ -3533,10 +3629,17 @@ GetPatientHistory(int userId)
             if (patient == null || doctor == null)
                 throw new Exception("Details not found");
 
+
+
             // Slot availability check
+            var slotUtcDate = DateTime.SpecifyKind(
+            dto.Date.ToDateTime(TimeOnly.MinValue),
+            DateTimeKind.Utc);
+
             var slotExists = await _slots.GetAsync(x =>
                 x.DoctorId == dto.DoctorId &&
                 x.HospitalId == dto.HospitalId &&
+                x.AvailableDate == slotUtcDate &&  // 👈 slotUtcDate
                 x.TimeSlot == dto.TimeSlot &&
                 x.IsClosed == false);
 
@@ -3631,7 +3734,7 @@ GetPatientHistory(int userId)
         // =====================================================================
 
         public async Task<List<DoctorSlotViewDto>> GetDoctorSlots(
-    int doctorId, DateOnly? date)
+     int doctorId, DateOnly? date)
         {
             var query = _slots.Query()
                 .Include(s => s.Hospital)
@@ -3640,9 +3743,13 @@ GetPatientHistory(int userId)
                 .Where(s => s.DoctorId == doctorId &&
                             s.IsClosed == false);
 
-            // Date filter
             if (date.HasValue)
-                query = query.Where(s => s.AvailableDate == date.Value);
+            {
+                var utcDate = DateTime.SpecifyKind(
+                    date.Value.ToDateTime(TimeOnly.MinValue),
+                    DateTimeKind.Utc);
+                query = query.Where(s => s.AvailableDate == utcDate);
+            }
 
             var slots = await query
                 .OrderBy(s => s.AvailableDate)
@@ -3655,7 +3762,7 @@ GetPatientHistory(int userId)
                 s.Hospital != null ? s.Hospital.Name : "N/A",
                 s.Hospital != null ? s.Hospital.State : "N/A",
                 s.Hospital != null ? s.Hospital.Area : "N/A",
-                s.AvailableDate,  // 👈 add
+                s.AvailableDate,  // 👈 DateTime
                 s.TimeSlot,
                 s.IsClosed,
                 s.Specialities.Select(sp => new DoctorSlotSpecialityDto(
@@ -3680,7 +3787,9 @@ GetPatientHistory(int userId)
 
             // Date update
             if (dto.AvailableDate.HasValue)
-                slot.AvailableDate = dto.AvailableDate.Value;
+                slot.AvailableDate = DateTime.SpecifyKind(
+                    dto.AvailableDate.Value.ToDateTime(TimeOnly.MinValue),
+                    DateTimeKind.Utc);  // 👈 fix
 
             // TimeSlot update
             if (!string.IsNullOrWhiteSpace(dto.TimeSlot))
@@ -3726,26 +3835,30 @@ GetPatientHistory(int userId)
         // =====================================================================
         public async Task DeleteSlot(int doctorId, int slotId, DateOnly date)
         {
+            var utcDate = DateTime.SpecifyKind(
+                date.ToDateTime(TimeOnly.MinValue),
+                DateTimeKind.Utc);
+
             var slot = await _slots.Query()
                 .Include(s => s.Specialities)
                 .FirstOrDefaultAsync(s =>
                     s.Id == slotId &&
                     s.DoctorId == doctorId &&
-                    s.AvailableDate == date)  // 👈 date check
+                    s.AvailableDate == utcDate)
                 ?? throw new Exception("Slot not found for given date");
 
-            // Future appointments check
             var hasAppointments = await _apps.Query()
                 .AnyAsync(a =>
                     a.DoctorId == doctorId &&
                     a.HospitalId == slot.HospitalId &&
                     a.TimeSlot == slot.TimeSlot &&
-                    a.AppointmentDate.Date == date.ToDateTime(TimeOnly.MinValue).Date &&
+                    a.AppointmentDate.Date == utcDate.Date &&
                     a.AppointmentDate >= DateTime.UtcNow &&
                     a.Status == "Booked");
 
             if (hasAppointments)
-                throw new Exception("Cannot delete slot — active appointments exist");
+                throw new Exception(
+                    "Cannot delete slot — active appointments exist");
 
             slot.Specialities.Clear();
             slot.IsClosed = true;

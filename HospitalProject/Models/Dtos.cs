@@ -7,9 +7,9 @@
     public record PatientRegDto(
         string Name,
         string Mobile,
-        string Password,
-        double? Lat,
-        double? Lon
+        string Password
+        //double? Lat,
+        //double? Lon
     );
 
     public record HospitalDoctorRegDto(
@@ -676,6 +676,31 @@
         public int? FamilyMemberId { get; set; }
     }
 
+
+    public record NearbyHospitalDto(
+    int HospitalId,
+    string HospitalName,
+    string FormattedAddress,
+    double Latitude,
+    double Longitude,
+    double DistanceKm,
+    List<NearbyDoctorDto> Doctors  // 👈 add
+);
+
+
+    public record NearbyDoctorDto(
+    int DoctorId,
+    string DoctorName,
+    List<string> Specialities,
+    List<NearbySlotDto> Slots
+);
+
+    public record NearbySlotDto(
+    int SlotId,
+    DateOnly AvailableDate,
+    string TimeSlot
+);
+
     public record InternalPharmacyCreateDto(
      string PharmacyName,
      string PhoneNumber,
@@ -1220,7 +1245,7 @@
      string HospitalName,
      string State,
      string Area,
-     DateOnly AvailableDate,  // 👈 add
+     DateTime AvailableDate,  // 👈 add
      string TimeSlot,
      bool IsClosed,
      List<DoctorSlotSpecialityDto> Specialities
