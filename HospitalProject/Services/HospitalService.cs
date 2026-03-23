@@ -3953,6 +3953,62 @@ GetPatientHistory(int userId)
         }
 
 
+        public async Task<List<DoctorAvailabilityViewDto>> GetDoctorAvailability(
+    int hospitalId, int doctorId, int? specialityId, DateTime? date) // 👈 Update signature
+        {
+            var query = _slots.Query()
+                .Include(s => s.Doctor)
+                    .ThenInclude(d => d.User)
+                .Include(s => s.Hospital)
+                .Include(s => s.Specialities)
+                    .ThenInclude(sp => sp.Speciality)
+                .Where(s =>
+                    s.HospitalId == hospitalId &&
+                    s.DoctorId == doctorId &&
+                    s.IsClosed == false);
+
+            // Date Filter Logic
+            if (date.HasValue)
+            {
+                // Kind-ai UTC-ah mathurathuku 'SpecifyKind' use pannanum
+                var targetDate = DateTime.SpecifyKind(date.Value.Date, DateTimeKind.Utc);
+                query = query.Where(s => s.AvailableDate == targetDate);
+            }
+            else
+            {
+                // If no date is provided, show all upcoming slots from today onwards
+                query = query.Where(s => s.AvailableDate >= DateTime.UtcNow.Date);
+            }
+
+            // Speciality filter (remains the same)
+            if (specialityId.HasValue)
+            {
+                query = query.Where(s =>
+                    s.Specialities.Any(sp =>
+                        sp.SpecialityId == specialityId.Value));
+            }
+
+            var slots = await query
+                .OrderBy(s => s.AvailableDate)
+                .ThenBy(s => s.TimeSlot)
+                .ToListAsync();
+
+            return slots.Select(s => new DoctorAvailabilityViewDto(
+                s.Id,
+                s.DoctorId,
+                s.Doctor.User.Name,
+                s.HospitalId ?? 0,
+                s.Hospital != null ? s.Hospital.Name : "N/A",
+                s.AvailableDate,
+                s.TimeSlot,
+                s.Specialities.Select(sp => new DoctorSlotSpecialityDto(
+                    sp.SpecialityId,
+                    sp.Speciality.Name
+                )).ToList()
+            )).ToList();
+        }
+
+
         public async Task<Doctor?> GetDoctorByUserId(int userId)
         {
             return await _d.GetAsync(d => d.UserId == userId);

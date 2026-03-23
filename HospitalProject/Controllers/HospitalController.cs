@@ -1705,6 +1705,34 @@ namespace HospitalProject.Controllers
         }
 
 
+        //[Authorize(Roles = "Patient")]
+        [HttpGet("doctor-availability")]
+        public async Task<IActionResult> GetDoctorAvailability(
+    [FromQuery] int hospitalId,
+    [FromQuery] int doctorId,
+    [FromQuery] int? specialityId,
+    [FromQuery] DateTime? date) // 👈 New parameter
+        {
+            try
+            {
+                var result = await _service.GetDoctorAvailability(
+                    hospitalId, doctorId, specialityId, date); // 👈 Pass to service
+                return Ok(new ApiResponse
+                {
+                    Success = true,
+                    Data = result
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
+        }
+
 
 
 

@@ -1295,6 +1295,18 @@
 );
 
 
+    public record DoctorAvailabilityViewDto(
+    int SlotId,
+    int DoctorId,
+    string DoctorName,
+    int HospitalId,
+    string HospitalName,
+    DateTime AvailableDate,
+    string TimeSlot,
+    List<DoctorSlotSpecialityDto> Specialities
+);
+
+
 
 
 }
