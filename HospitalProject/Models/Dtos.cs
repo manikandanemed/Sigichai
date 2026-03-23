@@ -596,6 +596,7 @@
 
 
     public record MedicalRepSlotCreateDto(
+         int HospitalId,
          int DoctorId,
          DateOnly Date,
         string TimeSlot,
@@ -603,9 +604,19 @@
     );
 
 
+    public record MedicalRepUpdateDto(
+    string? Name,
+    string? CompanyName,
+    string? Designation,
+    string? Area,
+    string? IdProofNumber
+);
+
+
 
     public record MedicalRepTimeBookingDto
     (
+    int HospitalId,
     int DoctorId,
     DateOnly Date,
     string TimeSlot
@@ -615,6 +626,8 @@
     public class MedicalRepSlotResponseDto
     {
         public int SlotId { get; set; }
+        public int HospitalId { get; set; }    // 👈 add
+        public string HospitalName { get; set; } = "";  // 👈 add
         public string TimeSlot { get; set; } = "";
     }
 
@@ -622,6 +635,8 @@
     public class MedicalRepBookingViewDto
     {
         public int AppointmentId { get; set; }
+        public int HospitalId { get; set; }        // 👈 add
+        public string HospitalName { get; set; } = "";  // 👈 add
         public string MedicalRepName { get; set; } = "";
         public string Mobile { get; set; } = "";
         public string Status { get; set; } = "";
@@ -657,6 +672,8 @@
     public class MedicalRepAppointmentViewDto
     {
         public int AppointmentId { get; set; }
+        public int HospitalId { get; set; }        // 👈 add
+        public string HospitalName { get; set; } = "";  // 👈 add
         public string DoctorName { get; set; } = "";
         public DateTime AppointmentDate { get; set; }
         public string TimeSlot { get; set; } = "";
@@ -1262,6 +1279,19 @@
     public record SlotItemDto(
     DateOnly AvailableDate,
     string TimeSlot
+    );
+
+    public record MedicalRepSlotViewDto(
+    int SlotId,
+    int? HospitalId,
+    string HospitalName,
+    int DoctorId,
+    string DoctorName,
+    DateTime SlotDate,
+    string TimeSlot,
+    int MaxReps,
+    int BookedCount,
+    bool IsClosed
 );
 
 

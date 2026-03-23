@@ -436,6 +436,10 @@ namespace HospitalProject.Models
     {
         public int Id { get; set; }
 
+        // 👇 add பண்ணுங்க
+        public int? HospitalId { get; set; }
+        public Hospital? Hospital { get; set; }
+
         public int DoctorId { get; set; }
         public Doctor Doctor { get; set; }
 
@@ -458,6 +462,10 @@ namespace HospitalProject.Models
 
         public int DoctorId { get; set; }
         public Doctor Doctor { get; set; }
+
+        // 👇 add 
+        public int? HospitalId { get; set; }
+        public Hospital? Hospital { get; set; }
 
         public DateTime AppointmentDate { get; set; }
         public string TimeSlot { get; set; } = string.Empty;

@@ -926,6 +926,9 @@ namespace HospitalProject.Migrations
                     b.Property<string>("DoctorNotes")
                         .HasColumnType("text");
 
+                    b.Property<int?>("HospitalId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("MedicalRepId")
                         .HasColumnType("integer");
 
@@ -948,6 +951,8 @@ namespace HospitalProject.Migrations
 
                     b.HasIndex("DoctorId");
 
+                    b.HasIndex("HospitalId");
+
                     b.HasIndex("MedicalRepId");
 
                     b.ToTable("MedicalRepAppointments");
@@ -967,6 +972,9 @@ namespace HospitalProject.Migrations
                     b.Property<int>("DoctorId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("HospitalId")
+                        .HasColumnType("integer");
+
                     b.Property<bool>("IsClosed")
                         .HasColumnType("boolean");
 
@@ -983,6 +991,8 @@ namespace HospitalProject.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("DoctorId");
+
+                    b.HasIndex("HospitalId");
 
                     b.ToTable("MedicalRepSlots");
                 });
@@ -2069,6 +2079,11 @@ namespace HospitalProject.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("HospitalProject.Models.Hospital", "Hospital")
+                        .WithMany()
+                        .HasForeignKey("HospitalId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("HospitalProject.Models.MedicalRep", "MedicalRep")
                         .WithMany()
                         .HasForeignKey("MedicalRepId")
@@ -2076,6 +2091,8 @@ namespace HospitalProject.Migrations
                         .IsRequired();
 
                     b.Navigation("Doctor");
+
+                    b.Navigation("Hospital");
 
                     b.Navigation("MedicalRep");
                 });
@@ -2088,7 +2105,14 @@ namespace HospitalProject.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("HospitalProject.Models.Hospital", "Hospital")
+                        .WithMany()
+                        .HasForeignKey("HospitalId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.Navigation("Doctor");
+
+                    b.Navigation("Hospital");
                 });
 
             modelBuilder.Entity("HospitalProject.Models.Patient", b =>

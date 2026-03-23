@@ -2451,6 +2451,37 @@
         }
       }
     },
+    "/api/medicalrep/profile": {
+      "patch": {
+        "tags": [
+          "MedicalRep"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MedicalRepUpdateDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MedicalRepUpdateDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/MedicalRepUpdateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/medicalrep/slots": {
       "get": {
         "tags": [
@@ -2690,6 +2721,28 @@
             }
           }
         },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/medicalrep/slots/my": {
+      "get": {
+        "tags": [
+          "MedicalRep"
+        ],
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -4003,6 +4056,10 @@
       "MedicalRepSlotCreateDto": {
         "type": "object",
         "properties": {
+          "hospitalId": {
+            "type": "integer",
+            "format": "int32"
+          },
           "doctorId": {
             "type": "integer",
             "format": "int32"
@@ -4025,6 +4082,10 @@
       "MedicalRepTimeBookingDto": {
         "type": "object",
         "properties": {
+          "hospitalId": {
+            "type": "integer",
+            "format": "int32"
+          },
           "doctorId": {
             "type": "integer",
             "format": "int32"
@@ -4034,6 +4095,32 @@
             "format": "date"
           },
           "timeSlot": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MedicalRepUpdateDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "companyName": {
+            "type": "string",
+            "nullable": true
+          },
+          "designation": {
+            "type": "string",
+            "nullable": true
+          },
+          "area": {
+            "type": "string",
+            "nullable": true
+          },
+          "idProofNumber": {
             "type": "string",
             "nullable": true
           }

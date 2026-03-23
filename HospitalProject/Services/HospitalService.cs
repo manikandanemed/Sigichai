@@ -340,6 +340,7 @@ namespace HospitalProject.Services
             if (user == null || !BCrypt.Net.BCrypt.Verify(d.Password, user.Password))
                 throw new Exception("Invalid credentials");
 
+            //working random otp
             //var otp = new Random().Next(1000, 9999).ToString();
 
             // ✅ New (Fixed OTP)
@@ -3170,22 +3171,55 @@ GetPatientHistory(int userId)
         }
 
 
+        public async Task UpdateMedicalRepProfile(int userId, MedicalRepUpdateDto dto)
+        {
+            var rep = await _medicalRep.Query()
+                .Include(r => r.User)
+                .FirstOrDefaultAsync(r => r.UserId == userId)
+                ?? throw new Exception("Medical rep not found");
+
+            // User Name update
+            if (!string.IsNullOrWhiteSpace(dto.Name))
+                rep.User.Name = dto.Name;
+
+            // Profile fields update
+            if (!string.IsNullOrWhiteSpace(dto.CompanyName))
+                rep.CompanyName = dto.CompanyName;
+
+            if (!string.IsNullOrWhiteSpace(dto.Designation))
+                rep.Designation = dto.Designation;
+
+            if (!string.IsNullOrWhiteSpace(dto.Area))
+                rep.Area = dto.Area;
+
+            if (!string.IsNullOrWhiteSpace(dto.IdProofNumber))
+                rep.IdProofNumber = dto.IdProofNumber;
+
+            await _u.SaveAsync();
+            await _medicalRep.SaveAsync();
+        }
+
+
 
 
         public async Task AddMedicalRepSlot(MedicalRepSlotCreateDto dto)
         {
             var utcDate = DateTime.SpecifyKind(
                 dto.Date.ToDateTime(TimeOnly.MinValue),
-                DateTimeKind.Utc
-            );
+                DateTimeKind.Utc);
 
-            // 👇 Patient slot conflict check
+            // Patient slot conflict check
+            var utcDateCheck = DateTime.SpecifyKind(
+                dto.Date.ToDateTime(TimeOnly.MinValue),
+                DateTimeKind.Utc);
+
             var patientSlotExists = await _slots.Query()
-            .AnyAsync(x =>
-            x.DoctorId == dto.DoctorId &&
-            x.AvailableDate == utcDate &&  // 👈 fix
-            x.TimeSlot == dto.TimeSlot &&
-            x.IsClosed == false);
+                .AnyAsync(x =>
+                    x.DoctorId == dto.DoctorId &&
+                    x.HospitalId == dto.HospitalId &&
+                    x.AvailableDate == utcDateCheck &&
+                    x.TimeSlot == dto.TimeSlot &&
+                    x.IsClosed == false);
 
             if (patientSlotExists)
                 throw new Exception(
@@ -3193,6 +3227,7 @@ GetPatientHistory(int userId)
 
             await _medicalRepSlots.AddAsync(new MedicalRepSlot
             {
+                HospitalId = dto.HospitalId,   // 👈 add
                 DoctorId = dto.DoctorId,
                 SlotDate = utcDate,
                 TimeSlot = dto.TimeSlot,
@@ -3207,21 +3242,19 @@ GetPatientHistory(int userId)
 
 
         public async Task<List<MedicalRepSlot>> GetMedicalRepSlots(
-    int doctorId,
-    DateOnly date)
+    int doctorId, DateOnly date)
         {
             var utcDate = DateTime.SpecifyKind(
                 date.ToDateTime(TimeOnly.MinValue),
-                DateTimeKind.Utc
-            );
+                DateTimeKind.Utc);
 
             return await _medicalRepSlots.Query()
+                .Include(s => s.Hospital)   // 👈 add
                 .Where(x =>
                     x.DoctorId == doctorId &&
                     x.SlotDate == utcDate &&
                     x.IsClosed == false &&
-                    x.BookedCount < x.MaxReps   // 🔥 KEY LOGIC
-                )
+                    x.BookedCount < x.MaxReps)
                 .ToListAsync();
         }
 
@@ -3248,27 +3281,25 @@ GetPatientHistory(int userId)
 
 
         public async Task<string> BookMedicalRepByTime(
-     int userId,
-     MedicalRepTimeBookingDto dto)
+     int userId, MedicalRepTimeBookingDto dto)
         {
             var rep = await _medicalRep.GetAsync(x => x.UserId == userId);
             if (rep == null)
                 throw new Exception("Medical rep not found");
 
             var doctor = await _d.GetAsync(x =>
-                x.Id == dto.DoctorId &&
-                x.IsVerified == true);
-
+                x.Id == dto.DoctorId && x.IsVerified == true);
             if (doctor == null)
                 throw new Exception("Doctor not available");
 
             var utcDate = DateTime.SpecifyKind(
                 dto.Date.ToDateTime(TimeOnly.MinValue),
-                DateTimeKind.Utc
-            );
+                DateTimeKind.Utc);
 
+            // 👇 HospitalId add
             var slot = await _medicalRepSlots.GetAsync(x =>
                 x.DoctorId == dto.DoctorId &&
+                x.HospitalId == dto.HospitalId &&
                 x.SlotDate == utcDate &&
                 x.TimeSlot == dto.TimeSlot &&
                 x.IsClosed == false);
@@ -3279,7 +3310,6 @@ GetPatientHistory(int userId)
             if (slot.BookedCount >= slot.MaxReps)
                 throw new Exception("Slot is full");
 
-            // 🔥 Increase count
             slot.BookedCount += 1;
             await _medicalRepSlots.SaveAsync();
 
@@ -3289,6 +3319,7 @@ GetPatientHistory(int userId)
             {
                 MedicalRepId = rep.Id,
                 DoctorId = doctor.Id,
+                HospitalId = dto.HospitalId,   // 👈 add
                 AppointmentDate = utcDate,
                 TimeSlot = dto.TimeSlot,
                 TempToken = token,
@@ -3296,7 +3327,6 @@ GetPatientHistory(int userId)
             });
 
             await _medicalRepApps.SaveAsync();
-
             return token;
         }
 
@@ -3393,17 +3423,20 @@ GetPatientHistory(int userId)
 
             // 🔹 Final projection
             return await query
-                .OrderBy(a => a.QueueToken)
-                .Select(a => new MedicalRepBookingViewDto
-                {
-                    AppointmentId = a.Id,
-                    MedicalRepName = a.MedicalRep.User.Name,
-                    Mobile = a.MedicalRep.User.MobileNumber,
-                    Status = a.Status,
-                    TempToken = a.TempToken,
-                    QueueToken = a.QueueToken
-                })
-                .ToListAsync();
+     .OrderBy(a => a.QueueToken)
+     .Select(a => new MedicalRepBookingViewDto
+     {
+         AppointmentId = a.Id,
+         HospitalId = a.HospitalId ?? 0,      // 👈 add
+         HospitalName = a.Hospital != null
+             ? a.Hospital.Name : "",               // 👈 add
+         MedicalRepName = a.MedicalRep.User.Name,
+         Mobile = a.MedicalRep.User.MobileNumber,
+         Status = a.Status,
+         TempToken = a.TempToken,
+         QueueToken = a.QueueToken
+     })
+     .ToListAsync();
         }
 
 
@@ -3510,18 +3543,21 @@ GetPatientHistory(int userId)
             }
 
             return await query
-                .OrderBy(a => a.AppointmentDate)
-                .ThenBy(a => a.TimeSlot)
-                .Select(a => new MedicalRepAppointmentViewDto
-                {
-                    AppointmentId = a.Id,
-                    DoctorName = a.Doctor.User.Name,
-                    AppointmentDate = a.AppointmentDate,
-                    TimeSlot = a.TimeSlot,
-                    TempToken = a.TempToken,
-                    DoctorNotes = a.DoctorNotes   // ✅ ADD THIS
-                })
-                .ToListAsync();
+      .OrderBy(a => a.AppointmentDate)
+      .ThenBy(a => a.TimeSlot)
+      .Select(a => new MedicalRepAppointmentViewDto
+      {
+          AppointmentId = a.Id,
+          HospitalId = a.HospitalId ?? 0,     // 👈 add
+          HospitalName = a.Hospital != null
+              ? a.Hospital.Name : "",              // 👈 add
+          DoctorName = a.Doctor.User.Name,
+          AppointmentDate = a.AppointmentDate,
+          TimeSlot = a.TimeSlot,
+          TempToken = a.TempToken,
+          DoctorNotes = a.DoctorNotes
+      })
+      .ToListAsync();
         }
 
 
@@ -3867,6 +3903,53 @@ GetPatientHistory(int userId)
             slot.Specialities.Clear();
             slot.IsClosed = true;
             await _slots.SaveAsync();
+        }
+
+
+
+        public async Task<List<MedicalRepSlotViewDto>> GetMedicalRepSlotsByDate(
+    int userId, string role, DateOnly? date)
+        {
+            var query = _medicalRepSlots.Query()
+                .Include(s => s.Hospital)
+                .Include(s => s.Doctor)
+                    .ThenInclude(d => d.User)
+                .AsQueryable();
+
+            // Doctor — தன்னோட slots மட்டும்
+            if (role == "Doctor")
+            {
+                var doctor = await _d.GetAsync(d => d.UserId == userId)
+                    ?? throw new Exception("Doctor not found");
+                query = query.Where(s => s.DoctorId == doctor.Id);
+            }
+
+            // Date filter
+            if (date.HasValue)
+            {
+                var utcDate = DateTime.SpecifyKind(
+                    date.Value.ToDateTime(TimeOnly.MinValue),
+                    DateTimeKind.Utc);
+                query = query.Where(s => s.SlotDate.Date == utcDate.Date);
+            }
+
+            var slots = await query
+                .OrderBy(s => s.SlotDate)
+                .ThenBy(s => s.TimeSlot)
+                .ToListAsync();
+
+            return slots.Select(s => new MedicalRepSlotViewDto(
+                s.Id,
+                s.HospitalId,
+                s.Hospital != null ? s.Hospital.Name : "N/A",
+                s.DoctorId,
+                s.Doctor.User.Name,
+                s.SlotDate,
+                s.TimeSlot,
+                s.MaxReps,
+                s.BookedCount,
+                s.IsClosed
+            )).ToList();
         }
 
 

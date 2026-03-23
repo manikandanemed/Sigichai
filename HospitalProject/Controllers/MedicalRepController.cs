@@ -33,6 +33,39 @@ namespace HospitalProject.Controllers
             });
         }
 
+
+        // ======================================
+        // 📝 MEDICAL REP — Update Profile
+        // PATCH /api/medicalrep/profile
+        // ======================================
+        [Authorize(Roles = "MedicalRep")]
+        [HttpPatch("profile")]
+        public async Task<IActionResult> UpdateProfile(
+            [FromBody] MedicalRepUpdateDto dto)
+        {
+            try
+            {
+                var userId = int.Parse(
+                    User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+                await _service.UpdateMedicalRepProfile(userId, dto);
+
+                return Ok(new ApiResponse
+                {
+                    Success = true,
+                    Message = "Profile updated successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
+        }
+
         // =====================================
         // 1️⃣ VIEW AVAILABLE SLOTS
         // doctorId + date
@@ -240,6 +273,42 @@ namespace HospitalProject.Controllers
                 Success = true,
                 Message = "Medical rep session ended successfully"
             });
+        }
+
+
+        // ======================================
+        // 📋 DOCTOR/ADMIN — View Medical Rep Slots
+        // GET /api/medicalrep/slots/my?date=2026-03-20
+        // ======================================
+        [Authorize(Roles = "Doctor,Admin")]
+        [HttpGet("slots/my")]
+        public async Task<IActionResult> GetMyMedicalRepSlots(
+            [FromQuery] DateOnly? date)
+        {
+            try
+            {
+                var userId = int.Parse(
+                    User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+                var role = User.FindFirstValue(ClaimTypes.Role)!;
+
+                var result = await _service.GetMedicalRepSlotsByDate(
+                    userId, role, date);
+
+                return Ok(new ApiResponse
+                {
+                    Success = true,
+                    Data = result
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
         }
 
 

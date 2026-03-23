@@ -1587,6 +1587,22 @@
   },
   {
     "ContainingType": "HospitalProject.Controllers.MedicalRepController",
+    "Method": "UpdateProfile",
+    "RelativePath": "api/medicalrep/profile",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "HospitalProject.Models.MedicalRepUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HospitalProject.Controllers.MedicalRepController",
     "Method": "RegisterMedicalRep",
     "RelativePath": "api/medicalrep/register",
     "HttpMethod": "POST",
@@ -1633,6 +1649,22 @@
       {
         "Name": "date",
         "Type": "System.DateOnly",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HospitalProject.Controllers.MedicalRepController",
+    "Method": "GetMyMedicalRepSlots",
+    "RelativePath": "api/medicalrep/slots/my",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "date",
+        "Type": "System.Nullable\u00601[[System.DateOnly, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": false
       }
     ],

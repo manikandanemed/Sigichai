@@ -505,6 +505,19 @@ namespace HospitalProject.Data
                 .WithMany()
                 .HasForeignKey(s => s.SpecialityId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+
+            modelBuilder.Entity<MedicalRepSlot>()
+                 .HasOne(s => s.Hospital)
+                 .WithMany()
+                 .HasForeignKey(s => s.HospitalId)
+                 .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<MedicalRepAppointment>()
+                .HasOne(a => a.Hospital)
+                .WithMany()
+                .HasForeignKey(a => a.HospitalId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }
