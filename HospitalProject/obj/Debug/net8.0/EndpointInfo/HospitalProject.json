@@ -2067,7 +2067,7 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "format": "date-time"
+              "format": "date"
             }
           }
         ],
@@ -4450,9 +4450,20 @@
       "SlotItemDto": {
         "type": "object",
         "properties": {
-          "availableDate": {
+          "fromDate": {
             "type": "string",
             "format": "date"
+          },
+          "toDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "days": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
           },
           "timeSlot": {
             "type": "string",

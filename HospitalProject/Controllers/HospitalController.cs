@@ -1705,18 +1705,19 @@ namespace HospitalProject.Controllers
         }
 
 
-        //[Authorize(Roles = "Patient")]
+        [Authorize(Roles = "Patient")]
         [HttpGet("doctor-availability")]
         public async Task<IActionResult> GetDoctorAvailability(
-    [FromQuery] int hospitalId,
-    [FromQuery] int doctorId,
-    [FromQuery] int? specialityId,
-    [FromQuery] DateTime? date) // 👈 New parameter
+     [FromQuery] int? hospitalId,      // 👈 optional
+     [FromQuery] int? doctorId,
+     [FromQuery] int? specialityId,
+     [FromQuery] DateOnly? date)
         {
             try
             {
                 var result = await _service.GetDoctorAvailability(
-                    hospitalId, doctorId, specialityId, date); // 👈 Pass to service
+                    hospitalId, doctorId, specialityId, date);
+
                 return Ok(new ApiResponse
                 {
                     Success = true,
@@ -1732,8 +1733,6 @@ namespace HospitalProject.Controllers
                 });
             }
         }
-
-
 
 
 

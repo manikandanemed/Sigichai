@@ -1277,7 +1277,9 @@
 
 
     public record SlotItemDto(
-    DateOnly AvailableDate,
+    DateOnly FromDate,
+    DateOnly ToDate,
+    List<string> Days,  // ["Monday", "Tuesday", "Wednesday"]
     string TimeSlot
     );
 
@@ -1301,8 +1303,9 @@
     string DoctorName,
     int HospitalId,
     string HospitalName,
-    DateTime AvailableDate,
-    string TimeSlot,
+    DateTime AvailableDate,   // 6th
+    string DayName,           // 7th
+    string TimeSlot,          // 8th
     List<DoctorSlotSpecialityDto> Specialities
 );
 
