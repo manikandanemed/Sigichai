@@ -150,6 +150,36 @@ namespace HospitalProject.Controllers
         }
 
 
+        // ======================================
+        // 🏥 GET DOCTOR ASSIGNED HOSPITALS
+        // GET /api/medicalrep/doctor/{doctorId}/hospitals
+        // ======================================
+        [Authorize(Roles = "Doctor,Admin")]
+        [HttpGet("doctor/{doctorId}/hospitals")]
+        public async Task<IActionResult> GetDoctorAssignedHospitals(int doctorId)
+        {
+            try
+            {
+                var data = await _service.GetDoctorAssignedHospitals(doctorId);
+
+                return Ok(new ApiResponse
+                {
+                    Success = true,
+                    Message = "Assigned hospitals fetched successfully",
+                    Data = data
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
+        }
+
+
 
         // ======================================
         // ➕ ADD MEDICAL REP SLOT (Doctor / Admin)

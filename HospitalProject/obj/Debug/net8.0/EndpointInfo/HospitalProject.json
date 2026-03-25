@@ -1921,18 +1921,19 @@
         }
       }
     },
-    "/api/hospital/doctor/my-slots": {
+    "/api/hospital/doctor/{doctorId}/slot-groups": {
       "get": {
         "tags": [
           "Hospital"
         ],
         "parameters": [
           {
-            "name": "date",
-            "in": "query",
+            "name": "doctorId",
+            "in": "path",
+            "required": true,
             "schema": {
-              "type": "string",
-              "format": "date"
+              "type": "integer",
+              "format": "int32"
             }
           }
         ],
@@ -2612,6 +2613,29 @@
             "in": "query",
             "schema": {
               "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/medicalrep/doctor/{doctorId}/hospitals": {
+      "get": {
+        "tags": [
+          "MedicalRep"
+        ],
+        "parameters": [
+          {
+            "name": "doctorId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
             }
           }
         ],

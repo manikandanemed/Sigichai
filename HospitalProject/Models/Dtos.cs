@@ -623,6 +623,19 @@
 );
 
 
+    public record DoctorSlotGroupedDto(
+    int HospitalId,
+    string HospitalName,
+    string Area,
+    string State,
+    string Specialisation,
+    DateOnly FromDate,
+    DateOnly ToDate,
+    List<string> Days,
+    string TimeSlot
+);
+
+
     public class MedicalRepSlotResponseDto
     {
         public int SlotId { get; set; }
@@ -630,6 +643,12 @@
         public string HospitalName { get; set; } = "";  // 👈 add
         public string TimeSlot { get; set; } = "";
     }
+
+
+    public record DoctorAssignedHospitalDto(
+    int HospitalId,
+    string HospitalName
+    );
 
 
     public class MedicalRepBookingViewDto
@@ -1263,6 +1282,7 @@
      string State,
      string Area,
      DateTime AvailableDate,  // 👈 add
+     string DayOfWeek,
      string TimeSlot,
      bool IsClosed,
      List<DoctorSlotSpecialityDto> Specialities
@@ -1307,7 +1327,22 @@
     string DayName,           // 7th
     string TimeSlot,          // 8th
     List<DoctorSlotSpecialityDto> Specialities
-);
+    );
+
+
+    public record DoctorSlotGroupViewDto(
+    int HospitalId,
+    string HospitalName,
+    string State,
+    string Area,
+    List<string> Specialities,
+    DateTime FromDate,
+    DateTime ToDate,
+    List<string> Days,
+    string TimeSlot,
+    int TotalSlots,
+    List<DoctorSlotViewDto> Slots
+    );
 
 
 

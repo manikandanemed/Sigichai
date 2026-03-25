@@ -104,6 +104,28 @@ var app = builder.Build();
 // =========================
 // MIDDLEWARE PIPELINE
 // =========================
+
+//  add exception
+app.UseExceptionHandler(errorApp =>
+{
+    errorApp.Run(async context =>
+    {
+        context.Response.StatusCode = 400;
+        context.Response.ContentType = "application/json";
+
+        var error = context.Features.Get<Microsoft.AspNetCore.Diagnostics.IExceptionHandlerFeature>();
+        if (error != null)
+        {
+            var result = System.Text.Json.JsonSerializer.Serialize(new
+            {
+                success = false,
+                message = error.Error.Message,
+                data = (object?)null
+            });
+            await context.Response.WriteAsync(result);
+        }
+    });
+});
 app.UseSwagger();
 app.UseSwaggerUI();
 

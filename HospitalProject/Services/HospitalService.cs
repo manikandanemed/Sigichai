@@ -39,6 +39,8 @@ namespace HospitalProject.Services
         private readonly PrescriptionQrService _qrService;
         private readonly PrescriptionRoutingService _routingService;
         private readonly IRepository<DoctorServiceLocation> _serviceLocation;
+        private readonly IRepository<DoctorSlotGroup> _doctorSlotGroups;
+
 
 
 
@@ -72,6 +74,7 @@ namespace HospitalProject.Services
             IRepository<DoctorServiceLocation> serviceLocation,
             PrescriptionQrService qrService,
             PrescriptionRoutingService routingService,
+            IRepository<DoctorSlotGroup> doctorSlotGroups,
             IConfiguration config)
         {
             _u = u; _p = p; _d = d; _admin = admin;
@@ -92,6 +95,7 @@ namespace HospitalProject.Services
             _qrService = qrService;
             _serviceLocation = serviceLocation;
             _routingService = routingService;
+            _doctorSlotGroups = doctorSlotGroups;
         }
 
 
@@ -720,6 +724,122 @@ namespace HospitalProject.Services
         // SLOT ADD (Doctor / Admin)
         // =========================
 
+        //public async Task AddDoctorSlot(int doctorId, BulkSlotCreateDto dto)
+        //{
+        //    // 1️⃣ Doctor exists check
+        //    var doctor = await _d.GetAsync(d => d.Id == doctorId);
+        //    if (doctor == null)
+        //        throw new Exception("Doctor not found");
+
+        //    //// 2️⃣ Doctor verification check
+        //    //if (!doctor.IsVerified)
+        //    //    throw new Exception("Doctor not verified by medical council");
+
+        //    // 3️⃣ Loop —For Each location
+        //    foreach (var location in dto.Locations)
+        //    {
+        //        // Hospital check — Illana auto create
+        //        var hospital = await _hospital.GetAsync(
+        //            h => h.PlaceId == location.PlaceId);
+
+        //        if (hospital == null)
+        //        {
+        //            hospital = new Hospital
+        //            {
+        //                Name = location.PlaceName,
+        //                Address = location.FormattedAddress,
+        //                Phone = "",
+        //                State = location.State,
+        //                Area = location.Area,
+        //                FormattedAddress = location.FormattedAddress,
+        //                Latitude = location.Latitude,
+        //                Longitude = location.Longitude,
+        //                PlaceId = location.PlaceId
+        //            };
+        //            await _hospital.AddAsync(hospital);
+        //            await _hospital.SaveAsync();
+        //        }
+
+        //        // Speciality valid check
+        //        foreach (var specialityId in location.SpecialityIds)
+        //        {
+        //            var speciality = await _speciality.GetAsync(
+        //                s => s.Id == specialityId && s.IsActive)
+        //                ?? throw new Exception(
+        //                    $"Speciality {specialityId} not found");
+        //        }
+
+        //        // Slots loop
+
+        //        foreach (var slotItem in location.Slots)
+        //        {
+        //            // FromDate → ToDate loop
+        //            var current = slotItem.FromDate;
+
+        //            while (current <= slotItem.ToDate)
+        //            {
+        //                // Day check — selected days only
+        //                var dayName = current.DayOfWeek.ToString(); // "Monday", "Tuesday"...
+
+        //                //if (slotItem.Days.Contains(dayName))
+        //                if (slotItem.Days.Any(d => d.Equals(dayName, StringComparison.OrdinalIgnoreCase)))
+        //                {
+        //                    var utcDate = DateTime.SpecifyKind(
+        //                        current.ToDateTime(TimeOnly.MinValue),
+        //                        DateTimeKind.Utc);
+
+        //                    // MedicalRep conflict check
+        //                    var medRepSlotExists = await _medicalRepSlots.Query()
+        //                        .AnyAsync(x =>
+        //                            x.DoctorId == doctorId &&
+        //                            x.HospitalId == hospital.Id &&
+        //                            x.SlotDate.Date == utcDate.Date &&
+        //                            x.TimeSlot == slotItem.TimeSlot &&
+        //                            x.IsClosed == false);
+
+        //                    if (medRepSlotExists)
+        //                        throw new Exception(
+        //                            $"Medical Rep slot exists for {current} {slotItem.TimeSlot}");
+
+        //                    // Duplicate slot check
+        //                    bool exists = _slots.Query().Any(x =>
+        //                        x.DoctorId == doctorId &&
+        //                        x.HospitalId == hospital.Id &&
+        //                        x.AvailableDate == utcDate &&
+        //                        x.TimeSlot == slotItem.TimeSlot
+        //                    );
+
+        //                    if (!exists)  // Duplicate Illana mattum create
+        //                    {
+        //                        var slot = new DoctorAvailability
+        //                        {
+        //                            DoctorId = doctorId,
+        //                            HospitalId = hospital.Id,
+        //                            AvailableDate = utcDate,
+        //                            TimeSlot = slotItem.TimeSlot.Trim()
+        //                        };
+
+        //                        foreach (var specialityId in location.SpecialityIds)
+        //                        {
+        //                            slot.Specialities.Add(new DoctorAvailabilitySpeciality
+        //                            {
+        //                                SpecialityId = specialityId
+        //                            });
+        //                        }
+
+        //                        await _slots.AddAsync(slot);
+        //                    }
+        //                }
+
+        //                current = current.AddDays(1); // Next day
+        //            }
+        //        }
+
+        //        await _slots.SaveAsync();
+        //    }
+        //}
+
+
         public async Task AddDoctorSlot(int doctorId, BulkSlotCreateDto dto)
         {
             // 1️⃣ Doctor exists check
@@ -727,11 +847,7 @@ namespace HospitalProject.Services
             if (doctor == null)
                 throw new Exception("Doctor not found");
 
-            //// 2️⃣ Doctor verification check
-            //if (!doctor.IsVerified)
-            //    throw new Exception("Doctor not verified by medical council");
-
-            // 3️⃣ Loop —For Each location
+            // 3️⃣ Loop — For Each location
             foreach (var location in dto.Locations)
             {
                 // Hospital check — Illana auto create
@@ -766,7 +882,6 @@ namespace HospitalProject.Services
                 }
 
                 // Slots loop
-              
                 foreach (var slotItem in location.Slots)
                 {
                     // FromDate → ToDate loop
@@ -775,9 +890,8 @@ namespace HospitalProject.Services
                     while (current <= slotItem.ToDate)
                     {
                         // Day check — selected days only
-                        var dayName = current.DayOfWeek.ToString(); // "Monday", "Tuesday"...
+                        var dayName = current.DayOfWeek.ToString();
 
-                        //if (slotItem.Days.Contains(dayName))
                         if (slotItem.Days.Any(d => d.Equals(dayName, StringComparison.OrdinalIgnoreCase)))
                         {
                             var utcDate = DateTime.SpecifyKind(
@@ -805,7 +919,7 @@ namespace HospitalProject.Services
                                 x.TimeSlot == slotItem.TimeSlot
                             );
 
-                            if (!exists)  // Duplicate Illana mattum create
+                            if (!exists)
                             {
                                 var slot = new DoctorAvailability
                                 {
@@ -827,8 +941,26 @@ namespace HospitalProject.Services
                             }
                         }
 
-                        current = current.AddDays(1); // Next day
+                        current = current.AddDays(1);
                     }
+
+                    // ✅ DoctorSlotGroup save — UI display க்கு
+                    foreach (var specialityId in location.SpecialityIds)
+                    {
+                        await _doctorSlotGroups.AddAsync(new DoctorSlotGroup
+                        {
+                            DoctorId = doctorId,
+                            HospitalId = hospital.Id,
+                            SpecialityId = specialityId,
+                            FromDate = slotItem.FromDate,
+                            ToDate = slotItem.ToDate,
+                            Days = string.Join(",", slotItem.Days),
+                            TimeSlot = slotItem.TimeSlot.Trim(),
+                            CreatedAt = DateTime.UtcNow
+                        });
+                    }
+
+                    await _doctorSlotGroups.SaveAsync();
                 }
 
                 await _slots.SaveAsync();
@@ -3221,6 +3353,17 @@ GetPatientHistory(int userId)
 
         public async Task AddMedicalRepSlot(MedicalRepSlotCreateDto dto)
         {
+            // ✅ Step 1 — Doctor இந்த Hospital-ல் assign ஆகிருக்கான்னு check
+            var isAssigned = await _serviceLocation.Query()
+                .AnyAsync(l =>
+                    l.DoctorId == dto.DoctorId &&
+                    l.HospitalId == dto.HospitalId &&
+                    l.IsActive);
+
+            if (!isAssigned)
+                throw new Exception(
+                    "Doctor is not assigned to this hospital");
+
             var utcDate = DateTime.SpecifyKind(
                 dto.Date.ToDateTime(TimeOnly.MinValue),
                 DateTimeKind.Utc);
@@ -3244,7 +3387,7 @@ GetPatientHistory(int userId)
 
             await _medicalRepSlots.AddAsync(new MedicalRepSlot
             {
-                HospitalId = dto.HospitalId,   // 👈 add
+                HospitalId = dto.HospitalId,
                 DoctorId = dto.DoctorId,
                 SlotDate = utcDate,
                 TimeSlot = dto.TimeSlot,
@@ -3256,6 +3399,19 @@ GetPatientHistory(int userId)
             await _medicalRepSlots.SaveAsync();
         }
 
+
+        public async Task<List<DoctorAssignedHospitalDto>> GetDoctorAssignedHospitals(int doctorId)
+        {
+            return await _serviceLocation.Query()
+                .Include(l => l.Hospital)
+                .Where(l => l.DoctorId == doctorId && l.IsActive)
+                .Select(l => new DoctorAssignedHospitalDto(
+                    l.Hospital.Id,
+                    l.Hospital.Name
+                ))
+                .Distinct()
+                .ToListAsync();
+        }
 
 
         public async Task<List<MedicalRepSlot>> GetMedicalRepSlots(
@@ -3790,43 +3946,93 @@ GetPatientHistory(int userId)
         // DOCTOR — My Slots View
         // =====================================================================
 
-        public async Task<List<DoctorSlotViewDto>> GetDoctorSlots(
-     int doctorId, DateOnly? date)
+        //   public async Task<List<DoctorSlotGroupViewDto>> GetDoctorSlots(
+        //int doctorId, DateOnly? date)
+        //   {
+        //       var query = _slots.Query()
+        //           .Include(s => s.Hospital)
+        //           .Include(s => s.Specialities)
+        //               .ThenInclude(sp => sp.Speciality)
+        //           .Where(s => s.DoctorId == doctorId &&
+        //                       s.IsClosed == false);
+
+        //       if (date.HasValue)
+        //       {
+        //           var utcDate = DateTime.SpecifyKind(
+        //               date.Value.ToDateTime(TimeOnly.MinValue),
+        //               DateTimeKind.Utc);
+        //           query = query.Where(s => s.AvailableDate.Date == utcDate.Date);
+        //       }
+
+        //       var slots = await query
+        //           .OrderBy(s => s.HospitalId)
+        //           .ThenBy(s => s.TimeSlot)
+        //           .ThenBy(s => s.AvailableDate)
+        //           .ToListAsync();
+
+        //       // Hospital + TimeSlot group
+        //       var grouped = slots
+        //           .GroupBy(s => new { s.HospitalId, s.TimeSlot })
+        //           .Select(g => new DoctorSlotGroupViewDto(
+        //               g.Key.HospitalId ?? 0,
+        //               g.First().Hospital != null ? g.First().Hospital!.Name : "N/A",
+        //               g.First().Hospital != null ? g.First().Hospital!.State : "N/A",
+        //               g.First().Hospital != null ? g.First().Hospital!.Area : "N/A",
+        //               g.First().Specialities
+        //                   .Select(sp => sp.Speciality.Name)
+        //                   .ToList(),
+        //               g.Min(s => s.AvailableDate),  // FromDate
+        //               g.Max(s => s.AvailableDate),  // ToDate
+        //               g.Select(s => s.AvailableDate.DayOfWeek.ToString())
+        //                   .Distinct()
+        //                   .ToList(),                // Days
+        //               g.Key.TimeSlot,
+        //               g.Count(),                    // Total Slots
+        //               g.Select(s => new DoctorSlotViewDto(
+        //                   s.Id,
+        //                   s.HospitalId ?? 0,
+        //                   s.Hospital != null ? s.Hospital.Name : "N/A",
+        //                   s.Hospital != null ? s.Hospital.State : "N/A",
+        //                   s.Hospital != null ? s.Hospital.Area : "N/A",
+        //                   s.AvailableDate,
+        //                   s.AvailableDate.DayOfWeek.ToString(),
+        //                   s.TimeSlot,
+        //                   s.IsClosed,
+        //                   s.Specialities.Select(sp => new DoctorSlotSpecialityDto(
+        //                       sp.SpecialityId,
+        //                       sp.Speciality.Name
+        //                   )).ToList()
+        //               )).ToList()
+        //           ))
+        //           .ToList();
+
+        //       return grouped;
+        //   }
+
+
+
+        public async Task<List<DoctorSlotGroupedDto>> GetDoctorSlots(int doctorId)
         {
-            var query = _slots.Query()
-                .Include(s => s.Hospital)
-                .Include(s => s.Specialities)
-                    .ThenInclude(sp => sp.Speciality)
-                .Where(s => s.DoctorId == doctorId &&
-                            s.IsClosed == false);
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
 
-            if (date.HasValue)
-            {
-                var utcDate = DateTime.SpecifyKind(
-                    date.Value.ToDateTime(TimeOnly.MinValue),
-                    DateTimeKind.Utc);
-                query = query.Where(s => s.AvailableDate == utcDate);
-            }
-
-            var slots = await query
-                .OrderBy(s => s.AvailableDate)
-                .ThenBy(s => s.TimeSlot)
+            return await _doctorSlotGroups.Query()
+                .Include(g => g.Hospital)
+                .Include(g => g.Speciality)
+                .Where(g =>
+                    g.DoctorId == doctorId &&
+                    g.ToDate >= today)
+                .Select(g => new DoctorSlotGroupedDto(
+                    g.HospitalId,
+                    g.Hospital.Name,
+                    g.Hospital.Area,
+                    g.Hospital.State,
+                    g.Speciality.Name,
+                    g.FromDate,
+                    g.ToDate,
+                    g.Days.Split(",", StringSplitOptions.None).ToList(),
+                    g.TimeSlot
+                ))
                 .ToListAsync();
-
-            return slots.Select(s => new DoctorSlotViewDto(
-                s.Id,
-                s.HospitalId ?? 0,
-                s.Hospital != null ? s.Hospital.Name : "N/A",
-                s.Hospital != null ? s.Hospital.State : "N/A",
-                s.Hospital != null ? s.Hospital.Area : "N/A",
-                s.AvailableDate,  // 👈 DateTime
-                s.TimeSlot,
-                s.IsClosed,
-                s.Specialities.Select(sp => new DoctorSlotSpecialityDto(
-                    sp.SpecialityId,
-                    sp.Speciality.Name
-                )).ToList()
-            )).ToList();
         }
 
 
@@ -4024,6 +4230,10 @@ GetPatientHistory(int userId)
                 )).ToList()
             )).ToList();
         }
+
+
+
+
 
 
         public async Task<Doctor?> GetDoctorByUserId(int userId)

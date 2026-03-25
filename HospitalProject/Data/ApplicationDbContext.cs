@@ -77,6 +77,8 @@ namespace HospitalProject.Data
 
         public DbSet<DoctorAvailabilitySpeciality> DoctorAvailabilitySpecialities => Set<DoctorAvailabilitySpeciality>();
 
+        public DbSet<DoctorSlotGroup> DoctorSlotGroups { get; set; }
+
 
 
 

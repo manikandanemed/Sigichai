@@ -27,14 +27,17 @@ namespace HospitalProject.Controllers
         // =========================
 
         [HttpPost("register/patient")]
-        public async Task<IActionResult> RegisterPatient([FromBody] PatientRegDto dto)
+        public async Task<IActionResult> RegisterPatient(PatientRegDto dto)
         {
-            await _service.RegisterPatient(dto);
-            return Ok(new ApiResponse
+            try
             {
-                Success = true,
-                Message = "Patient registered successfully"
-            });
+                await _service.RegisterPatient(dto);
+                return Ok(new ApiResponse { Success = true, Message = "Patient registered" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse { Success = false, Message = ex.Message });
+            }
         }
 
         [HttpPost("create")]
@@ -1601,35 +1604,24 @@ namespace HospitalProject.Controllers
 
 
 
-        // =====================================================================
-        // 👨‍⚕️ DOCTOR — My Slots View
-        // GET /api/hospital/doctor/my-slots?date=2026-03-15
-        // =====================================================================
+        // ======================================
+        // 📋 GET DOCTOR SLOTS (Grouped View)
+        // GET /api/hospital/doctor/{doctorId}/slots
+        // ======================================
 
-        [Authorize(Roles = "Doctor")]
-        [HttpGet("doctor/my-slots")]
-        public async Task<IActionResult> GetDoctorSlots(
-    [FromQuery] DateOnly? date)  // 👈 date filter optional
+        [Authorize(Roles = "Doctor,Admin")]
+        [HttpGet("doctor/{doctorId}/slot-groups")]
+        public async Task<IActionResult> GetDoctorSlots(int doctorId)
         {
             try
             {
-                var userId = int.Parse(
-                    User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-
-                var doctor = await _service.GetDoctorByUserId(userId);
-                if (doctor == null)
-                    return BadRequest(new ApiResponse
-                    {
-                        Success = false,
-                        Message = "Doctor not found"
-                    });
-
-                var result = await _service.GetDoctorSlots(doctor.Id, date);
+                var data = await _service.GetDoctorSlots(doctorId);
 
                 return Ok(new ApiResponse
                 {
                     Success = true,
-                    Data = result
+                    Message = "Doctor slots fetched successfully",
+                    Data = data
                 });
             }
             catch (Exception ex)

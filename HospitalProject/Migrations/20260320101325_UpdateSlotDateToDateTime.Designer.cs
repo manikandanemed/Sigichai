@@ -3,6 +3,7 @@ using System;
 using HospitalProject.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HospitalProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260320101325_UpdateSlotDateToDateTime")]
+    partial class UpdateSlotDateToDateTime
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -454,51 +457,6 @@ namespace HospitalProject.Migrations
                     b.HasIndex("DoctorServiceLocationId");
 
                     b.ToTable("DoctorServiceSlots");
-                });
-
-            modelBuilder.Entity("HospitalProject.Models.DoctorSlotGroup", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Days")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("DoctorId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateOnly>("FromDate")
-                        .HasColumnType("date");
-
-                    b.Property<int>("HospitalId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("SpecialityId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("TimeSlot")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateOnly>("ToDate")
-                        .HasColumnType("date");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DoctorId");
-
-                    b.HasIndex("HospitalId");
-
-                    b.HasIndex("SpecialityId");
-
-                    b.ToTable("DoctorSlotGroups");
                 });
 
             modelBuilder.Entity("HospitalProject.Models.DoctorStaff", b =>
@@ -971,9 +929,6 @@ namespace HospitalProject.Migrations
                     b.Property<string>("DoctorNotes")
                         .HasColumnType("text");
 
-                    b.Property<int?>("HospitalId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("MedicalRepId")
                         .HasColumnType("integer");
 
@@ -996,8 +951,6 @@ namespace HospitalProject.Migrations
 
                     b.HasIndex("DoctorId");
 
-                    b.HasIndex("HospitalId");
-
                     b.HasIndex("MedicalRepId");
 
                     b.ToTable("MedicalRepAppointments");
@@ -1017,9 +970,6 @@ namespace HospitalProject.Migrations
                     b.Property<int>("DoctorId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("HospitalId")
-                        .HasColumnType("integer");
-
                     b.Property<bool>("IsClosed")
                         .HasColumnType("boolean");
 
@@ -1036,8 +986,6 @@ namespace HospitalProject.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("DoctorId");
-
-                    b.HasIndex("HospitalId");
 
                     b.ToTable("MedicalRepSlots");
                 });
@@ -2004,33 +1952,6 @@ namespace HospitalProject.Migrations
                     b.Navigation("DoctorServiceLocation");
                 });
 
-            modelBuilder.Entity("HospitalProject.Models.DoctorSlotGroup", b =>
-                {
-                    b.HasOne("HospitalProject.Models.Doctor", "Doctor")
-                        .WithMany()
-                        .HasForeignKey("DoctorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("HospitalProject.Models.Hospital", "Hospital")
-                        .WithMany()
-                        .HasForeignKey("HospitalId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("HospitalProject.Models.Speciality", "Speciality")
-                        .WithMany()
-                        .HasForeignKey("SpecialityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Doctor");
-
-                    b.Navigation("Hospital");
-
-                    b.Navigation("Speciality");
-                });
-
             modelBuilder.Entity("HospitalProject.Models.DoctorStaff", b =>
                 {
                     b.HasOne("HospitalProject.Models.Doctor", "Doctor")
@@ -2151,11 +2072,6 @@ namespace HospitalProject.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HospitalProject.Models.Hospital", "Hospital")
-                        .WithMany()
-                        .HasForeignKey("HospitalId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("HospitalProject.Models.MedicalRep", "MedicalRep")
                         .WithMany()
                         .HasForeignKey("MedicalRepId")
@@ -2163,8 +2079,6 @@ namespace HospitalProject.Migrations
                         .IsRequired();
 
                     b.Navigation("Doctor");
-
-                    b.Navigation("Hospital");
 
                     b.Navigation("MedicalRep");
                 });
@@ -2177,14 +2091,7 @@ namespace HospitalProject.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HospitalProject.Models.Hospital", "Hospital")
-                        .WithMany()
-                        .HasForeignKey("HospitalId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.Navigation("Doctor");
-
-                    b.Navigation("Hospital");
                 });
 
             modelBuilder.Entity("HospitalProject.Models.Patient", b =>

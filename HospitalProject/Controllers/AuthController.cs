@@ -17,16 +17,27 @@ namespace HospitalProject.Controllers
             _service = service;
         }
 
-        [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginDto dto)
-        {
-            await _service.Login(dto);
 
-            return Ok(new ApiResponse
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginDto dto)
+        {
+            try
             {
-                Success = true,
-                Message = "OTP sent successfully"
-            });
+                await _service.Login(dto);
+                return Ok(new ApiResponse
+                {
+                    Success = true,
+                    Message = "OTP sent successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse  
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
         }
 
 

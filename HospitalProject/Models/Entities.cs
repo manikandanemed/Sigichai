@@ -906,4 +906,31 @@ namespace HospitalProject.Models
         public string TimeSlot { get; set; } = string.Empty;
         // "08:00-11:00" | "11:00-14:00" | "14:00-17:00"
     }
+
+
+    // =========================
+    // DOCTOR SLOT GROUP
+    // =========================
+    public class DoctorSlotGroup
+    {
+        public int Id { get; set; }
+
+        public int DoctorId { get; set; }
+        public Doctor Doctor { get; set; } = null!;
+
+        public int HospitalId { get; set; }
+        public Hospital Hospital { get; set; } = null!;
+
+        public int SpecialityId { get; set; }
+        public Speciality Speciality { get; set; } = null!;
+
+        public DateOnly FromDate { get; set; }
+        public DateOnly ToDate { get; set; }
+
+        public string Days { get; set; } = string.Empty; // "Monday,Tuesday"
+
+        public string TimeSlot { get; set; } = string.Empty;
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    }
 }
