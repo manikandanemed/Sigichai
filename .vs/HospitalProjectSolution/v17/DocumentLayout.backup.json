@@ -294,7 +294,7 @@
               "RelativeDocumentMoniker": "HospitalProject\\Services\\HospitalService.cs",
               "ToolTip": "D:\\Sigichai\\sigichai internalwithqr\\sigichai internalphargy\\sigichai with phargt\\HospitalProjectSolution\\HospitalProject\\Services\\HospitalService.cs",
               "RelativeToolTip": "HospitalProject\\Services\\HospitalService.cs",
-              "ViewState": "AgIAAM8DAAAAAAAAAAAuwOIDAAA4AAAAAAAAAA==",
+              "ViewState": "AgIAADcNAAAAAAAAAAAewDsNAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-01-07T11:46:08.258Z",
               "EditorCaption": ""
@@ -309,8 +309,7 @@
               "RelativeToolTip": "HospitalProject\\Models\\Dtos.cs",
               "ViewState": "AgIAAEYAAAAAAAAAAAAvwE0AAAASAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-23T04:59:49.18Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-23T04:59:49.18Z"
             },
             {
               "$type": "Document",

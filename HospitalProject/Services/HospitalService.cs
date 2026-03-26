@@ -3385,12 +3385,13 @@ GetPatientHistory(int userId)
 
         public async Task AddMedicalRepSlot(MedicalRepSlotCreateDto dto)
         {
-            // ✅ Step 1 — Doctor இந்த Hospital-ல் assign ஆகிருக்கான்னு check
-            var isAssigned = await _serviceLocation.Query()
+            // ✅ Step 1 — Doctor Hospital assign check
+
+            var isAssigned = await _slots.Query()
                 .AnyAsync(l =>
                     l.DoctorId == dto.DoctorId &&
                     l.HospitalId == dto.HospitalId &&
-                    l.IsActive);
+                    l.IsClosed == false);
 
             if (!isAssigned)
                 throw new Exception(
