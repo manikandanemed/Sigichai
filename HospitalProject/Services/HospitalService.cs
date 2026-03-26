@@ -854,6 +854,22 @@ namespace HospitalProject.Services
                 var hospital = await _hospital.GetAsync(
                     h => h.PlaceId == location.PlaceId);
 
+                // 2️⃣ PlaceId இல்லன்னா Name + State + Area match பாரு
+                if (hospital == null)
+                {
+                    hospital = await _hospital.GetAsync(h =>
+                        h.Name == location.PlaceName &&
+                        h.State == location.State &&
+                        h.Area == location.Area);
+
+                    // ✅ PlaceId update 
+                    if (hospital != null)
+                    {
+                        hospital.PlaceId = location.PlaceId;
+                        await _hospital.SaveAsync();
+                    }
+                }
+
                 if (hospital == null)
                 {
                     hospital = new Hospital
@@ -945,8 +961,24 @@ namespace HospitalProject.Services
                     }
 
                     // ✅ DoctorSlotGroup save — UI display க்கு
+                    // ✅ DoctorSlotGroup save — UI display க்கு
                     foreach (var specialityId in location.SpecialityIds)
                     {
+                        // Duplicate check
+                        var groupExists = await _doctorSlotGroups.Query()
+                            .AnyAsync(g =>
+                                g.DoctorId == doctorId &&
+                                g.HospitalId == hospital.Id &&
+                                g.SpecialityId == specialityId &&
+                                g.FromDate == slotItem.FromDate &&
+                                g.ToDate == slotItem.ToDate &&
+                                g.Days == string.Join(",", slotItem.Days) &&
+                                g.TimeSlot == slotItem.TimeSlot.Trim());
+
+                        if (groupExists)
+                            throw new Exception(
+                                "Slot already exists for this Hospital, Speciality, Date Range and Time");
+
                         await _doctorSlotGroups.AddAsync(new DoctorSlotGroup
                         {
                             DoctorId = doctorId,
@@ -3400,18 +3432,38 @@ GetPatientHistory(int userId)
         }
 
 
+        //public async Task<List<DoctorAssignedHospitalDto>> GetDoctorAssignedHospitals(int doctorId)
+        //{
+        //    return await _serviceLocation.Query()
+        //        .Include(l => l.Hospital)
+        //        .Where(l => l.DoctorId == doctorId && l.IsActive)
+        //        .Select(l => new DoctorAssignedHospitalDto(
+        //            l.Hospital.Id,
+        //            l.Hospital.Name
+        //        ))
+        //        .Distinct()
+        //        .ToListAsync();
+        //}
+
+
         public async Task<List<DoctorAssignedHospitalDto>> GetDoctorAssignedHospitals(int doctorId)
         {
-            return await _serviceLocation.Query()
-                .Include(l => l.Hospital)
-                .Where(l => l.DoctorId == doctorId && l.IsActive)
-                .Select(l => new DoctorAssignedHospitalDto(
-                    l.Hospital.Id,
-                    l.Hospital.Name
-                ))
+            var result = await _slots.Query()
+                .Where(x => x.DoctorId == doctorId && x.IsClosed == false)
+                .Join(
+                    _hospital.Query(),
+                    da => da.HospitalId,
+                    h => h.Id,
+                    (da, h) => new { h.Id, h.Name }
+                )
                 .Distinct()
+                .Select(x => new DoctorAssignedHospitalDto(x.Id, x.Name))
                 .ToListAsync();
+
+            return result;
         }
+
+
 
 
         public async Task<List<MedicalRepSlot>> GetMedicalRepSlots(
@@ -3735,10 +3787,10 @@ GetPatientHistory(int userId)
 
 
         // =====================================================================
-        // NEARBY HOSPITALS — Patient Location வச்சு
+        // NEARBY HOSPITALS — Patient Location Base
         // =====================================================================
         public async Task<List<NearbyHospitalDto>> GetNearbyHospitals(
-    double lat, double lon, int? specialityId)
+        double lat, double lon, int? specialityId, double maxDistanceKm = 5)
         {
             var hospitals = await _hospital.Query()
                 .Where(h => h.Latitude != null && h.Longitude != null)
@@ -3748,7 +3800,13 @@ GetPatientHistory(int userId)
 
             foreach (var h in hospitals)
             {
-                // Doctor + Slot query
+                // Distance calculate
+                var distance = CalculateDistance(
+                    lat, lon, h.Latitude!.Value, h.Longitude!.Value);
+
+                // Distance filter — maxDistanceKm
+                if (distance > maxDistanceKm) continue;
+
                 var slotsQuery = _slots.Query()
                     .Include(s => s.Doctor)
                         .ThenInclude(d => d.User)
@@ -3759,7 +3817,6 @@ GetPatientHistory(int userId)
                         s.IsClosed == false &&
                         s.Doctor.IsVerified == true);
 
-                // Speciality filter
                 if (specialityId.HasValue)
                 {
                     slotsQuery = slotsQuery.Where(s =>
@@ -3769,7 +3826,6 @@ GetPatientHistory(int userId)
 
                 var slots = await slotsQuery.ToListAsync();
 
-                // Doctors-ஐ group பண்றோம்
                 var doctors = slots
                     .GroupBy(s => s.DoctorId)
                     .Select(g => new NearbyDoctorDto(
@@ -3778,17 +3834,15 @@ GetPatientHistory(int userId)
                         g.First().Specialities
                             .Select(sp => sp.Speciality.Name)
                             .ToList(),
-                       g.Select(s => new NearbySlotDto(
-                       s.Id,
-                       DateOnly.FromDateTime(s.AvailableDate),  // 👈 fix
-                       s.TimeSlot
-                       )).ToList()
+                        g.Select(s => new NearbySlotDto(
+                            s.Id,
+                            DateOnly.FromDateTime(s.AvailableDate),
+                            s.TimeSlot
+                        )).ToList()
                     ))
                     .ToList();
 
-                // Speciality filter-ல் doctor இல்லன்னா skip
-                if (specialityId.HasValue && !doctors.Any())
-                    continue;
+                if (specialityId.HasValue && !doctors.Any()) continue;
 
                 result.Add(new NearbyHospitalDto(
                     h.Id,
@@ -3796,7 +3850,7 @@ GetPatientHistory(int userId)
                     h.FormattedAddress ?? h.Address,
                     h.Latitude!.Value,
                     h.Longitude!.Value,
-                    CalculateDistance(lat, lon, h.Latitude.Value, h.Longitude.Value),
+                    distance,
                     doctors
                 ));
             }
@@ -4131,7 +4185,7 @@ GetPatientHistory(int userId)
 
 
         public async Task<List<MedicalRepSlotViewDto>> GetMedicalRepSlotsByDate(
-    int userId, string role, DateOnly? date)
+     int userId, string role, DateOnly? date)
         {
             var query = _medicalRepSlots.Query()
                 .Include(s => s.Hospital)
@@ -4147,7 +4201,14 @@ GetPatientHistory(int userId)
                 query = query.Where(s => s.DoctorId == doctor.Id);
             }
 
-            // Date filter
+            // ✅ Past date வரக்கூடாது
+            var today = DateTime.SpecifyKind(
+                DateTime.UtcNow.Date,
+                DateTimeKind.Utc);
+
+            query = query.Where(s => s.SlotDate.Date >= today);
+
+            // Date filter — specific date குடுத்தா அன்னைக்கு மட்டும்
             if (date.HasValue)
             {
                 var utcDate = DateTime.SpecifyKind(

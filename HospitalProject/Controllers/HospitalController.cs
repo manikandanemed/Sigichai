@@ -1495,14 +1495,15 @@ namespace HospitalProject.Controllers
         [Authorize(Roles = "Patient")]
         [HttpGet("nearby-hospitals")]
         public async Task<IActionResult> GetNearbyHospitals(
-       [FromQuery] double lat,
-       [FromQuery] double lon,
-       [FromQuery] int? specialityId)  // 👈 optional filter
+     [FromQuery] double lat,
+     [FromQuery] double lon,
+     [FromQuery] int? specialityId,
+     [FromQuery] double maxDistanceKm = 5)  // 👈 default 5km
         {
             try
             {
                 var result = await _service.GetNearbyHospitals(
-                    lat, lon, specialityId);
+                    lat, lon, specialityId, maxDistanceKm);
 
                 return Ok(new ApiResponse
                 {
