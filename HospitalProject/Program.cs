@@ -2,6 +2,7 @@
 using System.Text;
 //using HospitalProject.BackgroundServices;
 using HospitalProject.Data;
+using HospitalProject.Models;
 using HospitalProject.Repositories;
 using HospitalProject.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -16,6 +17,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
+
+builder.Services.Configure<Msg91Settings>(
+    builder.Configuration.GetSection("MSG91"));
+
+
+builder.Services.AddHttpClient<IMsg91Service, Msg91Service>();
 
 // =========================
 // DEPENDENCY INJECTION

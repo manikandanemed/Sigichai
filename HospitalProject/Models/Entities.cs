@@ -933,4 +933,14 @@ namespace HospitalProject.Models
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
+
+
+
+    public class Msg91Settings
+    {
+        public string AuthKey { get; set; }
+        public string WhatsAppUrl { get; set; }
+        public string SenderNumber { get; set; }
+        public string TemplateName { get; set; }
+    }
 }

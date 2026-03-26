@@ -40,6 +40,7 @@ namespace HospitalProject.Services
         private readonly PrescriptionRoutingService _routingService;
         private readonly IRepository<DoctorServiceLocation> _serviceLocation;
         private readonly IRepository<DoctorSlotGroup> _doctorSlotGroups;
+        private readonly IMsg91Service _msg91;
 
 
 
@@ -75,7 +76,8 @@ namespace HospitalProject.Services
             PrescriptionQrService qrService,
             PrescriptionRoutingService routingService,
             IRepository<DoctorSlotGroup> doctorSlotGroups,
-            IConfiguration config)
+            IConfiguration config,
+            IMsg91Service msg91 )
         {
             _u = u; _p = p; _d = d; _admin = admin;
             _slots = slots; _apps = apps; _otp = otp; _family = family; _hospital = hospital;
@@ -96,6 +98,7 @@ namespace HospitalProject.Services
             _serviceLocation = serviceLocation;
             _routingService = routingService;
             _doctorSlotGroups = doctorSlotGroups;
+            _msg91 = msg91;
         }
 
 
@@ -277,31 +280,34 @@ namespace HospitalProject.Services
         }
 
 
-        // =========================
-        // LOGIN + OTP
-        // =========================
-        //public async Task<string> Login(LoginDto d)
+        //Login Method for test (1234)
+        //public async Task<bool> Login(LoginDto d)
         //{
-        //    //var user = await _u.GetAsync(x => x.MobileNumber == d.MobileNumber);
-        //    //        var user = await _u.Query()
-        //    //.Include(x => x.Admin)
-        //    //.Include(x => x.Doctor)
-        //    //.Include(x => x.Patient)
-        //    //.FirstOrDefaultAsync(x => x.MobileNumber == d.MobileNumber);
 
+        //    // 🔴 1️⃣ Check if pharmacy staff request is pending
+        //    var pendingRequest = await _staffRequest.GetAsync(x =>
+        //        x.MobileNumber == d.MobileNumber &&
+        //        x.Status == "Pending");
+
+        //    if (pendingRequest != null)
+        //        throw new Exception("Account not approved by admin");
         //    var user = await _u.Query()
-        //      .Include(x => x.Admin)
-        //      .Include(x => x.Doctor)
-        //      .Include(x => x.Patient)
-        //      .FirstOrDefaultAsync(x =>
-        //      x.MobileNumber == d.MobileNumber &&
-        //      x.IsDeleted == false   // 🔥 ADD THIS
-        //      );
+        //        .Include(x => x.Admin)
+        //        .Include(x => x.Doctor)
+        //        .Include(x => x.Patient)
+        //        .FirstOrDefaultAsync(x =>
+        //            x.MobileNumber == d.MobileNumber &&
+        //            x.IsDeleted == false
+        //        );
 
         //    if (user == null || !BCrypt.Net.BCrypt.Verify(d.Password, user.Password))
-        //        return "Invalid Credentials";
+        //        throw new Exception("Invalid credentials");
 
-        //    var otp = new Random().Next(1000, 9999).ToString();
+        //    //working random otp
+        //    //var otp = new Random().Next(1000, 9999).ToString();
+
+        //    // ✅ New (Fixed OTP)
+        //    var otp = "1234";
 
         //    await _otp.AddAsync(new OtpStore
         //    {
@@ -317,21 +323,18 @@ namespace HospitalProject.Services
         //    });
 
         //    await _otp.SaveAsync();
-
         //    await _twilio.SendOtpAsync(d.MobileNumber, otp);
-        //    return "OTP Sent";
+
+        //    return true; // 🔥 IMPORTANT
         //}
 
+
+
+        //Login for OTP whatsapp
         public async Task<bool> Login(LoginDto d)
         {
+            Console.WriteLine("🔹 Login started");
 
-            // 🔴 1️⃣ Check if pharmacy staff request is pending
-            var pendingRequest = await _staffRequest.GetAsync(x =>
-                x.MobileNumber == d.MobileNumber &&
-                x.Status == "Pending");
-
-            if (pendingRequest != null)
-                throw new Exception("Account not approved by admin");
             var user = await _u.Query()
                 .Include(x => x.Admin)
                 .Include(x => x.Doctor)
@@ -344,11 +347,10 @@ namespace HospitalProject.Services
             if (user == null || !BCrypt.Net.BCrypt.Verify(d.Password, user.Password))
                 throw new Exception("Invalid credentials");
 
-            //working random otp
-            //var otp = new Random().Next(1000, 9999).ToString();
+            Console.WriteLine("✅ User validated");
 
-            // ✅ New (Fixed OTP)
-            var otp = "1234";
+            var otp = new Random().Next(1000, 9999).ToString();
+            Console.WriteLine("🔐 OTP Generated: " + otp);
 
             await _otp.AddAsync(new OtpStore
             {
@@ -364,66 +366,25 @@ namespace HospitalProject.Services
             });
 
             await _otp.SaveAsync();
-            await _twilio.SendOtpAsync(d.MobileNumber, otp);
+            Console.WriteLine("💾 OTP saved to DB");
 
-            return true; // 🔥 IMPORTANT
+            try
+            {
+                Console.WriteLine("📤 Sending OTP via MSG91...");
+
+                await _msg91.SendOtpAsync(user.MobileNumber, otp); // 👈 IMPORTANT: user.MobileNumber use பண்ணு
+
+                Console.WriteLine("✅ MSG91 send success");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("❌ MSG91 ERROR: " + ex.Message);
+                throw new Exception("OTP sending failed: " + ex.Message);
+            }
+
+            return true;
         }
 
-
-        ////flow2 doctor create admin without password
-
-        //    public async Task CreateIndependentDoctorAdmin(
-        //int doctorUserId,
-        //DoctorAdminCreateDto dto)
-        //    {
-        //        // 1️⃣ Doctor (logged-in user)
-        //        var doctor = await _d.GetAsync(d => d.UserId == doctorUserId);
-        //        if (doctor == null)
-        //            throw new Exception("Doctor not found");
-
-        //        // 2️⃣ Duplicate mobile check
-        //        if (await _u.GetAsync(x => x.MobileNumber == dto.Mobile) != null)
-        //            throw new Exception("Mobile already exists");
-
-        //        // 3️⃣ Create ADMIN user
-        //        var adminUser = new User
-        //        {
-        //            Name = dto.Name.Trim(),
-        //            MobileNumber = dto.Mobile.Trim(),
-        //            Password = BCrypt.Net.BCrypt.HashPassword("1234"), // temp
-        //            Role = "Admin"
-        //        };
-
-        //        await _u.AddAsync(adminUser);
-        //        await _u.SaveAsync();
-
-        //        // 4️⃣ Link admin to doctor (NO hospital)
-        //        await _doctorStaff.AddAsync(new DoctorStaff
-        //        {
-        //            DoctorId = doctor.Id,
-        //            UserId = adminUser.Id,
-        //            StaffRole = "Admin"
-        //        });
-
-        //        await _doctorStaff.SaveAsync();
-
-        //        // 5️⃣ OTP for first login
-        //        var otp = new Random().Next(1000, 9999).ToString();
-
-        //        await _otp.AddAsync(new OtpStore
-        //        {
-        //            MobileNumber = dto.Mobile,
-        //            OtpCode = otp,
-        //            Expiry = DateTime.UtcNow.AddMinutes(5)
-        //        });
-
-        //        await _otp.SaveAsync();
-
-        //        await _twilio.SendOtpAsync(
-        //            dto.Mobile,
-        //            $"You are added as clinic admin. OTP: {otp}"
-        //        );
-        //    }
 
 
         //flow2 doctor create admin with password
@@ -3815,8 +3776,8 @@ GetPatientHistory(int userId)
                         .ThenInclude(sp => sp.Speciality)
                     .Where(s =>
                         s.HospitalId == h.Id &&
-                        s.IsClosed == false &&
-                        s.Doctor.IsVerified == true);
+                        s.IsClosed == false); //&&
+                        //s.Doctor.IsVerified == true);
 
                 if (specialityId.HasValue)
                 {
