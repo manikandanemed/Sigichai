@@ -136,6 +136,10 @@ app.UseExceptionHandler(errorApp =>
 app.UseSwagger();
 app.UseSwaggerUI();
 
+// Added for Frontend UI(wwwroot)
+app.UseDefaultFiles();   
+app.UseStaticFiles();
+
 app.UseAuthentication();
 app.UseAuthorization();
 

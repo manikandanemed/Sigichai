@@ -968,3 +968,4 @@ D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt
 D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\runtimes\win\lib\net6.0\Microsoft.Win32.SystemEvents.dll
 D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\runtimes\unix\lib\net6.0\System.Drawing.Common.dll
 D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\runtimes\win\lib\net6.0\System.Drawing.Common.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Debug\net8.0\HospitalProject.staticwebassets.runtime.json
