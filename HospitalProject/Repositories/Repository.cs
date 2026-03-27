@@ -14,6 +14,8 @@ namespace HospitalProject.Repositories
         Task SaveAsync();
         IQueryable<T> Query();
         Task<T?> GetAsync(Expression<Func<T, bool>> predicate);
+
+        Task AddRangeAsync(IEnumerable<T> entities);
     }
 
     // =========================
@@ -57,6 +59,11 @@ namespace HospitalProject.Repositories
         public async Task<T?> GetAsync(Expression<Func<T, bool>> predicate)
         {
             return await _context.Set<T>().FirstOrDefaultAsync(predicate);
+        }
+
+        public async Task AddRangeAsync(IEnumerable<T> entities)
+        {
+            await _context.Set<T>().AddRangeAsync(entities);
         }
     }
 }

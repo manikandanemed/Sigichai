@@ -685,6 +685,8 @@ namespace HospitalProject.Services
         // SLOT ADD (Doctor / Admin)
         // =========================
 
+        // old code
+
         //public async Task AddDoctorSlot(int doctorId, BulkSlotCreateDto dto)
         //{
         //    // 1️⃣ Doctor exists check
@@ -692,16 +694,228 @@ namespace HospitalProject.Services
         //    if (doctor == null)
         //        throw new Exception("Doctor not found");
 
-        //    //// 2️⃣ Doctor verification check
-        //    //if (!doctor.IsVerified)
-        //    //    throw new Exception("Doctor not verified by medical council");
-
-        //    // 3️⃣ Loop —For Each location
+        //    // 3️⃣ Loop — For Each location
         //    foreach (var location in dto.Locations)
         //    {
         //        // Hospital check — Illana auto create
         //        var hospital = await _hospital.GetAsync(
         //            h => h.PlaceId == location.PlaceId);
+
+        //        // 2️⃣ PlaceId இல்லன்னா Name + State + Area match பாரு
+        //        if (hospital == null)
+        //        {
+        //            hospital = await _hospital.GetAsync(h =>
+        //                h.Name == location.PlaceName &&
+        //                h.State == location.State &&
+        //                h.Area == location.Area);
+
+        //            // ✅ PlaceId update 
+        //            if (hospital != null)
+        //            {
+        //                hospital.PlaceId = location.PlaceId;
+        //                await _hospital.SaveAsync();
+        //            }
+        //        }
+
+        //        if (hospital == null)
+        //        {
+        //            hospital = new Hospital
+        //            {
+        //                Name = location.PlaceName,
+        //                Address = location.FormattedAddress,
+        //                Phone = "",
+        //                State = location.State,
+        //                Area = location.Area,
+        //                FormattedAddress = location.FormattedAddress,
+        //                Latitude = location.Latitude,
+        //                Longitude = location.Longitude,
+        //                PlaceId = location.PlaceId
+        //            };
+        //            await _hospital.AddAsync(hospital);
+        //            await _hospital.SaveAsync();
+        //        }
+
+        //        // Speciality valid check
+        //        foreach (var specialityId in location.SpecialityIds)
+        //        {
+        //            var speciality = await _speciality.GetAsync(
+        //                s => s.Id == specialityId && s.IsActive)
+        //                ?? throw new Exception(
+        //                    $"Speciality {specialityId} not found");
+        //        }
+
+
+        //        // ✅ TimeSlot + Days overlap check — different hospital-ல் same time இருக்க கூடாது
+        //        foreach (var slotItem in location.Slots)
+        //        {
+        //            // Already saved DoctorSlotGroups-ல் overlap பாரு
+        //            var overlapping = await _doctorSlotGroups.Query()
+        //                .Where(g =>
+        //                    g.DoctorId == doctorId &&
+        //                    g.TimeSlot == slotItem.TimeSlot.Trim() &&
+        //                    g.FromDate <= slotItem.ToDate &&
+        //                    g.ToDate >= slotItem.FromDate)
+        //                .ToListAsync();
+
+        //            if (overlapping.Any())
+        //            {
+        //                // Days overlap check
+        //                var newDays = slotItem.Days
+        //                    .Select(d => d.ToLower()).ToList();
+
+        //                foreach (var existing in overlapping)
+        //                {
+        //                    var existingDays = existing.Days
+        //                        .Split(",")
+        //                        .Select(d => d.ToLower())
+        //                        .ToList();
+
+        //                    var commonDays = newDays
+        //                        .Intersect(existingDays)
+        //                        .ToList();
+
+        //                    if (commonDays.Any())
+        //                        throw new Exception(
+        //                            $"Time slot {slotItem.TimeSlot} already exists for " +
+        //                            $"{string.Join(",", commonDays)} between " +
+        //                            $"{slotItem.FromDate} - {slotItem.ToDate}");
+        //                }
+        //            }
+        //        }
+
+        //        // Slots loop
+        //        foreach (var slotItem in location.Slots)
+        //        {
+        //            // FromDate → ToDate loop
+        //            var current = slotItem.FromDate;
+
+        //            while (current <= slotItem.ToDate)
+        //            {
+        //                // Day check — selected days only
+        //                var dayName = current.DayOfWeek.ToString();
+
+        //                if (slotItem.Days.Any(d => d.Equals(dayName, StringComparison.OrdinalIgnoreCase)))
+        //                {
+        //                    var utcDate = DateTime.SpecifyKind(
+        //                        current.ToDateTime(TimeOnly.MinValue),
+        //                        DateTimeKind.Utc);
+
+        //                    // MedicalRep conflict check
+        //                    var medRepSlotExists = await _medicalRepSlots.Query()
+        //                        .AnyAsync(x =>
+        //                            x.DoctorId == doctorId &&
+        //                            x.HospitalId == hospital.Id &&
+        //                            x.SlotDate.Date == utcDate.Date &&
+        //                            x.TimeSlot == slotItem.TimeSlot &&
+        //                            x.IsClosed == false);
+
+        //                    if (medRepSlotExists)
+        //                        throw new Exception(
+        //                            $"Medical Rep slot exists for {current} {slotItem.TimeSlot}");
+
+        //                    // Duplicate slot check
+        //                    bool exists = _slots.Query().Any(x =>
+        //                        x.DoctorId == doctorId &&
+        //                        x.HospitalId == hospital.Id &&
+        //                        x.AvailableDate == utcDate &&
+        //                        x.TimeSlot == slotItem.TimeSlot
+        //                    );
+
+        //                    if (!exists)
+        //                    {
+        //                        var slot = new DoctorAvailability
+        //                        {
+        //                            DoctorId = doctorId,
+        //                            HospitalId = hospital.Id,
+        //                            AvailableDate = utcDate,
+        //                            TimeSlot = slotItem.TimeSlot.Trim()
+        //                        };
+
+        //                        foreach (var specialityId in location.SpecialityIds)
+        //                        {
+        //                            slot.Specialities.Add(new DoctorAvailabilitySpeciality
+        //                            {
+        //                                SpecialityId = specialityId
+        //                            });
+        //                        }
+
+        //                        await _slots.AddAsync(slot);
+        //                    }
+        //                }
+
+        //                current = current.AddDays(1);
+        //            }
+
+        //            // ✅ DoctorSlotGroup save — UI display க்கு
+        //            // ✅ DoctorSlotGroup save — UI display க்கு
+        //            foreach (var specialityId in location.SpecialityIds)
+        //            {
+        //                // Duplicate check
+        //                var groupExists = await _doctorSlotGroups.Query()
+        //                    .AnyAsync(g =>
+        //                        g.DoctorId == doctorId &&
+        //                        g.HospitalId == hospital.Id &&
+        //                        g.SpecialityId == specialityId &&
+        //                        g.FromDate == slotItem.FromDate &&
+        //                        g.ToDate == slotItem.ToDate &&
+        //                        g.Days == string.Join(",", slotItem.Days) &&
+        //                        g.TimeSlot == slotItem.TimeSlot.Trim());
+
+        //                if (groupExists)
+        //                    throw new Exception(
+        //                        "Slot already exists for this Hospital, Speciality, Date Range and Time");
+
+        //                await _doctorSlotGroups.AddAsync(new DoctorSlotGroup
+        //                {
+        //                    DoctorId = doctorId,
+        //                    HospitalId = hospital.Id,
+        //                    SpecialityId = specialityId,
+        //                    FromDate = slotItem.FromDate,
+        //                    ToDate = slotItem.ToDate,
+        //                    Days = string.Join(",", slotItem.Days),
+        //                    TimeSlot = slotItem.TimeSlot.Trim(),
+        //                    CreatedAt = DateTime.UtcNow
+        //                });
+        //            }
+
+        //            await _doctorSlotGroups.SaveAsync();
+        //        }
+
+        //        await _slots.SaveAsync();
+        //    }
+        //}
+
+
+
+        //public async Task AddDoctorSlot(int doctorId, BulkSlotCreateDto dto)
+        //{
+        //    // 1️⃣ Doctor exists check
+        //    var doctor = await _d.GetAsync(d => d.Id == doctorId);
+        //    if (doctor == null)
+        //        throw new Exception("Doctor not found");
+
+        //    // 3️⃣ Loop — For Each location
+        //    foreach (var location in dto.Locations)
+        //    {
+        //        // Hospital check — Illana auto create
+        //        var hospital = await _hospital.GetAsync(
+        //            h => h.PlaceId == location.PlaceId);
+
+        //        // PlaceId இல்லன்னா Name + State + Area match பாரு
+        //        if (hospital == null)
+        //        {
+        //            hospital = await _hospital.GetAsync(h =>
+        //                h.Name == location.PlaceName &&
+        //                h.State == location.State &&
+        //                h.Area == location.Area);
+
+        //            // ✅ PlaceId update
+        //            if (hospital != null)
+        //            {
+        //                hospital.PlaceId = location.PlaceId;
+        //                await _hospital.SaveAsync();
+        //            }
+        //        }
 
         //        if (hospital == null)
         //        {
@@ -731,18 +945,66 @@ namespace HospitalProject.Services
         //        }
 
         //        // Slots loop
-
         //        foreach (var slotItem in location.Slots)
         //        {
+        //            // ✅ TimeSlot + Days overlap check
+        //            var overlapping = await _doctorSlotGroups.Query()
+        //                .Where(g =>
+        //                    g.DoctorId == doctorId &&
+        //                    g.TimeSlot == slotItem.TimeSlot.Trim() &&
+        //                    g.FromDate <= slotItem.ToDate &&
+        //                    g.ToDate >= slotItem.FromDate)
+        //                .ToListAsync();
+
+        //            if (overlapping.Any())
+        //            {
+        //                var newDays = slotItem.Days
+        //                    .Select(d => d.ToLower()).ToList();
+
+        //                foreach (var existing in overlapping)
+        //                {
+        //                    var existingDays = existing.Days
+        //                        .Split(",")
+        //                        .Select(d => d.ToLower())
+        //                        .ToList();
+
+        //                    var commonDays = newDays
+        //                        .Intersect(existingDays)
+        //                        .ToList();
+
+        //                    if (commonDays.Any())
+        //                        throw new Exception(
+        //                            $"Time slot {slotItem.TimeSlot} already exists for " +
+        //                            $"{string.Join(",", commonDays)} between " +
+        //                            $"{slotItem.FromDate} - {slotItem.ToDate}");
+        //                }
+        //            }
+
+        //            // ✅ DoctorSlotGroup duplicate check
+        //            foreach (var specialityId in location.SpecialityIds)
+        //            {
+        //                var groupExists = await _doctorSlotGroups.Query()
+        //                    .AnyAsync(g =>
+        //                        g.DoctorId == doctorId &&
+        //                        g.HospitalId == hospital.Id &&
+        //                        g.SpecialityId == specialityId &&
+        //                        g.FromDate == slotItem.FromDate &&
+        //                        g.ToDate == slotItem.ToDate &&
+        //                        g.Days == string.Join(",", slotItem.Days) &&
+        //                        g.TimeSlot == slotItem.TimeSlot.Trim());
+
+        //                if (groupExists)
+        //                    throw new Exception(
+        //                        "Slot already exists for this Hospital, Speciality, Date Range and Time");
+        //            }
+
         //            // FromDate → ToDate loop
         //            var current = slotItem.FromDate;
 
         //            while (current <= slotItem.ToDate)
         //            {
-        //                // Day check — selected days only
-        //                var dayName = current.DayOfWeek.ToString(); // "Monday", "Tuesday"...
+        //                var dayName = current.DayOfWeek.ToString();
 
-        //                //if (slotItem.Days.Contains(dayName))
         //                if (slotItem.Days.Any(d => d.Equals(dayName, StringComparison.OrdinalIgnoreCase)))
         //                {
         //                    var utcDate = DateTime.SpecifyKind(
@@ -770,7 +1032,7 @@ namespace HospitalProject.Services
         //                        x.TimeSlot == slotItem.TimeSlot
         //                    );
 
-        //                    if (!exists)  // Duplicate Illana mattum create
+        //                    if (!exists)
         //                    {
         //                        var slot = new DoctorAvailability
         //                        {
@@ -792,13 +1054,32 @@ namespace HospitalProject.Services
         //                    }
         //                }
 
-        //                current = current.AddDays(1); // Next day
+        //                current = current.AddDays(1);
         //            }
+
+        //            // ✅ DoctorSlotGroup save
+        //            foreach (var specialityId in location.SpecialityIds)
+        //            {
+        //                await _doctorSlotGroups.AddAsync(new DoctorSlotGroup
+        //                {
+        //                    DoctorId = doctorId,
+        //                    HospitalId = hospital.Id,
+        //                    SpecialityId = specialityId,
+        //                    FromDate = slotItem.FromDate,
+        //                    ToDate = slotItem.ToDate,
+        //                    Days = string.Join(",", slotItem.Days),
+        //                    TimeSlot = slotItem.TimeSlot.Trim(),
+        //                    CreatedAt = DateTime.UtcNow
+        //                });
+        //            }
+
+        //            await _doctorSlotGroups.SaveAsync();
         //        }
 
         //        await _slots.SaveAsync();
         //    }
         //}
+
 
 
         public async Task AddDoctorSlot(int doctorId, BulkSlotCreateDto dto)
@@ -808,14 +1089,12 @@ namespace HospitalProject.Services
             if (doctor == null)
                 throw new Exception("Doctor not found");
 
-            // 3️⃣ Loop — For Each location
             foreach (var location in dto.Locations)
             {
-                // Hospital check — Illana auto create
+                // Hospital check
                 var hospital = await _hospital.GetAsync(
                     h => h.PlaceId == location.PlaceId);
 
-                // 2️⃣ PlaceId இல்லன்னா Name + State + Area match பாரு
                 if (hospital == null)
                 {
                     hospital = await _hospital.GetAsync(h =>
@@ -823,7 +1102,6 @@ namespace HospitalProject.Services
                         h.State == location.State &&
                         h.Area == location.Area);
 
-                    // ✅ PlaceId update 
                     if (hospital != null)
                     {
                         hospital.PlaceId = location.PlaceId;
@@ -858,15 +1136,67 @@ namespace HospitalProject.Services
                             $"Speciality {specialityId} not found");
                 }
 
-                // Slots loop
+                // ✅ Bulk insert list
+                var slotsToAdd = new List<DoctorAvailability>();
+
                 foreach (var slotItem in location.Slots)
                 {
+                    // ✅ TimeSlot + Days overlap check
+                    var overlapping = await _doctorSlotGroups.Query()
+                        .Where(g =>
+                            g.DoctorId == doctorId &&
+                            g.TimeSlot == slotItem.TimeSlot.Trim() &&
+                            g.FromDate <= slotItem.ToDate &&
+                            g.ToDate >= slotItem.FromDate)
+                        .ToListAsync();
+
+                    if (overlapping.Any())
+                    {
+                        var newDays = slotItem.Days
+                            .Select(d => d.ToLower()).ToList();
+
+                        foreach (var existing in overlapping)
+                        {
+                            var existingDays = existing.Days
+                                .Split(",")
+                                .Select(d => d.ToLower())
+                                .ToList();
+
+                            var commonDays = newDays
+                                .Intersect(existingDays)
+                                .ToList();
+
+                            if (commonDays.Any())
+                                throw new Exception(
+                                    $"Time slot {slotItem.TimeSlot} already exists for " +
+                                    $"{string.Join(",", commonDays)} between " +
+                                    $"{slotItem.FromDate} - {slotItem.ToDate}");
+                        }
+                    }
+
+                    // ✅ DoctorSlotGroup duplicate check
+                    foreach (var specialityId in location.SpecialityIds)
+                    {
+                        var groupExists = await _doctorSlotGroups.Query()
+                            .AnyAsync(g =>
+                                g.DoctorId == doctorId &&
+                                g.HospitalId == hospital.Id &&
+                                g.SpecialityId == specialityId &&
+                                g.FromDate == slotItem.FromDate &&
+                                g.ToDate == slotItem.ToDate &&
+                                g.Days == string.Join(",", slotItem.Days) &&
+                                g.TimeSlot == slotItem.TimeSlot.Trim());
+
+                        if (groupExists)
+                            throw new Exception(
+                                "Slot already exists for this Hospital, Speciality, Date Range and Time");
+                    }
+
                     // FromDate → ToDate loop
                     var current = slotItem.FromDate;
 
                     while (current <= slotItem.ToDate)
                     {
-                        // Day check — selected days only
                         var dayName = current.DayOfWeek.ToString();
 
                         if (slotItem.Days.Any(d => d.Equals(dayName, StringComparison.OrdinalIgnoreCase)))
@@ -914,32 +1244,17 @@ namespace HospitalProject.Services
                                     });
                                 }
 
-                                await _slots.AddAsync(slot);
+                                // ✅ List-ல் add பண்ணு
+                                slotsToAdd.Add(slot);
                             }
                         }
 
                         current = current.AddDays(1);
                     }
 
-                    // ✅ DoctorSlotGroup save — UI display க்கு
-                    // ✅ DoctorSlotGroup save — UI display க்கு
+                    // ✅ DoctorSlotGroup save
                     foreach (var specialityId in location.SpecialityIds)
                     {
-                        // Duplicate check
-                        var groupExists = await _doctorSlotGroups.Query()
-                            .AnyAsync(g =>
-                                g.DoctorId == doctorId &&
-                                g.HospitalId == hospital.Id &&
-                                g.SpecialityId == specialityId &&
-                                g.FromDate == slotItem.FromDate &&
-                                g.ToDate == slotItem.ToDate &&
-                                g.Days == string.Join(",", slotItem.Days) &&
-                                g.TimeSlot == slotItem.TimeSlot.Trim());
-
-                        if (groupExists)
-                            throw new Exception(
-                                "Slot already exists for this Hospital, Speciality, Date Range and Time");
-
                         await _doctorSlotGroups.AddAsync(new DoctorSlotGroup
                         {
                             DoctorId = doctorId,
@@ -956,7 +1271,12 @@ namespace HospitalProject.Services
                     await _doctorSlotGroups.SaveAsync();
                 }
 
-                await _slots.SaveAsync();
+                // ✅ ஒரே தடவை Bulk Insert
+                if (slotsToAdd.Any())
+                {
+                    await _slots.AddRangeAsync(slotsToAdd);
+                    await _slots.SaveAsync();
+                }
             }
         }
 
