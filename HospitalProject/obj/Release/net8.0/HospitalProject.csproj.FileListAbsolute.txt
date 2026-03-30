@@ -244,3 +244,4 @@ D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt
 D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Release\net8.0\HospitalProject.pdb
 D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Release\net8.0\HospitalProject.genruntimeconfig.cache
 D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\obj\Release\net8.0\ref\HospitalProject.dll
+D:\Sigichai\sigichai internalwithqr\sigichai internalphargy\sigichai with phargt\HospitalProjectSolution\HospitalProject\bin\Release\net8.0\HospitalProject.staticwebassets.runtime.json

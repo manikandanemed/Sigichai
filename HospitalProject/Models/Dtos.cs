@@ -49,6 +49,7 @@
         string Password
     );
 
+
     public record VerifyOtpDto(
         string MobileNumber,
         string Otp
@@ -90,6 +91,16 @@
 
     public record BulkSlotCreateDto(
     List<SlotCreateDto> Locations
+);
+
+    public record DoctorSlotByDateDto(
+    int SlotGroupId,
+    int AvailabilityId,
+    int HospitalId,
+    string HospitalName,
+    string Specialisation,
+    string TimeSlot,
+    DateOnly Date
 );
 
     public record PatientTimeBookingDto(

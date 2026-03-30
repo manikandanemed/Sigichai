@@ -591,6 +591,37 @@
   },
   {
     "ContainingType": "HospitalProject.Controllers.HospitalController",
+    "Method": "DeleteSlot",
+    "RelativePath": "api/hospital/doctor/{doctorId}/slots/{slotGroupId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "doctorId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "slotGroupId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "availabilityId",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "date",
+        "Type": "System.Nullable\u00601[[System.DateOnly, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HospitalProject.Controllers.HospitalController",
     "Method": "UpdateSlot",
     "RelativePath": "api/hospital/doctor/{doctorId}/slots/{slotId}",
     "HttpMethod": "PUT",
@@ -617,19 +648,14 @@
   },
   {
     "ContainingType": "HospitalProject.Controllers.HospitalController",
-    "Method": "DeleteSlot",
-    "RelativePath": "api/hospital/doctor/{doctorId}/slots/{slotId}",
-    "HttpMethod": "DELETE",
+    "Method": "GetDoctorSlotsByDate",
+    "RelativePath": "api/hospital/doctor/{doctorId}/slots/by-date",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
         "Name": "doctorId",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "slotId",
         "Type": "System.Int32",
         "IsRequired": true
       },
@@ -1064,6 +1090,16 @@
       {
         "Name": "maxDistanceKm",
         "Type": "System.Double",
+        "IsRequired": false
+      },
+      {
+        "Name": "page",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "pageSize",
+        "Type": "System.Int32",
         "IsRequired": false
       }
     ],

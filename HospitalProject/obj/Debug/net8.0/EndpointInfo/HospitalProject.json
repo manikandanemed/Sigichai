@@ -1837,6 +1837,24 @@
               "format": "double",
               "default": 5
             }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
           }
         ],
         "responses": {
@@ -1953,6 +1971,37 @@
         }
       }
     },
+    "/api/hospital/doctor/{doctorId}/slots/by-date": {
+      "get": {
+        "tags": [
+          "Hospital"
+        ],
+        "parameters": [
+          {
+            "name": "doctorId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/hospital/doctor/{doctorId}/slots/{slotId}": {
       "put": {
         "tags": [
@@ -2002,7 +2051,9 @@
             "description": "OK"
           }
         }
-      },
+      }
+    },
+    "/api/hospital/doctor/{doctorId}/slots/{slotGroupId}": {
       "delete": {
         "tags": [
           "Hospital"
@@ -2018,9 +2069,17 @@
             }
           },
           {
-            "name": "slotId",
+            "name": "slotGroupId",
             "in": "path",
             "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "availabilityId",
+            "in": "query",
             "schema": {
               "type": "integer",
               "format": "int32"

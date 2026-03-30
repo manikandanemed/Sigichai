@@ -464,94 +464,6 @@ namespace HospitalProject.Services
         // Verify Otp
         //----------------------
 
-        //public async Task<(string Token, string Role, string Name, int UserId)> VerifyOtp(VerifyOtpDto d)
-        //{
-        //    var rec = await _otp.GetAsync(x =>
-        //        x.MobileNumber == d.MobileNumber &&
-        //        x.OtpCode == d.Otp &&
-        //        x.Purpose == "LOGIN" &&
-        //        x.IsUsed == false &&
-        //        x.Expiry > DateTime.UtcNow
-        //    );
-
-        //    if (rec == null)
-        //        throw new Exception("Invalid or expired OTP");
-
-        //    rec.IsUsed = true;
-        //    await _otp.SaveAsync();
-
-        //    var user = await _u.Query()
-        //        .Include(x => x.Admin)
-        //        .Include(x => x.Doctor)
-        //        .Include(x => x.Patient)
-        //        .FirstOrDefaultAsync(x => x.Id == rec.UserId);
-
-        //    if (user == null)
-        //        throw new Exception("User not found");
-
-        //    // 🔥 ADD THIS CHECK
-        //    if (user.IsDeleted)
-        //        throw new Exception("User account is deactivated");
-
-        //    var token = GenerateJwt(user);
-
-        //    return (token, user.Role, user.Name, user.Id);
-        //}
-
-
-        //        public async Task<(
-        //    string Token,
-        //    string Role,
-        //    string Name,
-        //    int UserId,
-        //    int? AdminId,
-        //    int? DoctorId,
-        //    int? PatientId,
-        //    int? MedicalRepId
-        //)> VerifyOtp(VerifyOtpDto d)
-        //        {
-        //            var rec = await _otp.GetAsync(x =>
-        //                x.MobileNumber == d.MobileNumber &&
-        //                x.OtpCode == d.Otp &&
-        //                x.Purpose == "LOGIN" &&
-        //                x.IsUsed == false &&
-        //                x.Expiry > DateTime.UtcNow
-        //            );
-
-        //            if (rec == null)
-        //                throw new Exception("Invalid or expired OTP");
-
-        //            rec.IsUsed = true;
-        //            await _otp.SaveAsync();
-
-        //            var user = await _u.Query()
-        //                .Include(x => x.Admin)
-        //                .Include(x => x.Doctor)
-        //                .Include(x => x.Patient)
-        //                .Include(x => x.MedicalRep)   // 🔥 ADD THIS
-        //                .FirstOrDefaultAsync(x => x.Id == rec.UserId);
-
-        //            if (user == null)
-        //                throw new Exception("User not found");
-
-        //            if (user.IsDeleted)
-        //                throw new Exception("User account is deactivated");
-
-        //            var token = GenerateJwt(user);
-
-        //            return (
-        //                token,
-        //                user.Role,
-        //                user.Name,
-        //                user.Id,
-        //                user.Admin?.Id,     // 👈 AdminId
-        //                user.Doctor?.Id,    // 👈 DoctorId
-        //                user.Patient?.Id,    // 👈 PatientId
-        //                user.MedicalRep?.Id   // 🔥 THIS IS WHAT YOU WANT
-        //            );
-        //        }
-
-
         public async Task<(
      string Token,
      string Role,
@@ -4072,7 +3984,7 @@ GetPatientHistory(int userId)
         // NEARBY HOSPITALS — Patient Location Base
         // =====================================================================
         public async Task<List<NearbyHospitalDto>> GetNearbyHospitals(
-        double lat, double lon, int? specialityId, double maxDistanceKm = 5)
+        double lat, double lon, int? specialityId, double maxDistanceKm, int page, int pageSize)
         {
             var hospitals = await _hospital.Query()
                 .Where(h => h.Latitude != null && h.Longitude != null)
@@ -4139,6 +4051,8 @@ GetPatientHistory(int userId)
 
             return result
                 .OrderBy(h => h.DistanceKm)
+                .Skip((page - 1) * pageSize)  // ✅ pagination
+                .Take(pageSize)               // ✅ pagination
                 .ToList();
         }
 
@@ -4429,39 +4343,147 @@ GetPatientHistory(int userId)
             await _slots.SaveAsync();
         }
 
-        // =====================================================================
-        // SLOT DELETE
-        // =====================================================================
-        public async Task DeleteSlot(int doctorId, int slotId, DateOnly date)
+
+        public async Task<List<DoctorSlotByDateDto>> GetDoctorSlotsByDate(
+    int doctorId, DateOnly date)
         {
             var utcDate = DateTime.SpecifyKind(
                 date.ToDateTime(TimeOnly.MinValue),
                 DateTimeKind.Utc);
 
-            var slot = await _slots.Query()
-                .Include(s => s.Specialities)
-                .FirstOrDefaultAsync(s =>
-                    s.Id == slotId &&
-                    s.DoctorId == doctorId &&
-                    s.AvailableDate == utcDate)
-                ?? throw new Exception("Slot not found for given date");
+            var dayName = date.DayOfWeek.ToString();
 
-            var hasAppointments = await _apps.Query()
-                .AnyAsync(a =>
-                    a.DoctorId == doctorId &&
-                    a.HospitalId == slot.HospitalId &&
-                    a.TimeSlot == slot.TimeSlot &&
-                    a.AppointmentDate.Date == utcDate.Date &&
-                    a.AppointmentDate >= DateTime.UtcNow &&
-                    a.Status == "Booked");
+            // SlotGroups fetch
+            var groups = await _doctorSlotGroups.Query()
+                .Include(g => g.Hospital)
+                .Include(g => g.Speciality)
+                .Where(g =>
+                    g.DoctorId == doctorId &&
+                    g.FromDate <= date &&
+                    g.ToDate >= date &&
+                    g.Days.Contains(dayName))
+                .ToListAsync();
 
-            if (hasAppointments)
-                throw new Exception(
-                    "Cannot delete slot — active appointments exist");
+            var result = new List<DoctorSlotByDateDto>();
 
-            slot.Specialities.Clear();
-            slot.IsClosed = true;
-            await _slots.SaveAsync();
+            foreach (var g in groups)
+            {
+                // ✅ DoctorAvailability-ல் exact row தேடு
+                var availability = await _slots.Query()
+                    .FirstOrDefaultAsync(s =>
+                        s.DoctorId == doctorId &&
+                        s.HospitalId == g.HospitalId &&
+                        s.TimeSlot == g.TimeSlot &&
+                        s.AvailableDate == utcDate &&
+                        s.IsClosed == false);
+
+                result.Add(new DoctorSlotByDateDto(
+                    g.Id,
+                    availability?.Id ?? 0,  // ✅ AvailabilityId
+                    g.HospitalId,
+                    g.Hospital.Name,
+                    g.Speciality.Name,
+                    g.TimeSlot,
+                    date
+                ));
+            }
+
+            return result;
+        }
+
+        // =====================================================================
+        // SLOT DELETE
+        // =====================================================================
+        public async Task DeleteSlot(int doctorId, int slotGroupId, DateOnly? date, int? availabilityId = null)
+        {
+            // SlotGroup exist check
+            var group = await _doctorSlotGroups.Query()
+                .FirstOrDefaultAsync(g =>
+                    g.Id == slotGroupId &&
+                    g.DoctorId == doctorId)
+                ?? throw new Exception("Slot group not found");
+
+            if (date.HasValue)
+            {
+                // ✅ Scenario 2 — Specific date மட்டும் delete
+                var utcDate = DateTime.SpecifyKind(
+                    date.Value.ToDateTime(TimeOnly.MinValue),
+                    DateTimeKind.Utc);
+
+                var slot = await _slots.Query()
+     .Include(s => s.Specialities)
+     .FirstOrDefaultAsync(s =>
+         s.Id == availabilityId &&
+         s.DoctorId == doctorId)
+     ?? throw new Exception("Slot not found for given date");
+
+                // Active appointment check
+                var hasAppointments = await _apps.Query()
+                    .AnyAsync(a =>
+                        a.DoctorId == doctorId &&
+                        a.HospitalId == group.HospitalId &&
+                        a.TimeSlot == group.TimeSlot &&
+                        a.AppointmentDate.Date == utcDate.Date &&
+                        a.Status == "Booked");
+
+                if (hasAppointments)
+                    throw new Exception(
+                        "Cannot delete slot — active appointments exist");
+
+                slot.Specialities.Clear();
+                slot.IsClosed = true;
+                await _slots.SaveAsync();
+            }
+            else
+            {
+                // ✅ Scenario 1 — Entire group delete
+                var utcFrom = DateTime.SpecifyKind(
+                    group.FromDate.ToDateTime(TimeOnly.MinValue),
+                    DateTimeKind.Utc);
+
+                var utcTo = DateTime.SpecifyKind(
+                    group.ToDate.ToDateTime(TimeOnly.MinValue),
+                    DateTimeKind.Utc);
+
+                // Active appointments check
+                var hasAppointments = await _apps.Query()
+                    .AnyAsync(a =>
+                        a.DoctorId == doctorId &&
+                        a.HospitalId == group.HospitalId &&
+                        a.TimeSlot == group.TimeSlot &&
+                        a.AppointmentDate >= DateTime.UtcNow &&
+                        a.AppointmentDate >= utcFrom &&
+                        a.AppointmentDate <= utcTo &&
+                        a.Status == "Booked");
+
+                if (hasAppointments)
+                    throw new Exception(
+                        "Cannot delete slot group — active appointments exist");
+
+                // எல்லா DoctorAvailability rows close பண்ணு
+                var slots = await _slots.Query()
+                    .Include(s => s.Specialities)
+                    .Where(s =>
+                        s.DoctorId == doctorId &&
+                        s.HospitalId == group.HospitalId &&
+                        s.TimeSlot == group.TimeSlot &&
+                        s.AvailableDate >= utcFrom &&
+                        s.AvailableDate <= utcTo &&
+                        s.IsClosed == false)
+                    .ToListAsync();
+
+                foreach (var slot in slots)
+                {
+                    slot.Specialities.Clear();
+                    slot.IsClosed = true;
+                }
+
+                // DoctorSlotGroup delete
+                _doctorSlotGroups.Remove(group);
+
+                await _slots.SaveAsync();
+                await _doctorSlotGroups.SaveAsync();
+            }
         }
 
 

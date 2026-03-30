@@ -1495,15 +1495,17 @@ namespace HospitalProject.Controllers
         [Authorize(Roles = "Patient")]
         [HttpGet("nearby-hospitals")]
         public async Task<IActionResult> GetNearbyHospitals(
-     [FromQuery] double lat,
-     [FromQuery] double lon,
-     [FromQuery] int? specialityId,
-     [FromQuery] double maxDistanceKm = 5)  // 👈 default 5km
-        {
+        [FromQuery] double lat,
+        [FromQuery] double lon,
+        [FromQuery] int? specialityId = null,
+        [FromQuery] double maxDistanceKm = 5,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10)
+            {
             try
             {
                 var result = await _service.GetNearbyHospitals(
-                    lat, lon, specialityId, maxDistanceKm);
+                lat, lon, specialityId, maxDistanceKm, page, pageSize);
 
                 return Ok(new ApiResponse
                 {
@@ -1636,6 +1638,38 @@ namespace HospitalProject.Controllers
         }
 
 
+        // ======================================
+        // 📋 GET DOCTOR SLOTS BY DATE
+        // GET /api/hospital/doctor/{doctorId}/slots/by-date?date=2026-03-30
+        // ======================================
+        [Authorize(Roles = "Doctor,Admin")]
+        [HttpGet("doctor/{doctorId}/slots/by-date")]
+        public async Task<IActionResult> GetDoctorSlotsByDate(
+            int doctorId,
+            [FromQuery] DateOnly date)
+        {
+            try
+            {
+                var data = await _service.GetDoctorSlotsByDate(doctorId, date);
+
+                return Ok(new ApiResponse
+                {
+                    Success = true,
+                    Message = "Slots fetched successfully",
+                    Data = data
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
+        }
+
+
 
         // =====================================================================
         // 👨‍⚕️ DOCTOR — Update Slot
@@ -1672,19 +1706,22 @@ namespace HospitalProject.Controllers
 
 
         [Authorize(Roles = "Doctor,Admin")]
-        [HttpDelete("doctor/{doctorId}/slots/{slotId}")]
+        [HttpDelete("doctor/{doctorId}/slots/{slotGroupId}")]
         public async Task<IActionResult> DeleteSlot(
-    int doctorId,
-    int slotId,
-    [FromQuery] DateOnly date)  // 👈 date add
+        int doctorId,
+        int slotGroupId,
+       [FromQuery] int? availabilityId = null,
+       [FromQuery] DateOnly? date = null)
         {
             try
             {
-                await _service.DeleteSlot(doctorId, slotId, date);
+                await _service.DeleteSlot(doctorId, slotGroupId, date, availabilityId);
                 return Ok(new ApiResponse
                 {
                     Success = true,
-                    Message = "Slot deleted successfully"
+                    Message = date.HasValue
+                        ? "Slot deleted successfully"
+                        : "Slot group deleted successfully"
                 });
             }
             catch (Exception ex)
