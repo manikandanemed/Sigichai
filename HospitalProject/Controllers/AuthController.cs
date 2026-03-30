@@ -69,6 +69,31 @@ namespace HospitalProject.Controllers
         }
 
 
+        [HttpPost("resend-otp")]
+        public async Task<IActionResult> ResendOtp(
+        [FromBody] ResendOtpDto dto)
+        {
+            try
+            {
+                await _service.ResendOtp(dto.MobileNumber);
+                return Ok(new ApiResponse
+                {
+                    Success = true,
+                    Message = "OTP resent successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
+        }
+
+
+
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordDto dto)
         {

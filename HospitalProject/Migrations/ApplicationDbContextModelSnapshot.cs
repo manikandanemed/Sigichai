@@ -46,6 +46,27 @@ namespace HospitalProject.Migrations
                     b.ToTable("Admins");
                 });
 
+            modelBuilder.Entity("HospitalProject.Models.AppSetting", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AppSettings");
+                });
+
             modelBuilder.Entity("HospitalProject.Models.Appointment", b =>
                 {
                     b.Property<int>("Id")
@@ -1143,6 +1164,9 @@ namespace HospitalProject.Migrations
 
                     b.Property<DateTime>("Expiry")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsLoginInitiated")
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsSent")
                         .HasColumnType("boolean");

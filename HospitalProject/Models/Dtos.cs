@@ -88,6 +88,10 @@
      List<SlotItemDto> Slots
  );
 
+    public record ResendOtpDto(
+        string MobileNumber);
+
+
 
     public record BulkSlotCreateDto(
     List<SlotCreateDto> Locations

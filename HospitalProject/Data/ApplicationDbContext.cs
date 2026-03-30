@@ -79,6 +79,8 @@ namespace HospitalProject.Data
 
         public DbSet<DoctorSlotGroup> DoctorSlotGroups { get; set; }
 
+        public DbSet<AppSetting> AppSettings { get; set; }
+
 
 
 

@@ -314,6 +314,8 @@ namespace HospitalProject.Models
         // 🔥 NEW
         public bool IsUsed { get; set; } = false;
         public bool IsSent { get; set; } = false;
+        public bool IsLoginInitiated { get; set; } = false;
+
     }
 
 
@@ -942,5 +944,16 @@ namespace HospitalProject.Models
         public string WhatsAppUrl { get; set; }
         public string SenderNumber { get; set; }
         public string TemplateName { get; set; }
+    }
+
+
+    // =========================
+    // APP SETTINGS
+    // =========================
+    public class AppSetting
+    {
+        public int Id { get; set; }
+        public string Key { get; set; } = string.Empty;
+        public string Value { get; set; } = string.Empty;
     }
 }

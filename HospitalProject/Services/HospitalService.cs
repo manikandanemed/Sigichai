@@ -41,6 +41,7 @@ namespace HospitalProject.Services
         private readonly IRepository<DoctorServiceLocation> _serviceLocation;
         private readonly IRepository<DoctorSlotGroup> _doctorSlotGroups;
         private readonly IMsg91Service _msg91;
+        private readonly IRepository<AppSetting> _appSettings;
 
 
 
@@ -77,6 +78,7 @@ namespace HospitalProject.Services
             PrescriptionRoutingService routingService,
             IRepository<DoctorSlotGroup> doctorSlotGroups,
             IConfiguration config,
+            IRepository<AppSetting> appSettings,
             IMsg91Service msg91 )
         {
             _u = u; _p = p; _d = d; _admin = admin;
@@ -99,6 +101,7 @@ namespace HospitalProject.Services
             _routingService = routingService;
             _doctorSlotGroups = doctorSlotGroups;
             _msg91 = msg91;
+            _appSettings = appSettings;
         }
 
 
@@ -331,27 +334,94 @@ namespace HospitalProject.Services
 
 
         //Login for OTP whatsapp
+        //public async Task<bool> Login(LoginDto d)
+        //{
+        //    Console.WriteLine("🔹 Login started");
+
+        //    var user = await _u.Query()
+        //        .Include(x => x.Admin)
+        //        .Include(x => x.Doctor)
+        //        .Include(x => x.Patient)
+        //        .FirstOrDefaultAsync(x =>
+        //            x.MobileNumber == d.MobileNumber &&
+        //            x.IsDeleted == false
+        //        );
+
+        //    if (user == null || !BCrypt.Net.BCrypt.Verify(d.Password, user.Password))
+        //        throw new Exception("Invalid credentials");
+
+        //    Console.WriteLine("✅ User validated");
+
+        //    var otp = new Random().Next(1000, 9999).ToString();
+        //    Console.WriteLine("🔐 OTP Generated: " + otp);
+
+        //    await _otp.AddAsync(new OtpStore
+        //    {
+        //        UserId = user.Id,
+        //        MobileNumber = user.MobileNumber,
+        //        OtpCode = otp,
+        //        OtpType = "SMS",
+        //        Purpose = "LOGIN",
+        //        CreatedTime = DateTime.UtcNow,
+        //        Expiry = DateTime.UtcNow.AddMinutes(5),
+        //        IsUsed = false,
+        //        IsSent = true
+        //    });
+
+        //    await _otp.SaveAsync();
+        //    Console.WriteLine("💾 OTP saved to DB");
+
+        //    try
+        //    {
+        //        Console.WriteLine("📤 Sending OTP via MSG91...");
+
+        //        await _msg91.SendOtpAsync(user.MobileNumber, otp); // 👈 IMPORTANT: user.MobileNumber use பண்ணு
+
+        //        Console.WriteLine("✅ MSG91 send success");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine("❌ MSG91 ERROR: " + ex.Message);
+        //        throw new Exception("OTP sending failed: " + ex.Message);
+        //    }
+
+        //    return true;
+        //}
+
+
+
         public async Task<bool> Login(LoginDto d)
         {
-            Console.WriteLine("🔹 Login started");
+            // 1️⃣ Pharmacy staff pending check
+            var pendingRequest = await _staffRequest.GetAsync(x =>
+                x.MobileNumber == d.MobileNumber &&
+                x.Status == "Pending");
 
+            if (pendingRequest != null)
+                throw new Exception("Account not approved by admin");
+
+            // 2️⃣ User validate
             var user = await _u.Query()
                 .Include(x => x.Admin)
                 .Include(x => x.Doctor)
                 .Include(x => x.Patient)
                 .FirstOrDefaultAsync(x =>
                     x.MobileNumber == d.MobileNumber &&
-                    x.IsDeleted == false
-                );
+                    x.IsDeleted == false);
 
             if (user == null || !BCrypt.Net.BCrypt.Verify(d.Password, user.Password))
                 throw new Exception("Invalid credentials");
 
-            Console.WriteLine("✅ User validated");
+            // 3️⃣ OTP Enabled check
+            var otpSetting = await _appSettings.GetAsync(s => s.Key == "OtpEnabled");
+            var otpEnabled = otpSetting?.Value == "true";
 
-            var otp = new Random().Next(1000, 9999).ToString();
-            Console.WriteLine("🔐 OTP Generated: " + otp);
+            // 4️⃣ OTP generate
+            var otp = otpEnabled
+                ? new Random().Next(1000, 9999).ToString()
+                : "1234";
 
+            // 5️⃣ OTP save
             await _otp.AddAsync(new OtpStore
             {
                 UserId = user.Id,
@@ -362,27 +432,94 @@ namespace HospitalProject.Services
                 CreatedTime = DateTime.UtcNow,
                 Expiry = DateTime.UtcNow.AddMinutes(5),
                 IsUsed = false,
-                IsSent = true
+                IsSent = true,
+                IsLoginInitiated = true
             });
 
             await _otp.SaveAsync();
-            Console.WriteLine("💾 OTP saved to DB");
 
-            try
+            // 6️⃣ OTP send
+            if (otpEnabled)
             {
-                Console.WriteLine("📤 Sending OTP via MSG91...");
-
-                await _msg91.SendOtpAsync(user.MobileNumber, otp); // 👈 IMPORTANT: user.MobileNumber use பண்ணு
-
-                Console.WriteLine("✅ MSG91 send success");
+                await _msg91.SendOtpAsync(user.MobileNumber, otp);
             }
-            catch (Exception ex)
+            else
             {
-                Console.WriteLine("❌ MSG91 ERROR: " + ex.Message);
-                throw new Exception("OTP sending failed: " + ex.Message);
+                Console.WriteLine($"⚠️ OTP Disabled — Dummy OTP: {otp}");
             }
 
             return true;
+        }
+
+
+
+        public async Task ResendOtp(string mobileNumber)
+        {
+            // 1️⃣ User check
+            var user = await _u.GetAsync(u =>
+                u.MobileNumber == mobileNumber &&
+                u.IsDeleted == false)
+                ?? throw new Exception("User not found");
+
+            // 2️⃣ Login initiated-ஆ check
+            var loginOtp = await _otp.Query()
+                .Where(o =>
+                    o.UserId == user.Id &&
+                    o.Purpose == "LOGIN" &&
+                    o.IsLoginInitiated == true &&
+                    o.IsUsed == false &&
+                    o.Expiry > DateTime.UtcNow)
+                .FirstOrDefaultAsync()
+                ?? throw new Exception("Please login first");
+
+            // 3️⃣ Previous OTP expire பண்ணு
+            var existingOtps = await _otp.Query()
+                .Where(o =>
+                    o.UserId == user.Id &&
+                    o.Purpose == "LOGIN" &&
+                    o.IsUsed == false)
+                .ToListAsync();
+
+            foreach (var existing in existingOtps)
+                existing.IsUsed = true;
+
+            await _otp.SaveAsync();
+
+            // 4️⃣ OTP Enabled check
+            var otpSetting = await _appSettings.GetAsync(s => s.Key == "OtpEnabled");
+            var otpEnabled = otpSetting?.Value == "true";
+
+            // 5️⃣ OTP generate
+            var otp = otpEnabled
+                ? new Random().Next(1000, 9999).ToString()
+                : "1234";
+
+            // 6️⃣ OTP save
+            await _otp.AddAsync(new OtpStore
+            {
+                UserId = user.Id,
+                MobileNumber = user.MobileNumber,
+                OtpCode = otp,
+                OtpType = "SMS",
+                Purpose = "LOGIN",
+                CreatedTime = DateTime.UtcNow,
+                Expiry = DateTime.UtcNow.AddMinutes(5),
+                IsUsed = false,
+                IsSent = true,
+                IsLoginInitiated = true
+            });
+
+            await _otp.SaveAsync();
+
+            // 7️⃣ OTP send
+            if (otpEnabled)
+            {
+                await _msg91.SendOtpAsync(user.MobileNumber, otp);
+            }
+            else
+            {
+                Console.WriteLine($"⚠️ OTP Disabled — Dummy OTP: {otp}");
+            }
         }
 
 
@@ -486,6 +623,11 @@ namespace HospitalProject.Services
 
             if (rec == null)
                 throw new Exception("Invalid or expired OTP");
+
+            // ✅ Login initiated-ஆ check
+            if (!rec.IsLoginInitiated)
+                throw new Exception("Please login first");
+
 
             rec.IsUsed = true;
             await _otp.SaveAsync();
