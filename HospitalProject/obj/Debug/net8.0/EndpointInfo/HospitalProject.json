@@ -1886,6 +1886,14 @@
               "format": "int32",
               "default": 10
             }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
           }
         ],
         "responses": {

@@ -1492,20 +1492,53 @@ namespace HospitalProject.Controllers
         // GET /api/hospital/nearby-hospitals?lat=xx&lon=xx
         // =====================================================================
 
+        //[Authorize(Roles = "Patient")]
+        //[HttpGet("nearby-hospitals")]
+        //public async Task<IActionResult> GetNearbyHospitals(
+        //[FromQuery] double lat,
+        //[FromQuery] double lon,
+        //[FromQuery] int? specialityId = null,
+        //[FromQuery] double maxDistanceKm = 5,
+        //[FromQuery] int page = 1,
+        //[FromQuery] int pageSize = 10)
+        //    {
+        //    try
+        //    {
+        //        var result = await _service.GetNearbyHospitals(
+        //        lat, lon, specialityId, maxDistanceKm, page, pageSize);
+
+        //        return Ok(new ApiResponse
+        //        {
+        //            Success = true,
+        //            Data = result
+        //        });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(new ApiResponse
+        //        {
+        //            Success = false,
+        //            Message = ex.Message
+        //        });
+        //    }
+        //}
+
+
         [Authorize(Roles = "Patient")]
         [HttpGet("nearby-hospitals")]
         public async Task<IActionResult> GetNearbyHospitals(
-        [FromQuery] double lat,
-        [FromQuery] double lon,
-        [FromQuery] int? specialityId = null,
-        [FromQuery] double maxDistanceKm = 5,
-        [FromQuery] int page = 1,
-        [FromQuery] int pageSize = 10)
-            {
+    [FromQuery] double lat,
+    [FromQuery] double lon,
+    [FromQuery] int? specialityId = null,
+    [FromQuery] double maxDistanceKm = 5,
+    [FromQuery] int page = 1,
+    [FromQuery] int pageSize = 10,
+    [FromQuery] DateOnly? date = null)  // ✅ add
+        {
             try
             {
                 var result = await _service.GetNearbyHospitals(
-                lat, lon, specialityId, maxDistanceKm, page, pageSize);
+                    lat, lon, specialityId, maxDistanceKm, page, pageSize, date);
 
                 return Ok(new ApiResponse
                 {

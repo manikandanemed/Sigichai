@@ -4125,8 +4125,83 @@ GetPatientHistory(int userId)
         // =====================================================================
         // NEARBY HOSPITALS — Patient Location Base
         // =====================================================================
+        //public async Task<List<NearbyHospitalDto>> GetNearbyHospitals(
+        //double lat, double lon, int? specialityId, double maxDistanceKm, int page, int pageSize)
+        //{
+        //    var hospitals = await _hospital.Query()
+        //        .Where(h => h.Latitude != null && h.Longitude != null)
+        //        .ToListAsync();
+
+        //    var result = new List<NearbyHospitalDto>();
+
+        //    foreach (var h in hospitals)
+        //    {
+        //        // Distance calculate
+        //        var distance = CalculateDistance(
+        //            lat, lon, h.Latitude!.Value, h.Longitude!.Value);
+
+        //        // Distance filter — maxDistanceKm
+        //        if (distance > maxDistanceKm) continue;
+
+        //        var slotsQuery = _slots.Query()
+        //            .Include(s => s.Doctor)
+        //                .ThenInclude(d => d.User)
+        //            .Include(s => s.Specialities)
+        //                .ThenInclude(sp => sp.Speciality)
+        //            .Where(s =>
+        //                s.HospitalId == h.Id &&
+        //                s.IsClosed == false); //&&
+        //                //s.Doctor.IsVerified == true);
+
+        //        if (specialityId.HasValue)
+        //        {
+        //            slotsQuery = slotsQuery.Where(s =>
+        //                s.Specialities.Any(sp =>
+        //                    sp.SpecialityId == specialityId.Value));
+        //        }
+
+        //        var slots = await slotsQuery.ToListAsync();
+
+        //        var doctors = slots
+        //            .GroupBy(s => s.DoctorId)
+        //            .Select(g => new NearbyDoctorDto(
+        //                g.First().DoctorId,
+        //                g.First().Doctor.User.Name,
+        //                g.First().Specialities
+        //                    .Select(sp => sp.Speciality.Name)
+        //                    .ToList(),
+        //                g.Select(s => new NearbySlotDto(
+        //                    s.Id,
+        //                    DateOnly.FromDateTime(s.AvailableDate),
+        //                    s.TimeSlot
+        //                )).ToList()
+        //            ))
+        //            .ToList();
+
+        //        if (specialityId.HasValue && !doctors.Any()) continue;
+
+        //        result.Add(new NearbyHospitalDto(
+        //            h.Id,
+        //            h.Name,
+        //            h.FormattedAddress ?? h.Address,
+        //            h.Latitude!.Value,
+        //            h.Longitude!.Value,
+        //            distance,
+        //            doctors
+        //        ));
+        //    }
+
+        //    return result
+        //        .OrderBy(h => h.DistanceKm)
+        //        .Skip((page - 1) * pageSize)  // ✅ pagination
+        //        .Take(pageSize)               // ✅ pagination
+        //        .ToList();
+        //}
+
+
         public async Task<List<NearbyHospitalDto>> GetNearbyHospitals(
-        double lat, double lon, int? specialityId, double maxDistanceKm, int page, int pageSize)
+    double lat, double lon, int? specialityId,
+    double maxDistanceKm, int page, int pageSize, DateOnly? date = null)
         {
             var hospitals = await _hospital.Query()
                 .Where(h => h.Latitude != null && h.Longitude != null)
@@ -4136,11 +4211,9 @@ GetPatientHistory(int userId)
 
             foreach (var h in hospitals)
             {
-                // Distance calculate
                 var distance = CalculateDistance(
                     lat, lon, h.Latitude!.Value, h.Longitude!.Value);
 
-                // Distance filter — maxDistanceKm
                 if (distance > maxDistanceKm) continue;
 
                 var slotsQuery = _slots.Query()
@@ -4150,14 +4223,25 @@ GetPatientHistory(int userId)
                         .ThenInclude(sp => sp.Speciality)
                     .Where(s =>
                         s.HospitalId == h.Id &&
-                        s.IsClosed == false); //&&
-                        //s.Doctor.IsVerified == true);
+                        s.IsClosed == false);
 
+                // Speciality filter
                 if (specialityId.HasValue)
                 {
                     slotsQuery = slotsQuery.Where(s =>
                         s.Specialities.Any(sp =>
                             sp.SpecialityId == specialityId.Value));
+                }
+
+                // ✅ Date filter
+                if (date.HasValue)
+                {
+                    var utcDate = DateTime.SpecifyKind(
+                        date.Value.ToDateTime(TimeOnly.MinValue),
+                        DateTimeKind.Utc);
+
+                    slotsQuery = slotsQuery.Where(s =>
+                        s.AvailableDate == utcDate);
                 }
 
                 var slots = await slotsQuery.ToListAsync();
@@ -4179,6 +4263,7 @@ GetPatientHistory(int userId)
                     .ToList();
 
                 if (specialityId.HasValue && !doctors.Any()) continue;
+                if (date.HasValue && !doctors.Any()) continue;  // ✅ date filter-ல் doctor இல்லன்னா skip
 
                 result.Add(new NearbyHospitalDto(
                     h.Id,
@@ -4193,8 +4278,8 @@ GetPatientHistory(int userId)
 
             return result
                 .OrderBy(h => h.DistanceKm)
-                .Skip((page - 1) * pageSize)  // ✅ pagination
-                .Take(pageSize)               // ✅ pagination
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToList();
         }
 
