@@ -4736,17 +4736,68 @@ GetPatientHistory(int userId)
 
 
 
+        //public async Task<List<DoctorSlotGroupedDto>> GetDoctorSlots(int doctorId)
+        //{
+        //    var today = DateOnly.FromDateTime(DateTime.UtcNow);
+
+        //    return await _doctorSlotGroups.Query()
+        //        .Include(g => g.Hospital)
+        //        .Include(g => g.Speciality)
+        //        .Where(g =>
+        //            g.DoctorId == doctorId &&
+        //            g.ToDate >= today)
+        //        .Select(g => new DoctorSlotGroupedDto(
+        //            g.HospitalId,
+        //            g.Hospital.Name,
+        //            g.Hospital.Area,
+        //            g.Hospital.State,
+        //            g.Speciality.Name,
+        //            g.FromDate,
+        //            g.ToDate,
+        //            g.Days.Split(",", StringSplitOptions.None).ToList(),
+        //            g.TimeSlot
+        //        ))
+        //        .ToListAsync();
+        //}
+
+
         public async Task<List<DoctorSlotGroupedDto>> GetDoctorSlots(int doctorId)
         {
             var today = DateOnly.FromDateTime(DateTime.UtcNow);
 
-            return await _doctorSlotGroups.Query()
+            var groups = await _doctorSlotGroups.Query()
                 .Include(g => g.Hospital)
                 .Include(g => g.Speciality)
                 .Where(g =>
                     g.DoctorId == doctorId &&
                     g.ToDate >= today)
-                .Select(g => new DoctorSlotGroupedDto(
+                .ToListAsync();
+
+            var result = new List<DoctorSlotGroupedDto>();
+
+            foreach (var g in groups)
+            {
+                // ✅ Availabilities fetch
+                var availabilities = await _slots.Query()
+                    .Where(s =>
+                        s.DoctorId == doctorId &&
+                        s.HospitalId == g.HospitalId &&
+                        s.TimeSlot == g.TimeSlot &&
+                        s.AvailableDate >= DateTime.SpecifyKind(
+                            g.FromDate.ToDateTime(TimeOnly.MinValue),
+                            DateTimeKind.Utc) &&
+                        s.AvailableDate <= DateTime.SpecifyKind(
+                            g.ToDate.ToDateTime(TimeOnly.MinValue),
+                            DateTimeKind.Utc) &&
+                        s.IsClosed == false)
+                    .Select(s => new AvailabilityDateDto(
+                        s.Id,
+                        DateOnly.FromDateTime(s.AvailableDate)
+                    ))
+                    .ToListAsync();
+
+                result.Add(new DoctorSlotGroupedDto(
+                    g.Id,
                     g.HospitalId,
                     g.Hospital.Name,
                     g.Hospital.Area,
@@ -4755,9 +4806,12 @@ GetPatientHistory(int userId)
                     g.FromDate,
                     g.ToDate,
                     g.Days.Split(",", StringSplitOptions.None).ToList(),
-                    g.TimeSlot
-                ))
-                .ToListAsync();
+                    g.TimeSlot,
+                    availabilities  // ✅
+                ));
+            }
+
+            return result;
         }
 
 

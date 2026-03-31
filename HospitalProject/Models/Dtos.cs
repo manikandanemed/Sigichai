@@ -663,6 +663,7 @@
 
 
     public record DoctorSlotGroupedDto(
+    int Id,     
     int HospitalId,
     string HospitalName,
     string Area,
@@ -671,7 +672,13 @@
     DateOnly FromDate,
     DateOnly ToDate,
     List<string> Days,
-    string TimeSlot
+    string TimeSlot,
+    List<AvailabilityDateDto> Availabilities  // ✅ ADD
+    );
+
+    public record AvailabilityDateDto(
+    int AvailabilityId,
+    DateOnly Date
 );
 
 

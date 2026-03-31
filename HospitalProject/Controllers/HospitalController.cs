@@ -1645,7 +1645,7 @@ namespace HospitalProject.Controllers
         // GET /api/hospital/doctor/{doctorId}/slots
         // ======================================
 
-        [Authorize(Roles = "Doctor,Admin")]
+        //[Authorize(Roles = "Doctor,Admin")]
         [HttpGet("doctor/{doctorId}/slot-groups")]
         public async Task<IActionResult> GetDoctorSlots(int doctorId)
         {
