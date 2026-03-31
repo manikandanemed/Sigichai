@@ -200,6 +200,115 @@ namespace HospitalProject.Controllers
 
 
         // ======================================
+        // 📋 GET MEDICAL REP SLOT GROUPS
+        // GET /api/medicalrep/slot-groups
+        // ======================================
+        [Authorize(Roles = "Doctor,Admin")]
+        [HttpGet("slot-groups")]
+        public async Task<IActionResult> GetMedicalRepSlotGroups()
+        {
+            try
+            {
+                var userId = int.Parse(
+                    User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+                var role = User.FindFirstValue(ClaimTypes.Role)!;
+
+                var data = await _service.GetMedicalRepSlotGroups(userId, role);
+
+                return Ok(new ApiResponse
+                {
+                    Success = true,
+                    Message = "Medical rep slot groups fetched successfully",
+                    Data = data
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
+        }
+
+
+        // ======================================
+        // 🗑️ DELETE MEDICAL REP SLOT GROUP
+        // DELETE /api/medicalrep/slot-groups/{slotGroupId}
+        // ======================================
+        [Authorize(Roles = "Doctor,Admin")]
+        [HttpDelete("slot-groups/{slotGroupId}")]
+        public async Task<IActionResult> DeleteMedicalRepSlotGroup(
+            int slotGroupId,
+            [FromQuery] DateOnly? date = null)
+        {
+            try
+            {
+                var userId = int.Parse(
+                    User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+                var role = User.FindFirstValue(ClaimTypes.Role)!;
+
+                await _service.DeleteMedicalRepSlotGroup(
+                    userId, role, slotGroupId, date);
+
+                return Ok(new ApiResponse
+                {
+                    Success = true,
+                    Message = date.HasValue
+                        ? "Slot deleted successfully"
+                        : "Slot group deleted successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
+        }
+
+
+        // ======================================
+        // ✏️ UPDATE MEDICAL REP SLOT (Specific Date)
+        // PATCH /api/medicalrep/slot-groups/{slotGroupId}/slot?date=2026-04-06
+        // ======================================
+        [Authorize(Roles = "Doctor,Admin")]
+        [HttpPatch("slot-groups/{slotGroupId}/slot")]
+        public async Task<IActionResult> UpdateMedicalRepSlot(
+            int slotGroupId,
+            [FromQuery] DateOnly date,
+            [FromBody] MedicalRepSlotUpdateDto dto)
+        {
+            try
+            {
+                var userId = int.Parse(
+                    User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+                var role = User.FindFirstValue(ClaimTypes.Role)!;
+
+                await _service.UpdateMedicalRepSlot(
+                    userId, role, slotGroupId, date, dto);
+
+                return Ok(new ApiResponse
+                {
+                    Success = true,
+                    Message = "Slot updated successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
+        }
+
+
+        // ======================================
         // 🩺 DOCTOR CONSULT – MEDICAL REP
         // ======================================
         [Authorize(Roles = "Doctor")]

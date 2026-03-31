@@ -381,6 +381,7 @@ namespace HospitalProject.Models
         public string? UprnNumber { get; set; }
         public string University { get; set; } = string.Empty;
         public string PermanentAddress { get; set; } = string.Empty;
+        public int? YearsOfExperience { get; set; }
     }
 
 
@@ -955,5 +956,33 @@ namespace HospitalProject.Models
         public int Id { get; set; }
         public string Key { get; set; } = string.Empty;
         public string Value { get; set; } = string.Empty;
+    }
+
+
+    // =========================
+    // MEDICAL REP SLOT GROUP
+    // =========================
+    public class MedicalRepSlotGroup
+    {
+        public int Id { get; set; }
+
+        public int DoctorId { get; set; }
+        public Doctor Doctor { get; set; } = null!;
+
+        public int HospitalId { get; set; }
+        public Hospital Hospital { get; set; } = null!;
+
+        public DateOnly FromDate { get; set; }
+        public DateOnly ToDate { get; set; }
+
+        public string Days { get; set; } = string.Empty; // "Monday,Tuesday"
+
+        public string TimeSlot { get; set; } = string.Empty;
+
+        public int MaxReps { get; set; }
+
+        public bool IsClosed { get; set; } = false;
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

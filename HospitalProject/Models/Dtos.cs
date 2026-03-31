@@ -322,7 +322,8 @@
      int GraduationYear,
      string University,
      string PermanentAddress,
-     string? UprnNumber
+     string? UprnNumber,
+     int? YearsOfExperience  // ✅ ADD
  );
 
 
@@ -341,7 +342,8 @@
      int GraduationYear,
      string University,
      string PermanentAddress,
-     string? UprnNumber
+     string? UprnNumber,
+     int? YearsOfExperience  // ✅ ADD
  );
 
 
@@ -611,12 +613,34 @@
 
 
     public record MedicalRepSlotCreateDto(
-         int HospitalId,
-         int DoctorId,
-         DateOnly Date,
-        string TimeSlot,
-        int MaxReps
-    );
+     int HospitalId,
+     int DoctorId,
+     DateOnly FromDate,
+     DateOnly ToDate,
+     List<string> Days,
+     string TimeSlot,
+     int MaxReps
+ );
+
+
+    public record MedicalRepSlotGroupViewDto(
+    int Id,
+    int HospitalId,
+    string HospitalName,
+    int DoctorId,
+    string DoctorName,
+    DateOnly FromDate,
+    DateOnly ToDate,
+    List<string> Days,
+    string TimeSlot,
+    int MaxReps,
+    bool IsClosed
+);
+
+    public record MedicalRepSlotUpdateDto(
+    string? TimeSlot,
+    int? MaxReps
+);
 
 
     public record MedicalRepUpdateDto(
@@ -1277,8 +1301,9 @@
     int? GraduationYear,
     string? University,
     string? PermanentAddress,
-    string? UprnNumber
-);
+    string? UprnNumber,
+    int? YearsOfExperience  // ✅ ADD
+    );
 
 
     // =========================

@@ -1744,6 +1744,63 @@
   },
   {
     "ContainingType": "HospitalProject.Controllers.MedicalRepController",
+    "Method": "GetMedicalRepSlotGroups",
+    "RelativePath": "api/medicalrep/slot-groups",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HospitalProject.Controllers.MedicalRepController",
+    "Method": "DeleteMedicalRepSlotGroup",
+    "RelativePath": "api/medicalrep/slot-groups/{slotGroupId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "slotGroupId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "date",
+        "Type": "System.Nullable\u00601[[System.DateOnly, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HospitalProject.Controllers.MedicalRepController",
+    "Method": "UpdateMedicalRepSlot",
+    "RelativePath": "api/medicalrep/slot-groups/{slotGroupId}/slot",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "slotGroupId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "date",
+        "Type": "System.DateOnly",
+        "IsRequired": false
+      },
+      {
+        "Name": "dto",
+        "Type": "HospitalProject.Models.MedicalRepSlotUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HospitalProject.Controllers.MedicalRepController",
     "Method": "GetAvailableSlots",
     "RelativePath": "api/medicalrep/slots",
     "HttpMethod": "GET",

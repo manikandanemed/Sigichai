@@ -42,6 +42,7 @@ namespace HospitalProject.Services
         private readonly IRepository<DoctorSlotGroup> _doctorSlotGroups;
         private readonly IMsg91Service _msg91;
         private readonly IRepository<AppSetting> _appSettings;
+        private readonly IRepository<MedicalRepSlotGroup> _medicalRepSlotGroups;
 
 
 
@@ -79,6 +80,7 @@ namespace HospitalProject.Services
             IRepository<DoctorSlotGroup> doctorSlotGroups,
             IConfiguration config,
             IRepository<AppSetting> appSettings,
+            IRepository<MedicalRepSlotGroup> medicalRepSlotGroups,
             IMsg91Service msg91 )
         {
             _u = u; _p = p; _d = d; _admin = admin;
@@ -101,6 +103,7 @@ namespace HospitalProject.Services
             _routingService = routingService;
             _doctorSlotGroups = doctorSlotGroups;
             _msg91 = msg91;
+            _medicalRepSlotGroups = medicalRepSlotGroups;
             _appSettings = appSettings;
         }
 
@@ -2064,7 +2067,8 @@ namespace HospitalProject.Services
                 GraduationYear = dto.GraduationYear,
                 University = dto.University,
                 PermanentAddress = dto.PermanentAddress,
-                UprnNumber = dto.UprnNumber
+                UprnNumber = dto.UprnNumber,
+                YearsOfExperience = dto.YearsOfExperience  // ✅ ADD
             };
 
             await _doctorProfile.AddAsync(profile);
@@ -2105,7 +2109,8 @@ namespace HospitalProject.Services
                 profile.GraduationYear,
                 profile.University,
                 profile.PermanentAddress,
-                profile.UprnNumber
+                profile.UprnNumber,
+                profile.YearsOfExperience  // ✅ ADD
             );
         }
 
@@ -2167,6 +2172,9 @@ namespace HospitalProject.Services
 
             if (!string.IsNullOrWhiteSpace(dto.UprnNumber))
                 profile.UprnNumber = dto.UprnNumber;
+
+            if (dto.YearsOfExperience.HasValue)
+                profile.YearsOfExperience = dto.YearsOfExperience.Value;
 
             await _u.SaveAsync();          // User Name save
             await _doctorProfile.SaveAsync(); // Profile save
@@ -3720,8 +3728,7 @@ GetPatientHistory(int userId)
 
         public async Task AddMedicalRepSlot(MedicalRepSlotCreateDto dto)
         {
-            // ✅ Step 1 — Doctor Hospital assign check
-
+            // ✅ Doctor hospital assignment check
             var isAssigned = await _slots.Query()
                 .AnyAsync(l =>
                     l.DoctorId == dto.DoctorId &&
@@ -3729,44 +3736,285 @@ GetPatientHistory(int userId)
                     l.IsClosed == false);
 
             if (!isAssigned)
+                throw new Exception("Doctor is not assigned to this hospital");
+
+            // ✅ Duplicate group check
+            var groupExists = await _medicalRepSlotGroups.Query()
+                .AnyAsync(g =>
+                    g.DoctorId == dto.DoctorId &&
+                    g.HospitalId == dto.HospitalId &&
+                    g.FromDate == dto.FromDate &&
+                    g.ToDate == dto.ToDate &&
+                    g.Days == string.Join(",", dto.Days) &&
+                    g.TimeSlot == dto.TimeSlot.Trim());
+
+            if (groupExists)
                 throw new Exception(
-                    "Doctor is not assigned to this hospital");
+                    "Medical Rep slot already exists for this date range and time");
+
+            // ✅ Bulk insert list
+            var slotsToAdd = new List<MedicalRepSlot>();
+
+            var current = dto.FromDate;
+            while (current <= dto.ToDate)
+            {
+                var dayName = current.DayOfWeek.ToString();
+
+                if (dto.Days.Any(d => d.Equals(dayName, StringComparison.OrdinalIgnoreCase)))
+                {
+                    var utcDate = DateTime.SpecifyKind(
+                        current.ToDateTime(TimeOnly.MinValue),
+                        DateTimeKind.Utc);
+
+                    // Patient slot conflict check
+                    var patientSlotExists = await _slots.Query()
+                        .AnyAsync(x =>
+                            x.DoctorId == dto.DoctorId &&
+                            x.HospitalId == dto.HospitalId &&
+                            x.AvailableDate == utcDate &&
+                            x.TimeSlot == dto.TimeSlot &&
+                            x.IsClosed == false);
+
+                    if (patientSlotExists)
+                        throw new Exception(
+                            $"Patient slot exists for {current} {dto.TimeSlot}");
+
+                    // Duplicate date check
+                    var dateExists = await _medicalRepSlots.Query()
+                        .AnyAsync(x =>
+                            x.DoctorId == dto.DoctorId &&
+                            x.HospitalId == dto.HospitalId &&
+                            x.SlotDate == utcDate &&
+                            x.TimeSlot == dto.TimeSlot &&
+                            x.IsClosed == false);
+
+                    if (!dateExists)
+                    {
+                        slotsToAdd.Add(new MedicalRepSlot
+                        {
+                            HospitalId = dto.HospitalId,
+                            DoctorId = dto.DoctorId,
+                            SlotDate = utcDate,
+                            TimeSlot = dto.TimeSlot.Trim(),
+                            MaxReps = dto.MaxReps,
+                            BookedCount = 0,
+                            IsClosed = false
+                        });
+                    }
+                }
+
+                current = current.AddDays(1);
+            }
+
+            // ✅ Bulk insert
+            if (slotsToAdd.Any())
+            {
+                await _medicalRepSlots.AddRangeAsync(slotsToAdd);
+                await _medicalRepSlots.SaveAsync();
+            }
+
+            // ✅ Group save
+            await _medicalRepSlotGroups.AddAsync(new MedicalRepSlotGroup
+            {
+                DoctorId = dto.DoctorId,
+                HospitalId = dto.HospitalId,
+                FromDate = dto.FromDate,
+                ToDate = dto.ToDate,
+                Days = string.Join(",", dto.Days),
+                TimeSlot = dto.TimeSlot.Trim(),
+                MaxReps = dto.MaxReps,
+                IsClosed = false,
+                CreatedAt = DateTime.UtcNow
+            });
+
+            await _medicalRepSlotGroups.SaveAsync();
+        }
+
+
+        public async Task<List<MedicalRepSlotGroupViewDto>> GetMedicalRepSlotGroups(
+    int userId, string role)
+        {
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+
+            var query = _medicalRepSlotGroups.Query()
+                .Include(g => g.Hospital)
+                .Include(g => g.Doctor)
+                    .ThenInclude(d => d.User)
+                .Where(g => g.ToDate >= today && !g.IsClosed)
+                .AsQueryable();
+
+            // Doctor — தன்னோட groups மட்டும்
+            if (role == "Doctor")
+            {
+                var doctor = await _d.GetAsync(d => d.UserId == userId)
+                    ?? throw new Exception("Doctor not found");
+                query = query.Where(g => g.DoctorId == doctor.Id);
+            }
+
+            var groups = await query
+                .OrderBy(g => g.FromDate)
+                .ToListAsync();
+
+            return groups.Select(g => new MedicalRepSlotGroupViewDto(
+                g.Id,
+                g.HospitalId,
+                g.Hospital.Name,
+                g.DoctorId,
+                g.Doctor.User.Name,
+                g.FromDate,
+                g.ToDate,
+                g.Days.Split(",", StringSplitOptions.None).ToList(),
+                g.TimeSlot,
+                g.MaxReps,
+                g.IsClosed
+            )).ToList();
+        }
+
+
+        public async Task DeleteMedicalRepSlotGroup(
+     int userId, string role, int slotGroupId, DateOnly? date)
+        {
+            var group = await _medicalRepSlotGroups.Query()
+                .FirstOrDefaultAsync(g => g.Id == slotGroupId)
+                ?? throw new Exception("Slot group not found");
+
+            if (role == "Doctor")
+            {
+                var doctor = await _d.GetAsync(d => d.UserId == userId)
+                    ?? throw new Exception("Doctor not found");
+
+                if (group.DoctorId != doctor.Id)
+                    throw new Exception("Unauthorized");
+            }
+
+            if (date.HasValue)
+            {
+                // ✅ Specific date மட்டும் delete
+                var utcDate = DateTime.SpecifyKind(
+                    date.Value.ToDateTime(TimeOnly.MinValue),
+                    DateTimeKind.Utc);
+
+                var slot = await _medicalRepSlots.Query()
+                    .FirstOrDefaultAsync(s =>
+                        s.DoctorId == group.DoctorId &&
+                        s.HospitalId == group.HospitalId &&
+                        s.TimeSlot == group.TimeSlot &&
+                        s.SlotDate == utcDate &&
+                        s.IsClosed == false)
+                    ?? throw new Exception("Slot not found for given date");
+
+                var hasBookings = await _medicalRepApps.Query()
+                    .AnyAsync(a =>
+                        a.DoctorId == group.DoctorId &&
+                        a.HospitalId == group.HospitalId &&
+                        a.TimeSlot == group.TimeSlot &&
+                        a.AppointmentDate == utcDate &&
+                        a.Status == "Booked");
+
+                if (hasBookings)
+                    throw new Exception(
+                        "Cannot delete — active bookings exist for this date");
+
+                slot.IsClosed = true;
+                await _medicalRepSlots.SaveAsync();
+            }
+            else
+            {
+                // ✅ Entire group delete
+                var utcFrom = DateTime.SpecifyKind(
+                    group.FromDate.ToDateTime(TimeOnly.MinValue),
+                    DateTimeKind.Utc);
+
+                var utcTo = DateTime.SpecifyKind(
+                    group.ToDate.ToDateTime(TimeOnly.MinValue),
+                    DateTimeKind.Utc);
+
+                var hasBookings = await _medicalRepApps.Query()
+                    .AnyAsync(a =>
+                        a.DoctorId == group.DoctorId &&
+                        a.HospitalId == group.HospitalId &&
+                        a.TimeSlot == group.TimeSlot &&
+                        a.AppointmentDate >= utcFrom &&
+                        a.AppointmentDate <= utcTo &&
+                        a.Status == "Booked");
+
+                if (hasBookings)
+                    throw new Exception(
+                        "Cannot delete — active bookings exist for this slot group");
+
+                var slots = await _medicalRepSlots.Query()
+                    .Where(s =>
+                        s.DoctorId == group.DoctorId &&
+                        s.HospitalId == group.HospitalId &&
+                        s.TimeSlot == group.TimeSlot &&
+                        s.SlotDate >= utcFrom &&
+                        s.SlotDate <= utcTo &&
+                        s.IsClosed == false)
+                    .ToListAsync();
+
+                foreach (var slot in slots)
+                    slot.IsClosed = true;
+
+                _medicalRepSlotGroups.Remove(group);
+
+                await _medicalRepSlots.SaveAsync();
+                await _medicalRepSlotGroups.SaveAsync();
+            }
+        }
+
+
+        public async Task UpdateMedicalRepSlot(
+    int userId, string role, int slotGroupId, DateOnly date, MedicalRepSlotUpdateDto dto)
+        {
+            // Group check
+            var group = await _medicalRepSlotGroups.Query()
+                .FirstOrDefaultAsync(g => g.Id == slotGroupId)
+                ?? throw new Exception("Slot group not found");
+
+            // Doctor — தன்னோட group-ஆ check
+            if (role == "Doctor")
+            {
+                var doctor = await _d.GetAsync(d => d.UserId == userId)
+                    ?? throw new Exception("Doctor not found");
+
+                if (group.DoctorId != doctor.Id)
+                    throw new Exception("Unauthorized");
+            }
 
             var utcDate = DateTime.SpecifyKind(
-                dto.Date.ToDateTime(TimeOnly.MinValue),
+                date.ToDateTime(TimeOnly.MinValue),
                 DateTimeKind.Utc);
 
-            // Patient slot conflict check
-            var utcDateCheck = DateTime.SpecifyKind(
-                dto.Date.ToDateTime(TimeOnly.MinValue),
-                DateTimeKind.Utc);
+            // Specific date slot fetch
+            var slot = await _medicalRepSlots.Query()
+                .FirstOrDefaultAsync(s =>
+                    s.DoctorId == group.DoctorId &&
+                    s.HospitalId == group.HospitalId &&
+                    s.SlotDate == utcDate &&
+                    s.IsClosed == false)
+                ?? throw new Exception("Slot not found for given date");
 
-            var patientSlotExists = await _slots.Query()
-                .AnyAsync(x =>
-                    x.DoctorId == dto.DoctorId &&
-                    x.HospitalId == dto.HospitalId &&
-                    x.AvailableDate == utcDateCheck &&
-                    x.TimeSlot == dto.TimeSlot &&
-                    x.IsClosed == false);
+            // Active bookings check
+            var hasBookings = await _medicalRepApps.Query()
+                .AnyAsync(a =>
+                    a.DoctorId == group.DoctorId &&
+                    a.HospitalId == group.HospitalId &&
+                    a.AppointmentDate == utcDate &&
+                    a.Status == "Booked");
 
-            if (patientSlotExists)
+            if (hasBookings)
                 throw new Exception(
-                    "Cannot create Medical Rep slot — Patient slot exists for this date and time");
+                    "Cannot update — active bookings exist for this date");
 
-            await _medicalRepSlots.AddAsync(new MedicalRepSlot
-            {
-                HospitalId = dto.HospitalId,
-                DoctorId = dto.DoctorId,
-                SlotDate = utcDate,
-                TimeSlot = dto.TimeSlot,
-                MaxReps = dto.MaxReps,
-                BookedCount = 0,
-                IsClosed = false
-            });
+            // Update
+            if (!string.IsNullOrWhiteSpace(dto.TimeSlot))
+                slot.TimeSlot = dto.TimeSlot.Trim();
+
+            if (dto.MaxReps.HasValue)
+                slot.MaxReps = dto.MaxReps.Value;
 
             await _medicalRepSlots.SaveAsync();
         }
-
 
         //public async Task<List<DoctorAssignedHospitalDto>> GetDoctorAssignedHospitals(int doctorId)
         //{
