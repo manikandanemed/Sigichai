@@ -1566,6 +1566,7 @@ namespace HospitalProject.Controllers
 
             var request = new BookAppointmentDto
             {
+                HospitalId = dto.HospitalId,
                 DoctorId = dto.DoctorId,
                 Date = dto.Date,
                 TimeSlot = dto.TimeSlot,
@@ -1584,7 +1585,7 @@ namespace HospitalProject.Controllers
         }
 
 
-
+        [Authorize(Roles = "Patient")]
         [HttpPost("book/family")]
         public async Task<IActionResult> BookFamily(FamilyTimeBookingDto dto)
         {
@@ -1592,6 +1593,7 @@ namespace HospitalProject.Controllers
 
             var request = new BookAppointmentDto
             {
+                HospitalId = dto.HospitalId,
                 DoctorId = dto.DoctorId,
                 Date = dto.Date,
                 TimeSlot = dto.TimeSlot,
@@ -1645,7 +1647,7 @@ namespace HospitalProject.Controllers
         // GET /api/hospital/doctor/{doctorId}/slots
         // ======================================
 
-        //[Authorize(Roles = "Doctor,Admin")]
+        [Authorize(Roles = "Doctor,Admin")]
         [HttpGet("doctor/{doctorId}/slot-groups")]
         public async Task<IActionResult> GetDoctorSlots(int doctorId)
         {
