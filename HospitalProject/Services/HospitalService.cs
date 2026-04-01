@@ -4561,8 +4561,8 @@ GetPatientHistory(int userId)
             var doctor = await _d.Query()
                 .Include(d => d.User)
                 .FirstOrDefaultAsync(x =>
-                    x.Id == dto.DoctorId &&
-                    x.IsVerified == true);
+                    x.Id == dto.DoctorId); //&&
+                    //x.IsVerified == true);
 
             if (patient == null || doctor == null)
                 throw new Exception("Details not found");

@@ -3,12 +3,12 @@
   "WorkspaceRootPath": "D:\\Sigichai\\sigichai internalwithqr\\sigichai internalphargy\\sigichai with phargt\\HospitalProjectSolution\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A0F1FFC1-2DB4-4DB7-A585-551B9028712B}|HospitalProject\\HospitalProject.csproj|d:\\sigichai\\sigichai internalwithqr\\sigichai internalphargy\\sigichai with phargt\\hospitalprojectsolution\\hospitalproject\\controllers\\hospitalcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A0F1FFC1-2DB4-4DB7-A585-551B9028712B}|HospitalProject\\HospitalProject.csproj|solutionrelative:hospitalproject\\controllers\\hospitalcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{A0F1FFC1-2DB4-4DB7-A585-551B9028712B}|HospitalProject\\HospitalProject.csproj|d:\\sigichai\\sigichai internalwithqr\\sigichai internalphargy\\sigichai with phargt\\hospitalprojectsolution\\hospitalproject\\services\\hospitalservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A0F1FFC1-2DB4-4DB7-A585-551B9028712B}|HospitalProject\\HospitalProject.csproj|solutionrelative:hospitalproject\\services\\hospitalservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A0F1FFC1-2DB4-4DB7-A585-551B9028712B}|HospitalProject\\HospitalProject.csproj|d:\\sigichai\\sigichai internalwithqr\\sigichai internalphargy\\sigichai with phargt\\hospitalprojectsolution\\hospitalproject\\controllers\\hospitalcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A0F1FFC1-2DB4-4DB7-A585-551B9028712B}|HospitalProject\\HospitalProject.csproj|solutionrelative:hospitalproject\\controllers\\hospitalcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A0F1FFC1-2DB4-4DB7-A585-551B9028712B}|HospitalProject\\HospitalProject.csproj|d:\\sigichai\\sigichai internalwithqr\\sigichai internalphargy\\sigichai with phargt\\hospitalprojectsolution\\hospitalproject\\controllers\\medicalrepcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -132,7 +132,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 15,
+          "SelectedChildIndex": 22,
           "Children": [
             {
               "$type": "Document",
@@ -288,8 +288,7 @@
               "RelativeToolTip": "HospitalProject\\Controllers\\MedicalRepController.cs",
               "ViewState": "AgIAAC4BAAAAAAAAAAAQwBkBAAAmAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-19T05:08:57.825Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-19T05:08:57.825Z"
             },
             {
               "$type": "Document",
@@ -317,13 +316,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "HospitalController.cs",
               "DocumentMoniker": "D:\\Sigichai\\sigichai internalwithqr\\sigichai internalphargy\\sigichai with phargt\\HospitalProjectSolution\\HospitalProject\\Controllers\\HospitalController.cs",
               "RelativeDocumentMoniker": "HospitalProject\\Controllers\\HospitalController.cs",
               "ToolTip": "D:\\Sigichai\\sigichai internalwithqr\\sigichai internalphargy\\sigichai with phargt\\HospitalProjectSolution\\HospitalProject\\Controllers\\HospitalController.cs",
               "RelativeToolTip": "HospitalProject\\Controllers\\HospitalController.cs",
-              "ViewState": "AgIAABUGAAAAAAAAAAAAwDMGAAAmAAAAAAAAAA==",
+              "ViewState": "AgIAAB0GAAAAAAAAAAAQwCgGAAA3AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-03-09T04:59:44.778Z",
               "EditorCaption": ""
@@ -402,13 +401,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "HospitalService.cs",
               "DocumentMoniker": "D:\\Sigichai\\sigichai internalwithqr\\sigichai internalphargy\\sigichai with phargt\\HospitalProjectSolution\\HospitalProject\\Services\\HospitalService.cs",
               "RelativeDocumentMoniker": "HospitalProject\\Services\\HospitalService.cs",
               "ToolTip": "D:\\Sigichai\\sigichai internalwithqr\\sigichai internalphargy\\sigichai with phargt\\HospitalProjectSolution\\HospitalProject\\Services\\HospitalService.cs",
               "RelativeToolTip": "HospitalProject\\Services\\HospitalService.cs",
-              "ViewState": "AgIAABYSAAAAAAAAAAAAwBkSAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAMIRAAAAAAAAAAAIwNMRAAAqAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-01-07T11:46:08.258Z",
               "EditorCaption": ""
