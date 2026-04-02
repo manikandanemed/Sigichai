@@ -4140,6 +4140,49 @@ GetPatientHistory(int userId)
         }
 
 
+        //MedicalRep cancel appointment
+        public async Task CancelMedicalRepAppointment(int userId, int appointmentId)
+        {
+            // 1️⃣ MedicalRep check
+            var medicalRep = await _medicalRep.GetAsync(m => m.UserId == userId)
+                ?? throw new Exception("Medical Rep not found");
+
+            // 2️⃣ Appointment check
+            var appointment = await _medicalRepApps.GetAsync(a =>
+                a.Id == appointmentId &&
+                a.MedicalRepId == medicalRep.Id)
+                ?? throw new Exception("Appointment not found");
+
+            // 3️⃣ Already cancelled check
+            if (appointment.Status == "Cancelled")
+                throw new Exception("Appointment already cancelled");
+
+            // 4️⃣ 2 hours check
+            var now = DateTime.UtcNow;
+
+            if ((appointment.AppointmentDate - now).TotalHours < 2)
+                throw new Exception(
+                    "Cannot cancel — less than 2 hours remaining for appointment");
+
+            // 5️⃣ Cancel
+            appointment.Status = "Cancelled";
+
+            // 6️⃣ BookedCount decrement
+            var slot = await _medicalRepSlots.GetAsync(s =>
+                s.DoctorId == appointment.DoctorId &&
+                s.HospitalId == appointment.HospitalId &&
+                s.TimeSlot == appointment.TimeSlot &&
+                s.SlotDate == appointment.AppointmentDate &&
+                s.IsClosed == false);
+
+            if (slot != null && slot.BookedCount > 0)
+                slot.BookedCount--;
+
+            await _medicalRepApps.SaveAsync();
+            await _medicalRepSlots.SaveAsync();
+        }
+
+
 
         public async Task<int> CheckInMedicalRep(string tempToken)
         {
@@ -4589,15 +4632,27 @@ GetPatientHistory(int userId)
                 DateTimeKind.Utc);
 
             // Already booked check
+            //var alreadyBooked = await _apps.GetAsync(x =>
+            //    x.DoctorId == dto.DoctorId &&
+            //    x.HospitalId == dto.HospitalId &&
+            //    x.AppointmentDate == utcDate &&
+            //    x.TimeSlot == dto.TimeSlot &&
+            //    x.Status != "Cancelled");
+
+            //if (alreadyBooked != null)
+            //    throw new Exception("Slot already booked for this date");
+
             var alreadyBooked = await _apps.GetAsync(x =>
-                x.DoctorId == dto.DoctorId &&
-                x.HospitalId == dto.HospitalId &&
-                x.AppointmentDate == utcDate &&
-                x.TimeSlot == dto.TimeSlot &&
-                x.Status != "Cancelled");
+            x.PatientId == patient.Id &&  // ✅ Same patient மட்டும்
+            x.DoctorId == dto.DoctorId &&
+            x.HospitalId == dto.HospitalId &&
+            x.AppointmentDate == utcDate &&
+            x.TimeSlot == dto.TimeSlot &&
+            x.Status != "Cancelled");
 
             if (alreadyBooked != null)
-                throw new Exception("Slot already booked for this date");
+                throw new Exception("You have already booked this slot");
+
 
             // 1️⃣ Create Appointment
             var appointment = new Appointment
@@ -4638,6 +4693,54 @@ GetPatientHistory(int userId)
                 amount = 1000,
                 keyId = _config["Razorpay:Key"]
             };
+        }
+
+        //Cancel Appointment
+        public async Task CancelAppointment(int userId, int appointmentId)
+        {
+            // 1️⃣ Patient check
+            var patient = await _p.GetAsync(p => p.UserId == userId)
+                ?? throw new Exception("Patient not found");
+
+            // 2️⃣ Appointment check
+            var appointment = await _apps.GetAsync(a =>
+                a.Id == appointmentId &&
+                a.PatientId == patient.Id)
+                ?? throw new Exception("Appointment not found");
+
+            // 3️⃣ Already cancelled check
+            if (appointment.Status == "Cancelled")
+                throw new Exception("Appointment already cancelled");
+
+            // 4️⃣ 2 hours check
+            var appointmentDateTime = appointment.AppointmentDate;
+            var now = DateTime.UtcNow;
+
+            if ((appointmentDateTime - now).TotalHours < 2)
+                throw new Exception(
+                    "Cannot cancel — less than 2 hours remaining for appointment");
+
+            // 5️⃣ Cancel appointment
+            appointment.Status = "Cancelled";
+            await _apps.SaveAsync();
+
+            // 6️⃣ Refund — Payment success-ஆ இருந்தா மட்டும்
+            if (appointment.PaymentStatus == "Success" &&
+                !string.IsNullOrEmpty(appointment.RazorpayPaymentId))
+            {
+                var refunded = await _paymentService.RefundPayment(
+                    appointment.RazorpayPaymentId, 10.00m);
+
+                // PaymentLog update
+                var log = await _paymentlog.GetAsync(
+                    x => x.AppointmentId == appointmentId);
+
+                if (log != null)
+                {
+                    log.Status = refunded ? "Refunded" : "RefundFailed";
+                    await _paymentlog.SaveAsync();
+                }
+            }
         }
 
 

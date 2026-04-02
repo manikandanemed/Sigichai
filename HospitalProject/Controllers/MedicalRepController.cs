@@ -134,6 +134,39 @@ namespace HospitalProject.Controllers
         }
 
 
+        // ======================================
+        // ❌ CANCEL MEDICAL REP APPOINTMENT
+        // POST /api/medicalrep/appointment/{appointmentId}/cancel
+        // ======================================
+        [Authorize(Roles = "MedicalRep")]
+        [HttpPost("appointment/{appointmentId}/cancel")]
+        public async Task<IActionResult> CancelMedicalRepAppointment(
+            int appointmentId)
+        {
+            try
+            {
+                int userId = int.Parse(
+                    User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+                await _service.CancelMedicalRepAppointment(userId, appointmentId);
+
+                return Ok(new ApiResponse
+                {
+                    Success = true,
+                    Message = "Appointment cancelled successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
+        }
+
+
         // CHECK-IN
         [Authorize(Roles = "MedicalRep,Admin")]
         [HttpPost("checkin")]

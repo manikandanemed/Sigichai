@@ -411,6 +411,22 @@
   },
   {
     "ContainingType": "HospitalProject.Controllers.HospitalController",
+    "Method": "CancelAppointment",
+    "RelativePath": "api/hospital/appointment/{appointmentId}/cancel",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "appointmentId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HospitalProject.Controllers.HospitalController",
     "Method": "BookFamilyByTime",
     "RelativePath": "api/hospital/appointment/book/family/by-time",
     "HttpMethod": "POST",
@@ -1573,6 +1589,22 @@
       {
         "Name": "dto",
         "Type": "HospitalProject.Models.MedicalRepSlotCreateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HospitalProject.Controllers.MedicalRepController",
+    "Method": "CancelMedicalRepAppointment",
+    "RelativePath": "api/medicalrep/appointment/{appointmentId}/cancel",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "appointmentId",
+        "Type": "System.Int32",
         "IsRequired": true
       }
     ],

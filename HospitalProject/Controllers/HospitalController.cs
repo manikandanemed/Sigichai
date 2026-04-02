@@ -1612,6 +1612,38 @@ namespace HospitalProject.Controllers
         }
 
 
+        // ======================================
+        // ❌ CANCEL APPOINTMENT
+        // POST /api/hospital/appointment/{appointmentId}/cancel
+        // ======================================
+        [Authorize(Roles = "Patient")]
+        [HttpPost("appointment/{appointmentId}/cancel")]
+        public async Task<IActionResult> CancelAppointment(int appointmentId)
+        {
+            try
+            {
+                int userId = int.Parse(
+                    User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+                await _service.CancelAppointment(userId, appointmentId);
+
+                return Ok(new ApiResponse
+                {
+                    Success = true,
+                    Message = "Appointment cancelled and refund initiated"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
+        }
+
+
 
         // =====================================================================
         // 👨‍⚕️ DOCTOR — NMC Auto Fill

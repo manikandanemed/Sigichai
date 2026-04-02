@@ -1965,6 +1965,29 @@
         }
       }
     },
+    "/api/hospital/appointment/{appointmentId}/cancel": {
+      "post": {
+        "tags": [
+          "Hospital"
+        ],
+        "parameters": [
+          {
+            "name": "appointmentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/hospital/doctor/nmc-lookup/{registrationNumber}": {
       "get": {
         "tags": [
@@ -2702,6 +2725,29 @@
             }
           }
         },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/medicalrep/appointment/{appointmentId}/cancel": {
+      "post": {
+        "tags": [
+          "MedicalRep"
+        ],
+        "parameters": [
+          {
+            "name": "appointmentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
