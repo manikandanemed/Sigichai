@@ -1617,20 +1617,19 @@ namespace HospitalProject.Controllers
         // POST /api/hospital/appointment/{appointmentId}/cancel
         // ======================================
         [Authorize(Roles = "Patient")]
-        [HttpPost("appointment/{appointmentId}/cancel")]
-        public async Task<IActionResult> CancelAppointment(int appointmentId)
+        [HttpPost("appointment/cancel")]
+        [Authorize(Roles = "Patient")]
+        public async Task<IActionResult> CancelAppointment(CancelAppointmentDto dto)
         {
             try
             {
-                int userId = int.Parse(
-                    User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-
-                await _service.CancelAppointment(userId, appointmentId);
-
+                var userId = int.Parse(User.FindFirst("UserId")!.Value);
+                var result = await _service.CancelAppointmentAsync(userId, dto);
                 return Ok(new ApiResponse
                 {
                     Success = true,
-                    Message = "Appointment cancelled and refund initiated"
+                    Message = result.Message,
+                    Data = result
                 });
             }
             catch (Exception ex)

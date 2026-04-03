@@ -1392,6 +1392,20 @@
     );
 
 
+    public record CancelAppointmentDto(
+    int AppointmentId,
+    string? Reason
+    );
+
+    public record CancelResultDto(
+        bool Success,
+        string Message,
+        bool RefundInitiated,
+        string? RefundId,
+        string RefundStatus
+    );
+
+
 
 
 }

@@ -166,6 +166,57 @@ namespace HospitalProject.Migrations
                     b.ToTable("Appointments");
                 });
 
+            modelBuilder.Entity("HospitalProject.Models.AppointmentCancelLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AppointmentId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CancelledAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CancelledByRole")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("CancelledByUserId")
+                        .HasColumnType("integer");
+
+                    b.Property<double>("MinutesBeforeSlot")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("Reason")
+                        .HasColumnType("text");
+
+                    b.Property<decimal?>("RefundAmount")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("RefundId")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("RefundInitiated")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("RefundStatus")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("SlotStartTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppointmentId")
+                        .IsUnique();
+
+                    b.ToTable("AppointmentCancelLogs");
+                });
+
             modelBuilder.Entity("HospitalProject.Models.DispenseItem", b =>
                 {
                     b.Property<int>("Id")
@@ -1801,6 +1852,47 @@ namespace HospitalProject.Migrations
                     b.ToTable("QrScanLogs");
                 });
 
+            modelBuilder.Entity("HospitalProject.Models.RefundLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AppointmentId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("FailureReason")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("InitiatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("RazorpayPaymentId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("RazorpayResponse")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("RefundAmount")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppointmentId");
+
+                    b.ToTable("RefundLogs");
+                });
+
             modelBuilder.Entity("HospitalProject.Models.Speciality", b =>
                 {
                     b.Property<int>("Id")
@@ -1915,6 +2007,17 @@ namespace HospitalProject.Migrations
                     b.Navigation("FamilyMember");
 
                     b.Navigation("Patient");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.AppointmentCancelLog", b =>
+                {
+                    b.HasOne("HospitalProject.Models.Appointment", "Appointment")
+                        .WithOne("CancelLog")
+                        .HasForeignKey("HospitalProject.Models.AppointmentCancelLog", "AppointmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Appointment");
                 });
 
             modelBuilder.Entity("HospitalProject.Models.DispenseItem", b =>
@@ -2526,9 +2629,24 @@ namespace HospitalProject.Migrations
                     b.Navigation("ScannedByUser");
                 });
 
+            modelBuilder.Entity("HospitalProject.Models.RefundLog", b =>
+                {
+                    b.HasOne("HospitalProject.Models.Appointment", "Appointment")
+                        .WithMany("RefundLogs")
+                        .HasForeignKey("AppointmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Appointment");
+                });
+
             modelBuilder.Entity("HospitalProject.Models.Appointment", b =>
                 {
+                    b.Navigation("CancelLog");
+
                     b.Navigation("PaymentLogs");
+
+                    b.Navigation("RefundLogs");
                 });
 
             modelBuilder.Entity("HospitalProject.Models.DispenseRecord", b =>

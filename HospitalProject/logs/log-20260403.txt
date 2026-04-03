@@ -1,0 +1,15 @@
+[2026-04-03 10:58:48 INF] HTTP GET /swagger/index.html responded 200 in 137.1953 ms
+[2026-04-03 10:58:50 INF] HTTP GET /swagger/v1/swagger.json responded 200 in 142.6502 ms
+[2026-04-03 11:48:44 INF] HTTP GET /swagger/index.html responded 200 in 156.5252 ms
+[2026-04-03 11:48:46 INF] HTTP GET /swagger/v1/swagger.json responded 200 in 122.4200 ms
+[2026-04-03 11:51:06 INF] 🔹 Login attempt — Mobile: +91 9846549865
+[2026-04-03 11:51:12 INF] ✅ Login success — UserId: 1090, Role: Patient
+[2026-04-03 11:51:14 INF] ⚠️ OTP Disabled — Dummy OTP used for Mobile: +91 9846549865
+[2026-04-03 11:51:14 INF] HTTP POST /api/auth/login responded 200 in 12785.9725 ms
+[2026-04-03 14:21:38 INF] HTTP GET /swagger/index.html responded 200 in 118.2105 ms
+[2026-04-03 14:21:39 INF] HTTP GET /swagger/favicon-32x32.png responded 200 in 18.2805 ms
+[2026-04-03 14:21:39 INF] HTTP GET /swagger/v1/swagger.json responded 200 in 96.7607 ms
+[2026-04-03 15:46:53 INF] HTTP GET /swagger/index.html responded 200 in 101.4197 ms
+[2026-04-03 15:46:54 INF] HTTP GET /swagger/v1/swagger.json responded 200 in 140.0412 ms
+[2026-04-03 15:54:09 INF] HTTP GET /swagger/index.html responded 200 in 210.0292 ms
+[2026-04-03 15:54:10 INF] HTTP GET /swagger/v1/swagger.json responded 200 in 120.4900 ms

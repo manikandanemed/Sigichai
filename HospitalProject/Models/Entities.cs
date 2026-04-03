@@ -257,6 +257,10 @@ namespace HospitalProject.Models
         public string? RazorpayOrderId { get; set; }
         public string? RazorpayPaymentId { get; set; }
         public string PaymentStatus { get; set; } = "Pending";
+
+        // Appointment class-ல் இருக்க existing properties கீழே add பண்ணுங்க
+        public AppointmentCancelLog? CancelLog { get; set; }
+        public ICollection<RefundLog> RefundLogs { get; set; } = new List<RefundLog>();
     }
 
 
@@ -984,5 +988,51 @@ namespace HospitalProject.Models
         public bool IsClosed { get; set; } = false;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    }
+
+
+    public class RefundLog
+    {
+        public int Id { get; set; }
+
+        public int AppointmentId { get; set; }
+        public Appointment Appointment { get; set; } = null!;
+
+        public string RazorpayPaymentId { get; set; } = string.Empty;
+        public decimal RefundAmount { get; set; }
+
+        public string Status { get; set; } = "Initiated";
+        // Initiated / Success / Failed / AlreadyRefunded
+
+        public string? FailureReason { get; set; }
+        public string? RazorpayResponse { get; set; }
+
+        public DateTime InitiatedAt { get; set; } = DateTime.Now;
+        public DateTime? CompletedAt { get; set; }
+    }
+
+    public class AppointmentCancelLog
+    {
+        public int Id { get; set; }
+
+        public int AppointmentId { get; set; }
+        public Appointment Appointment { get; set; } = null!;
+
+        public int CancelledByUserId { get; set; }
+        public string CancelledByRole { get; set; } = string.Empty;
+
+        public string? Reason { get; set; }
+
+        public DateTime CancelledAt { get; set; } = DateTime.Now;
+
+        public bool RefundInitiated { get; set; } = false;
+        public string? RefundId { get; set; }
+        public string RefundStatus { get; set; } = "NA";
+        // NA / Initiated / Success / Failed / AlreadyRefunded
+
+        public decimal? RefundAmount { get; set; }
+
+        public DateTime SlotStartTime { get; set; }
+        public double MinutesBeforeSlot { get; set; }
     }
 }

@@ -82,6 +82,9 @@ namespace HospitalProject.Data
         public DbSet<AppSetting> AppSettings { get; set; }
         public DbSet<MedicalRepSlotGroup> MedicalRepSlotGroups { get; set; }
 
+        public DbSet<RefundLog> RefundLogs { get; set; }
+        public DbSet<AppointmentCancelLog> AppointmentCancelLogs { get; set; }
+
 
 
 

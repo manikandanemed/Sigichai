@@ -43,6 +43,9 @@ namespace HospitalProject.Services
         private readonly IMsg91Service _msg91;
         private readonly IRepository<AppSetting> _appSettings;
         private readonly IRepository<MedicalRepSlotGroup> _medicalRepSlotGroups;
+        private readonly ILogger<HospitalService> _logger;
+        private readonly IRepository<AppointmentCancelLog> _cancelLog;
+        private readonly IRepository<RefundLog> _refundLog;
 
 
 
@@ -81,6 +84,9 @@ namespace HospitalProject.Services
             IConfiguration config,
             IRepository<AppSetting> appSettings,
             IRepository<MedicalRepSlotGroup> medicalRepSlotGroups,
+            ILogger<HospitalService> logger,
+            IRepository<AppointmentCancelLog> cancelLog,
+            IRepository<RefundLog> refundLog,
             IMsg91Service msg91 )
         {
             _u = u; _p = p; _d = d; _admin = admin;
@@ -105,6 +111,9 @@ namespace HospitalProject.Services
             _msg91 = msg91;
             _medicalRepSlotGroups = medicalRepSlotGroups;
             _appSettings = appSettings;
+            _logger = logger;
+            _cancelLog = cancelLog;
+            _refundLog = refundLog;
         }
 
 
@@ -286,35 +295,38 @@ namespace HospitalProject.Services
         }
 
 
-        //Login Method for test (1234)
         //public async Task<bool> Login(LoginDto d)
         //{
-
-        //    // 🔴 1️⃣ Check if pharmacy staff request is pending
+        //    // 1️⃣ Pharmacy staff pending check
         //    var pendingRequest = await _staffRequest.GetAsync(x =>
         //        x.MobileNumber == d.MobileNumber &&
         //        x.Status == "Pending");
 
         //    if (pendingRequest != null)
         //        throw new Exception("Account not approved by admin");
+
+        //    // 2️⃣ User validate
         //    var user = await _u.Query()
         //        .Include(x => x.Admin)
         //        .Include(x => x.Doctor)
         //        .Include(x => x.Patient)
         //        .FirstOrDefaultAsync(x =>
         //            x.MobileNumber == d.MobileNumber &&
-        //            x.IsDeleted == false
-        //        );
+        //            x.IsDeleted == false);
 
         //    if (user == null || !BCrypt.Net.BCrypt.Verify(d.Password, user.Password))
         //        throw new Exception("Invalid credentials");
 
-        //    //working random otp
-        //    //var otp = new Random().Next(1000, 9999).ToString();
+        //    // 3️⃣ OTP Enabled check
+        //    var otpSetting = await _appSettings.GetAsync(s => s.Key == "OtpEnabled");
+        //    var otpEnabled = otpSetting?.Value == "true";
 
-        //    // ✅ New (Fixed OTP)
-        //    var otp = "1234";
+        //    // 4️⃣ OTP generate
+        //    var otp = otpEnabled
+        //        ? new Random().Next(1000, 9999).ToString()
+        //        : "1234";
 
+        //    // 5️⃣ OTP save
         //    await _otp.AddAsync(new OtpStore
         //    {
         //        UserId = user.Id,
@@ -325,85 +337,40 @@ namespace HospitalProject.Services
         //        CreatedTime = DateTime.UtcNow,
         //        Expiry = DateTime.UtcNow.AddMinutes(5),
         //        IsUsed = false,
-        //        IsSent = true
+        //        IsSent = true,
+        //        IsLoginInitiated = true
         //    });
 
         //    await _otp.SaveAsync();
-        //    await _twilio.SendOtpAsync(d.MobileNumber, otp);
 
-        //    return true; // 🔥 IMPORTANT
-        //}
-
-
-
-        //Login for OTP whatsapp
-        //public async Task<bool> Login(LoginDto d)
-        //{
-        //    Console.WriteLine("🔹 Login started");
-
-        //    var user = await _u.Query()
-        //        .Include(x => x.Admin)
-        //        .Include(x => x.Doctor)
-        //        .Include(x => x.Patient)
-        //        .FirstOrDefaultAsync(x =>
-        //            x.MobileNumber == d.MobileNumber &&
-        //            x.IsDeleted == false
-        //        );
-
-        //    if (user == null || !BCrypt.Net.BCrypt.Verify(d.Password, user.Password))
-        //        throw new Exception("Invalid credentials");
-
-        //    Console.WriteLine("✅ User validated");
-
-        //    var otp = new Random().Next(1000, 9999).ToString();
-        //    Console.WriteLine("🔐 OTP Generated: " + otp);
-
-        //    await _otp.AddAsync(new OtpStore
+        //    // 6️⃣ OTP send
+        //    if (otpEnabled)
         //    {
-        //        UserId = user.Id,
-        //        MobileNumber = user.MobileNumber,
-        //        OtpCode = otp,
-        //        OtpType = "SMS",
-        //        Purpose = "LOGIN",
-        //        CreatedTime = DateTime.UtcNow,
-        //        Expiry = DateTime.UtcNow.AddMinutes(5),
-        //        IsUsed = false,
-        //        IsSent = true
-        //    });
-
-        //    await _otp.SaveAsync();
-        //    Console.WriteLine("💾 OTP saved to DB");
-
-        //    try
-        //    {
-        //        Console.WriteLine("📤 Sending OTP via MSG91...");
-
-        //        await _msg91.SendOtpAsync(user.MobileNumber, otp); // 👈 IMPORTANT: user.MobileNumber use பண்ணு
-
-        //        Console.WriteLine("✅ MSG91 send success");
+        //        await _msg91.SendOtpAsync(user.MobileNumber, otp);
         //    }
-        //    catch (Exception ex)
+        //    else
         //    {
-        //        Console.WriteLine("❌ MSG91 ERROR: " + ex.Message);
-        //        throw new Exception("OTP sending failed: " + ex.Message);
+        //        Console.WriteLine($"⚠️ OTP Disabled — Dummy OTP: {otp}");
         //    }
 
         //    return true;
         //}
 
 
-
         public async Task<bool> Login(LoginDto d)
         {
-            // 1️⃣ Pharmacy staff pending check
+            _logger.LogInformation("🔹 Login attempt — Mobile: {Mobile}", d.MobileNumber);
+
             var pendingRequest = await _staffRequest.GetAsync(x =>
                 x.MobileNumber == d.MobileNumber &&
                 x.Status == "Pending");
 
             if (pendingRequest != null)
+            {
+                _logger.LogWarning("❌ Login blocked — Account not approved: {Mobile}", d.MobileNumber);
                 throw new Exception("Account not approved by admin");
+            }
 
-            // 2️⃣ User validate
             var user = await _u.Query()
                 .Include(x => x.Admin)
                 .Include(x => x.Doctor)
@@ -413,18 +380,21 @@ namespace HospitalProject.Services
                     x.IsDeleted == false);
 
             if (user == null || !BCrypt.Net.BCrypt.Verify(d.Password, user.Password))
+            {
+                _logger.LogWarning("❌ Login failed — Invalid credentials: {Mobile}", d.MobileNumber);
                 throw new Exception("Invalid credentials");
+            }
 
-            // 3️⃣ OTP Enabled check
+            _logger.LogInformation("✅ Login success — UserId: {UserId}, Role: {Role}",
+                user.Id, user.Role);
+
             var otpSetting = await _appSettings.GetAsync(s => s.Key == "OtpEnabled");
             var otpEnabled = otpSetting?.Value == "true";
 
-            // 4️⃣ OTP generate
             var otp = otpEnabled
                 ? new Random().Next(1000, 9999).ToString()
                 : "1234";
 
-            // 5️⃣ OTP save
             await _otp.AddAsync(new OtpStore
             {
                 UserId = user.Id,
@@ -441,19 +411,18 @@ namespace HospitalProject.Services
 
             await _otp.SaveAsync();
 
-            // 6️⃣ OTP send
             if (otpEnabled)
             {
                 await _msg91.SendOtpAsync(user.MobileNumber, otp);
+                _logger.LogInformation("✅ OTP sent via WhatsApp — Mobile: {Mobile}", user.MobileNumber);
             }
             else
             {
-                Console.WriteLine($"⚠️ OTP Disabled — Dummy OTP: {otp}");
+                _logger.LogInformation("⚠️ OTP Disabled — Dummy OTP used for Mobile: {Mobile}", user.MobileNumber);
             }
 
             return true;
         }
-
 
 
         public async Task ResendOtp(string mobileNumber)
@@ -4597,67 +4566,165 @@ GetPatientHistory(int userId)
 
 
         // HospitalService.cs 
+        //    public async Task<object> BookWithPayment(
+        //int userId, BookAppointmentDto dto, bool isFamily)
+        //    {
+        //        var patient = await _p.GetAsync(x => x.UserId == userId);
+        //        var doctor = await _d.Query()
+        //            .Include(d => d.User)
+        //            .FirstOrDefaultAsync(x =>
+        //                x.Id == dto.DoctorId); //&&
+        //                //x.IsVerified == true);
+
+        //        if (patient == null || doctor == null)
+        //            throw new Exception("Details not found");
+
+
+
+        //        // Slot availability check
+        //        var slotUtcDate = DateTime.SpecifyKind(
+        //        dto.Date.ToDateTime(TimeOnly.MinValue),
+        //        DateTimeKind.Utc);
+
+        //        var slotExists = await _slots.GetAsync(x =>
+        //            x.DoctorId == dto.DoctorId &&
+        //            x.HospitalId == dto.HospitalId &&
+        //            x.AvailableDate == slotUtcDate &&  // 👈 slotUtcDate
+        //            x.TimeSlot == dto.TimeSlot &&
+        //            x.IsClosed == false);
+
+        //        if (slotExists == null)
+        //            throw new Exception("Selected time not available");
+
+        //        var utcDate = DateTime.SpecifyKind(
+        //            dto.Date.ToDateTime(TimeOnly.MinValue),
+        //            DateTimeKind.Utc);
+
+        //        // Already booked check
+        //        //var alreadyBooked = await _apps.GetAsync(x =>
+        //        //    x.DoctorId == dto.DoctorId &&
+        //        //    x.HospitalId == dto.HospitalId &&
+        //        //    x.AppointmentDate == utcDate &&
+        //        //    x.TimeSlot == dto.TimeSlot &&
+        //        //    x.Status != "Cancelled");
+
+        //        //if (alreadyBooked != null)
+        //        //    throw new Exception("Slot already booked for this date");
+
+        //        var alreadyBooked = await _apps.GetAsync(x =>
+        //        x.PatientId == patient.Id &&  // ✅ Same patient மட்டும்
+        //        x.DoctorId == dto.DoctorId &&
+        //        x.HospitalId == dto.HospitalId &&
+        //        x.AppointmentDate == utcDate &&
+        //        x.TimeSlot == dto.TimeSlot &&
+        //        x.Status != "Cancelled");
+
+        //        if (alreadyBooked != null)
+        //            throw new Exception("You have already booked this slot");
+
+
+        //        // 1️⃣ Create Appointment
+        //        var appointment = new Appointment
+        //        {
+        //            HospitalId = dto.HospitalId,   // 👈 dto-ல் இருந்து
+        //            PatientId = patient.Id,
+        //            DoctorId = doctor.Id,
+        //            AppointmentDate = utcDate,
+        //            TimeSlot = dto.TimeSlot.Trim(),
+        //            Status = "PaymentPending",
+        //            ReasonForVisit = dto.ReasonForVisit,
+        //            FamilyMemberId = isFamily ? dto.FamilyMemberId : null
+        //        };
+
+        //        await _apps.AddAsync(appointment);
+        //        await _apps.SaveAsync();
+
+        //        // 2️⃣ Create Razorpay Order
+        //        string orderId = await _paymentService.CreateOrder(
+        //            10.00m, appointment.Id.ToString());
+
+        //        appointment.RazorpayOrderId = orderId;
+        //        await _apps.SaveAsync();
+
+        //        // 3️⃣ Save Payment Log
+        //        await _paymentlog.AddAsync(new PaymentLog
+        //        {
+        //            AppointmentId = appointment.Id,
+        //            RazorpayOrderId = orderId,
+        //            Amount = 10.00m,
+        //            Status = "Created"
+        //        });
+        //        await _paymentlog.SaveAsync();
+
+        //        return new
+        //        {
+        //            orderId,
+        //            amount = 1000,
+        //            keyId = _config["Razorpay:Key"]
+        //        };
+        //    }
+
+
         public async Task<object> BookWithPayment(
     int userId, BookAppointmentDto dto, bool isFamily)
         {
+            _logger.LogInformation("🔹 BookWithPayment started — UserId: {UserId}, DoctorId: {DoctorId}, Date: {Date}, TimeSlot: {TimeSlot}",
+                userId, dto.DoctorId, dto.Date, dto.TimeSlot);
+
             var patient = await _p.GetAsync(x => x.UserId == userId);
             var doctor = await _d.Query()
                 .Include(d => d.User)
                 .FirstOrDefaultAsync(x =>
-                    x.Id == dto.DoctorId); //&&
-                    //x.IsVerified == true);
+                    x.Id == dto.DoctorId &&
+                    x.IsVerified == true);
 
             if (patient == null || doctor == null)
+            {
+                _logger.LogWarning("❌ BookWithPayment failed — Patient or Doctor not found. UserId: {UserId}, DoctorId: {DoctorId}",
+                    userId, dto.DoctorId);
                 throw new Exception("Details not found");
+            }
 
-
-
-            // Slot availability check
             var slotUtcDate = DateTime.SpecifyKind(
-            dto.Date.ToDateTime(TimeOnly.MinValue),
-            DateTimeKind.Utc);
+                dto.Date.ToDateTime(TimeOnly.MinValue),
+                DateTimeKind.Utc);
 
             var slotExists = await _slots.GetAsync(x =>
                 x.DoctorId == dto.DoctorId &&
                 x.HospitalId == dto.HospitalId &&
-                x.AvailableDate == slotUtcDate &&  // 👈 slotUtcDate
+                x.AvailableDate == slotUtcDate &&
                 x.TimeSlot == dto.TimeSlot &&
                 x.IsClosed == false);
 
             if (slotExists == null)
+            {
+                _logger.LogWarning("❌ Slot not available — DoctorId: {DoctorId}, Date: {Date}, TimeSlot: {TimeSlot}",
+                    dto.DoctorId, dto.Date, dto.TimeSlot);
                 throw new Exception("Selected time not available");
+            }
 
             var utcDate = DateTime.SpecifyKind(
                 dto.Date.ToDateTime(TimeOnly.MinValue),
                 DateTimeKind.Utc);
 
-            // Already booked check
-            //var alreadyBooked = await _apps.GetAsync(x =>
-            //    x.DoctorId == dto.DoctorId &&
-            //    x.HospitalId == dto.HospitalId &&
-            //    x.AppointmentDate == utcDate &&
-            //    x.TimeSlot == dto.TimeSlot &&
-            //    x.Status != "Cancelled");
-
-            //if (alreadyBooked != null)
-            //    throw new Exception("Slot already booked for this date");
-
             var alreadyBooked = await _apps.GetAsync(x =>
-            x.PatientId == patient.Id &&  // ✅ Same patient மட்டும்
-            x.DoctorId == dto.DoctorId &&
-            x.HospitalId == dto.HospitalId &&
-            x.AppointmentDate == utcDate &&
-            x.TimeSlot == dto.TimeSlot &&
-            x.Status != "Cancelled");
+                x.PatientId == patient.Id &&
+                x.DoctorId == dto.DoctorId &&
+                x.HospitalId == dto.HospitalId &&
+                x.AppointmentDate == utcDate &&
+                x.TimeSlot == dto.TimeSlot &&
+                x.Status != "Cancelled");
 
             if (alreadyBooked != null)
+            {
+                _logger.LogWarning("❌ Already booked — PatientId: {PatientId}, DoctorId: {DoctorId}, Date: {Date}",
+                    patient.Id, dto.DoctorId, dto.Date);
                 throw new Exception("You have already booked this slot");
+            }
 
-
-            // 1️⃣ Create Appointment
             var appointment = new Appointment
             {
-                HospitalId = dto.HospitalId,   // 👈 dto-ல் இருந்து
+                HospitalId = dto.HospitalId,
                 PatientId = patient.Id,
                 DoctorId = doctor.Id,
                 AppointmentDate = utcDate,
@@ -4670,14 +4737,18 @@ GetPatientHistory(int userId)
             await _apps.AddAsync(appointment);
             await _apps.SaveAsync();
 
-            // 2️⃣ Create Razorpay Order
+            _logger.LogInformation("✅ Appointment created — AppointmentId: {AppointmentId}",
+                appointment.Id);
+
             string orderId = await _paymentService.CreateOrder(
                 10.00m, appointment.Id.ToString());
 
             appointment.RazorpayOrderId = orderId;
             await _apps.SaveAsync();
 
-            // 3️⃣ Save Payment Log
+            _logger.LogInformation("✅ Razorpay order created — OrderId: {OrderId}, AppointmentId: {AppointmentId}",
+                orderId, appointment.Id);
+
             await _paymentlog.AddAsync(new PaymentLog
             {
                 AppointmentId = appointment.Id,
@@ -4686,6 +4757,8 @@ GetPatientHistory(int userId)
                 Status = "Created"
             });
             await _paymentlog.SaveAsync();
+
+            _logger.LogInformation("✅ Payment log saved — OrderId: {OrderId}", orderId);
 
             return new
             {
@@ -4696,52 +4769,136 @@ GetPatientHistory(int userId)
         }
 
         //Cancel Appointment
-        public async Task CancelAppointment(int userId, int appointmentId)
+        public async Task<CancelResultDto> CancelAppointmentAsync(
+    int patientUserId, CancelAppointmentDto dto)
         {
-            // 1️⃣ Patient check
-            var patient = await _p.GetAsync(p => p.UserId == userId)
-                ?? throw new Exception("Patient not found");
+            var appointment = await _apps.Query()
+                .Include(a => a.PaymentLogs)
+                .FirstOrDefaultAsync(a => a.Id == dto.AppointmentId);
 
-            // 2️⃣ Appointment check
-            var appointment = await _apps.GetAsync(a =>
-                a.Id == appointmentId &&
-                a.PatientId == patient.Id)
-                ?? throw new Exception("Appointment not found");
+            if (appointment == null)
+                throw new Exception("Appointment not found.");
 
-            // 3️⃣ Already cancelled check
+            var patient = await _p.Query()
+                .FirstOrDefaultAsync(p => p.UserId == patientUserId);
+
+            if (patient == null || appointment.PatientId != patient.Id)
+                throw new Exception("Unauthorized.");
+
             if (appointment.Status == "Cancelled")
-                throw new Exception("Appointment already cancelled");
+                throw new Exception("Appointment already cancelled.");
 
-            // 4️⃣ 2 hours check
-            var appointmentDateTime = appointment.AppointmentDate;
-            var now = DateTime.UtcNow;
+            var slotStart = ParseSlotStartTime(appointment.AppointmentDate, appointment.TimeSlot);
+            var now = DateTime.Now;
+            var minutesBeforeSlot = (slotStart - now).TotalMinutes;
 
-            if ((appointmentDateTime - now).TotalHours < 2)
-                throw new Exception(
-                    "Cannot cancel — less than 2 hours remaining for appointment");
-
-            // 5️⃣ Cancel appointment
+            // ✅ Step 1: Appointment status update
             appointment.Status = "Cancelled";
-            await _apps.SaveAsync();
 
-            // 6️⃣ Refund — Payment success-ஆ இருந்தா மட்டும்
-            if (appointment.PaymentStatus == "Success" &&
-                !string.IsNullOrEmpty(appointment.RazorpayPaymentId))
+            bool refundInitiated = false;
+            string? refundId = null;
+            string refundStatus = "NA";
+            string? refundFailReason = null;
+
+            if (appointment.IsPaid && !string.IsNullOrEmpty(appointment.RazorpayPaymentId))
             {
-                var refunded = await _paymentService.RefundPayment(
-                    appointment.RazorpayPaymentId, 10.00m);
-
-                // PaymentLog update
-                var log = await _paymentlog.GetAsync(
-                    x => x.AppointmentId == appointmentId);
-
-                if (log != null)
+                if (minutesBeforeSlot >= 15)
                 {
-                    log.Status = refunded ? "Refunded" : "RefundFailed";
-                    await _paymentlog.SaveAsync();
+                    // ✅ Step 2: Refund try — RefundLog இதுக்குள்ளே save ஆகும்
+                    var refundResult = await _paymentService.RefundPayment(
+                        appointment.RazorpayPaymentId,
+                        appointment.Fees,
+                        appointment.Id);
+
+                    refundStatus = refundResult.Status;
+                    refundInitiated = refundResult.Success;
+                    refundFailReason = refundResult.FailureReason;
+
+                    if (refundResult.Success)
+                    {
+                        refundId = appointment.RazorpayPaymentId;
+
+                        // PaymentLog update
+                        var payLog = appointment.PaymentLogs?
+                            .OrderByDescending(l => l.CreatedAt)
+                            .FirstOrDefault();
+
+                        if (payLog != null)
+                            payLog.Status = "Refunded";
+
+                        appointment.PaymentStatus = "Refunded";
+                    }
+                    else
+                    {
+                        appointment.PaymentStatus =
+                            refundResult.Status == "AlreadyRefunded"
+                            ? "Refunded"
+                            : "RefundFailed";
+                    }
+                }
+                else
+                {
+                    // ❌ 15 min-க்கு குள்ள
+                    refundStatus = "NA";
+                    appointment.PaymentStatus = "NoRefund";
                 }
             }
+
+            // ✅ Step 3: Appointment save
+            await _apps.SaveAsync();
+
+            // ✅ Step 4: Cancel Log save
+            var cancelLog = new AppointmentCancelLog
+            {
+                AppointmentId = appointment.Id,
+                CancelledByUserId = patientUserId,
+                CancelledByRole = "Patient",
+                Reason = dto.Reason,
+                CancelledAt = now,
+                RefundInitiated = refundInitiated,
+                RefundId = refundId,
+                RefundStatus = refundStatus,
+                RefundAmount = refundInitiated ? appointment.Fees : null,
+                SlotStartTime = slotStart,
+                MinutesBeforeSlot = minutesBeforeSlot
+            };
+
+            await _cancelLog.AddAsync(cancelLog);
+            await _cancelLog.SaveAsync(); // ✅ Correct
+
+            string message = refundStatus switch
+            {
+                "Success" => "Appointment cancelled. Full refund initiated successfully.",
+                "AlreadyRefunded" => "Appointment cancelled. Refund was already processed.",
+                "Failed" => $"Appointment cancelled. Refund failed: {refundFailReason}",
+                _ => minutesBeforeSlot < 0
+                                        ? "Appointment cancelled after slot time. No refund applicable."
+                                        : "Appointment cancelled. Refund not applicable (within 15 min window)."
+            };
+
+            return new CancelResultDto(
+                true, message, refundInitiated, refundId, refundStatus);
         }
+
+
+        //cancel payment helper
+        private DateTime ParseSlotStartTime(DateTime appointmentDate, string timeSlot)
+        {
+            var startPart = timeSlot.Split('-')[0].Trim();
+            var timeOnly = TimeOnly.ParseExact(
+                startPart, "hh:mmtt",
+                System.Globalization.CultureInfo.InvariantCulture);
+
+            return new DateTime(
+                appointmentDate.Year,
+                appointmentDate.Month,
+                appointmentDate.Day,
+                timeOnly.Hour,
+                timeOnly.Minute,
+                0);
+        }
+
+
 
 
         // =====================================================================
