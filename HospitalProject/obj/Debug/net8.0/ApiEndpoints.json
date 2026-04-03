@@ -300,6 +300,16 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "HospitalProject.Controllers.HealthController",
+    "Method": "Get",
+    "RelativePath": "api/health",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "HospitalProject.Controllers.HospitalController",
     "Method": "UpdateVitalsByAdmin",
     "RelativePath": "api/hospital/admin/appointment/update-vitals",

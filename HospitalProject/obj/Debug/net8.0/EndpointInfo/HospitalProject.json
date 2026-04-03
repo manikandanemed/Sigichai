@@ -500,6 +500,18 @@
         }
       }
     },
+    "/api/health": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/hospital/register/patient": {
       "post": {
         "tags": [
