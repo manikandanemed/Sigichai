@@ -1616,14 +1616,23 @@ namespace HospitalProject.Controllers
         // ❌ CANCEL APPOINTMENT
         // POST /api/hospital/appointment/{appointmentId}/cancel
         // ======================================
-        [Authorize(Roles = "Patient")]
         [HttpPost("appointment/cancel")]
         [Authorize(Roles = "Patient")]
         public async Task<IActionResult> CancelAppointment(CancelAppointmentDto dto)
         {
             try
             {
-                var userId = int.Parse(User.FindFirst("UserId")!.Value);
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                if (userIdClaim == null)
+                    return Unauthorized(new ApiResponse
+                    {
+                        Success = false,
+                        Message = "Unauthorized"
+                    });
+
+                int userId = int.Parse(userIdClaim);
+
                 var result = await _service.CancelAppointmentAsync(userId, dto);
                 return Ok(new ApiResponse
                 {
@@ -1634,14 +1643,63 @@ namespace HospitalProject.Controllers
             }
             catch (Exception ex)
             {
+                // ✅ Inner exception-உம் காட்டும்
+                var fullError = ex.InnerException?.Message ?? ex.Message;
                 return BadRequest(new ApiResponse
                 {
                     Success = false,
-                    Message = ex.Message
+                    Message = fullError
                 });
             }
         }
 
+        //chatgpt
+        //[Authorize(Roles = "Patient")]
+        //[HttpPost("appointment/cancel")]
+        //public async Task<IActionResult> CancelAppointment([FromBody] CancelAppointmentDto dto)
+        //{
+        //    try
+        //    {
+        //        if (dto == null)
+        //        {
+        //            return BadRequest(new ApiResponse
+        //            {
+        //                Success = false,
+        //                Message = "Request body is required"
+        //            });
+        //        }
+
+        //        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+
+        //        if (userIdClaim == null)
+        //        {
+        //            return Unauthorized(new ApiResponse
+        //            {
+        //                Success = false,
+        //                Message = "User not authenticated properly"
+        //            });
+        //        }
+
+        //        var userId = int.Parse(userIdClaim.Value);
+
+        //        var result = await _service.CancelAppointmentAsync(userId, dto);
+
+        //        return Ok(new ApiResponse
+        //        {
+        //            Success = true,
+        //            Message = result.Message,
+        //            Data = result
+        //        });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(new ApiResponse
+        //        {
+        //            Success = false,
+        //            Message = ex.InnerException?.Message ?? ex.Message
+        //        });
+        //    }
+        //}
 
 
         // =====================================================================
@@ -1818,6 +1876,38 @@ namespace HospitalProject.Controllers
                 {
                     Success = true,
                     Data = result
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
+        }
+
+
+        //**********************
+        // Delete account soft
+        //**********************
+
+        [HttpDelete("account/delete")]
+        [Authorize]
+        public async Task<IActionResult> DeleteAccount(DeleteAccountDto dto)
+        {
+            try
+            {
+                var userId = int.Parse(
+                    User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
+                await _service.DeleteAccountAsync(userId, dto);
+
+                return Ok(new ApiResponse
+                {
+                    Success = true,
+                    Message = "Account deleted successfully."
                 });
             }
             catch (Exception ex)

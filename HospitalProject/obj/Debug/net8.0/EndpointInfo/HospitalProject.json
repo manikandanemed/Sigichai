@@ -2229,6 +2229,37 @@
         }
       }
     },
+    "/api/hospital/account/delete": {
+      "delete": {
+        "tags": [
+          "Hospital"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteAccountDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteAccountDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteAccountDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/internal-pharmacy/register": {
       "post": {
         "tags": [
@@ -3691,6 +3722,16 @@
         },
         "additionalProperties": false
       },
+      "DeleteAccountDto": {
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "DispenseItemRequestDto": {
         "type": "object",
         "properties": {
@@ -4818,6 +4859,10 @@
           "timeSlot": {
             "type": "string",
             "nullable": true
+          },
+          "minutesPerPatient": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false

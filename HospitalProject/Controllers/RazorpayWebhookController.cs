@@ -16,15 +16,20 @@ namespace HospitalProject.Controllers
         private readonly ITwilioService _twilio;
         private readonly IConfiguration _config;
         private readonly ILogger<RazorpayWebhookController> _logger;
+        private readonly IMsg91Service _msg91;
+
+
 
         public RazorpayWebhookController(
             ApplicationDbContext db,
+            IMsg91Service msg91,     // ✅ Twilio → MSG91
             ITwilioService twilio,
             IConfiguration config,
             ILogger<RazorpayWebhookController> logger)
         {
             _db = db;
             _twilio = twilio;
+            _msg91 = msg91;
             _config = config;
             _logger = logger;
         }
@@ -65,10 +70,13 @@ namespace HospitalProject.Controllers
                 _logger.LogInformation("💳 Payment captured — OrderId: {OrderId}, PaymentId: {PaymentId}",
                     orderId, paymentId);
 
+                // ✅ Doctor + Hospital include add 
                 var appointment = await _db.Appointments
                     .Include(a => a.Patient)
                         .ThenInclude(p => p.User)
                     .Include(a => a.FamilyMember)
+                    .Include(a => a.Doctor)        // ✅ Add
+                        .ThenInclude(d => d.User)  // ✅ Add
                     .FirstOrDefaultAsync(a => a.RazorpayOrderId == orderId);
 
                 if (appointment == null)
@@ -102,12 +110,36 @@ namespace HospitalProject.Controllers
                     _logger.LogInformation("✅ Appointment updated — TempToken: {TempToken}",
                         appointment.TempToken);
 
-                    await _twilio.SendOtpAsync(
-                        appointment.Patient.User.MobileNumber,
-                        $"Payment Successful! Your Token: {appointment.TempToken}");
+                    // ✅Changed
+                    // ✅ TentativeTime UTC → IST convert
+                    var istZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Kolkata");
 
-                    _logger.LogInformation("✅ WhatsApp sent to: {Mobile}",
-                        appointment.Patient.User.MobileNumber);
+                    var tentativeDisplay = appointment.TentativeTime.HasValue
+                        ? TimeZoneInfo.ConvertTimeFromUtc(
+                            appointment.TentativeTime.Value, istZone)
+                            .ToString("hh:mm tt")
+                        : "Will be updated soon";
+
+                    var dateDisplay = appointment.AppointmentDate
+                        .ToString("yyyy-MM-dd");
+
+                    // Doctor name
+                    var doctorName = appointment.Doctor?.User?.Name ?? "Doctor";
+
+                    // Hospital name — Appointment-ல் Hospital include பண்ணணும்
+                    var hospitalName = "Hospital"; // default
+
+                    // ✅ MSG91 send
+                    await _msg91.SendAppointmentConfirmationAsync(
+                        appointment.Patient.User.MobileNumber,
+                        appointment.TempToken,
+                        tentativeDisplay,
+                        dateDisplay,
+                        doctorName,
+                        hospitalName);
+
+                    _logger.LogInformation("✅ WhatsApp sent via MSG91 — Token: {Token}, Time: {Time}",
+                        appointment.TempToken, tentativeDisplay);
                 }
                 else
                 {

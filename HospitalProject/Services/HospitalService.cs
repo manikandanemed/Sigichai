@@ -371,18 +371,38 @@ namespace HospitalProject.Services
                 throw new Exception("Account not approved by admin");
             }
 
+            //var user = await _u.Query()
+            //    .Include(x => x.Admin)
+            //    .Include(x => x.Doctor)
+            //    .Include(x => x.Patient)
+            //    .FirstOrDefaultAsync(x =>
+            //        x.MobileNumber == d.MobileNumber &&
+            //        x.IsDeleted == false);
+
+            //if (user == null || !BCrypt.Net.BCrypt.Verify(d.Password, user.Password))
+            //{
+            //    _logger.LogWarning("❌ Login failed — Invalid credentials: {Mobile}", d.MobileNumber);
+            //    throw new Exception("Invalid credentials");
+            //}
+
             var user = await _u.Query()
-                .Include(x => x.Admin)
-                .Include(x => x.Doctor)
-                .Include(x => x.Patient)
-                .FirstOrDefaultAsync(x =>
-                    x.MobileNumber == d.MobileNumber &&
-                    x.IsDeleted == false);
+           .Include(x => x.Admin)
+           .Include(x => x.Doctor)
+           .Include(x => x.Patient)
+           .FirstOrDefaultAsync(x =>
+            x.MobileNumber == d.MobileNumber);
 
             if (user == null || !BCrypt.Net.BCrypt.Verify(d.Password, user.Password))
             {
                 _logger.LogWarning("❌ Login failed — Invalid credentials: {Mobile}", d.MobileNumber);
                 throw new Exception("Invalid credentials");
+            }
+
+            // ✅ Deleted account check
+            if (user.IsDeleted)
+            {
+                _logger.LogWarning("❌ Login blocked — Account deleted: {Mobile}", d.MobileNumber);
+                throw new Exception("Account has been deleted.");
             }
 
             _logger.LogInformation("✅ Login success — UserId: {UserId}, Role: {Role}",
@@ -1260,6 +1280,7 @@ namespace HospitalProject.Services
                                     HospitalId = hospital.Id,
                                     AvailableDate = utcDate,
                                     TimeSlot = slotItem.TimeSlot.Trim()
+                                    
                                 };
 
                                 foreach (var specialityId in location.SpecialityIds)
@@ -1290,7 +1311,8 @@ namespace HospitalProject.Services
                             ToDate = slotItem.ToDate,
                             Days = string.Join(",", slotItem.Days),
                             TimeSlot = slotItem.TimeSlot.Trim(),
-                            CreatedAt = DateTime.UtcNow
+                            CreatedAt = DateTime.UtcNow,
+                            MinutesPerPatient = slotItem.MinutesPerPatient
                         });
                     }
 
@@ -2300,22 +2322,29 @@ namespace HospitalProject.Services
             if (app == null)
                 throw new Exception("Appointment not found");
 
-            // 2️⃣ Doctor fetch (from tracking or direct)
+            // 2️⃣ Doctor fetch
             var doctor = app.Doctor;
             if (doctor == null)
                 throw new Exception("Doctor details not found for this appointment");
 
-            // 3️⃣ 🔴 DOCTOR VERIFICATION CHECK (IMPORTANT)
+            // 3️⃣ Doctor verification check
             if (!doctor.IsVerified)
                 throw new Exception("Doctor not verified by medical council");
 
             // 4️⃣ Save consultation details
             app.Diagnosis = d.Diagnosis;
-            app.Prescription = d.Prescription; // Legacy string field
+            app.Prescription = d.Prescription;
             app.Fees = d.Fees;
             app.Status = "Consulted";
 
-            // 5️⃣ Handle Structured Prescription if provided
+            // ✅ ActualStartTime — இல்லன்னா மட்டும் set பண்ணு
+            if (app.ActualStartTime == null)
+                app.ActualStartTime = DateTime.UtcNow;
+
+            // ✅ ActualEndTime — consult முடிஞ்சது
+            app.ActualEndTime = DateTime.UtcNow;
+
+            // 5️⃣ Handle Structured Prescription
             if (d.Medicines != null && d.Medicines.Any())
             {
                 var prescription = new Prescription
@@ -2325,8 +2354,8 @@ namespace HospitalProject.Services
                     PatientId = app.PatientId,
                     Status = "Pending",
                     CreatedAt = DateTime.UtcNow,
-                    ValidityDays = d.ValidityDays,  // 👈 add
-                    MaxRefills = d.MaxRefills       // 👈 add
+                    ValidityDays = d.ValidityDays,
+                    MaxRefills = d.MaxRefills
                 };
 
                 foreach (var item in d.Medicines)
@@ -2343,19 +2372,75 @@ namespace HospitalProject.Services
                 }
 
                 await _prescription.AddAsync(prescription);
-                await _prescription.SaveAsync(); // 👈 முதல்ல save — Id கிடைக்கணும்
+                await _prescription.SaveAsync();
 
-                // ✅ QR Auto-generate
                 await _qrService.GenerateQrForPrescription(prescription.Id);
-
-                // ✅ Route to pharmacies
                 await _routingService.RoutePrescription(prescription.Id);
             }
 
             await _apps.SaveAsync();
+
+            // ✅ Average calculate
+            await UpdateMinutesPerPatientAsync(app.DoctorId, app.HospitalId, app.AppointmentDate);
+
             await _prescription.SaveAsync();
         }
 
+        //Doctor consult helper
+
+        private async Task UpdateMinutesPerPatientAsync(
+            int doctorId, int? hospitalId, DateTime appointmentDate)
+        {
+            var consultedApps = await _apps.Query()
+                .Where(x =>
+                    x.DoctorId == doctorId &&
+                    x.HospitalId == hospitalId &&
+                    x.AppointmentDate == appointmentDate &&
+                    x.ActualStartTime != null &&
+                    x.ActualEndTime != null &&
+                    x.Status == "Consulted")
+                .ToListAsync();
+
+            if (!consultedApps.Any())
+                return;
+
+            var totalMinutes = consultedApps
+                .Sum(x => (x.ActualEndTime!.Value - x.ActualStartTime!.Value).TotalMinutes);
+
+            var avgMinutes = (int)Math.Round(totalMinutes / consultedApps.Count);
+
+            if (avgMinutes < 5)
+                avgMinutes = 5;
+
+            var dayName = appointmentDate.DayOfWeek.ToString();
+            var dateOnly = DateOnly.FromDateTime(appointmentDate);
+
+            var slotGroups = await _doctorSlotGroups.Query()
+                .Where(g =>
+                    g.DoctorId == doctorId &&
+                    g.HospitalId == hospitalId &&
+                    g.FromDate <= dateOnly &&
+                    g.ToDate >= dateOnly &&
+                    g.Days.Contains(dayName))
+                .ToListAsync();
+
+            if (!slotGroups.Any())
+                return;
+
+            foreach (var group in slotGroups)
+            {
+                group.MinutesPerPatient = avgMinutes;
+
+                _logger.LogInformation(
+                    "✅ MinutesPerPatient updated — DoctorId: {DoctorId}, GroupId: {GroupId}, Avg: {Avg} min",
+                    doctorId, group.Id, avgMinutes);
+            }
+
+            await _doctorSlotGroups.SaveAsync();
+        }
+
+        
+        
 
 
 
@@ -4675,8 +4760,8 @@ GetPatientHistory(int userId)
             var doctor = await _d.Query()
                 .Include(d => d.User)
                 .FirstOrDefaultAsync(x =>
-                    x.Id == dto.DoctorId &&
-                    x.IsVerified == true);
+                    x.Id == dto.DoctorId);
+                    //x.IsVerified == true);
 
             if (patient == null || doctor == null)
             {
@@ -4707,6 +4792,102 @@ GetPatientHistory(int userId)
                 dto.Date.ToDateTime(TimeOnly.MinValue),
                 DateTimeKind.Utc);
 
+            // ✅ Booked count
+            var bookedCount = await _apps.Query()
+                .Where(x =>
+                    x.DoctorId == dto.DoctorId &&
+                    x.HospitalId == dto.HospitalId &&
+                    x.AppointmentDate == slotUtcDate &&
+                    x.TimeSlot == dto.TimeSlot &&
+                    x.Status != "Cancelled" &&
+                    x.Status != "PaymentPending" &&
+                    x.Status != "PaymentFailed")
+                .CountAsync();
+
+            // ✅ SlotGroup — MinutesPerPatient எடு
+            var dayName = slotUtcDate.DayOfWeek.ToString();
+            var dateOnly = DateOnly.FromDateTime(slotUtcDate);
+
+            var slotGroup = await _doctorSlotGroups.Query()
+                .FirstOrDefaultAsync(g =>
+                    g.DoctorId == dto.DoctorId &&
+                    g.HospitalId == dto.HospitalId &&
+                    g.FromDate <= dateOnly &&
+                    g.ToDate >= dateOnly &&
+                    g.Days.Contains(dayName));
+
+            // ✅ TentativeTime calculate
+            DateTime? tentativeTime = null;
+
+            if (slotGroup != null)
+            {
+                var istZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Kolkata");
+
+                // SlotStart — IST → UTC convert
+                var slotStartIst = new DateTime(
+                    slotUtcDate.Year,
+                    slotUtcDate.Month,
+                    slotUtcDate.Day,
+                    0, 0, 0,
+                    DateTimeKind.Unspecified);
+
+                var startPart = dto.TimeSlot.Split('-')[0].Trim();
+                var timeOnly = TimeOnly.TryParseExact(startPart, "hh:mm tt",
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    System.Globalization.DateTimeStyles.None, out var t1)
+                    ? t1
+                    : TimeOnly.ParseExact(startPart, "hh:mmtt",
+                        System.Globalization.CultureInfo.InvariantCulture);
+
+                var slotStartLocal = new DateTime(
+                    slotUtcDate.Year,
+                    slotUtcDate.Month,
+                    slotUtcDate.Day,
+                    timeOnly.Hour,
+                    timeOnly.Minute,
+                    0,
+                    DateTimeKind.Unspecified);
+
+                // SlotEnd parse
+                var endPart = dto.TimeSlot.Split('-')[1].Trim();
+                var timeOnlyEnd = TimeOnly.TryParseExact(endPart, "hh:mm tt",
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    System.Globalization.DateTimeStyles.None, out var t2)
+                    ? t2
+                    : TimeOnly.ParseExact(endPart, "hh:mmtt",
+                        System.Globalization.CultureInfo.InvariantCulture);
+
+                var slotEndLocal = new DateTime(
+                    slotUtcDate.Year,
+                    slotUtcDate.Month,
+                    slotUtcDate.Day,
+                    timeOnlyEnd.Hour,
+                    timeOnlyEnd.Minute,
+                    0,
+                    DateTimeKind.Unspecified);
+
+                // IST → UTC
+                var slotStartUtc = TimeZoneInfo.ConvertTimeToUtc(slotStartLocal, istZone);
+                var slotEndUtc = TimeZoneInfo.ConvertTimeToUtc(slotEndLocal, istZone);
+
+                // TentativeTime calculate
+                var calculatedTime = slotStartUtc.AddMinutes(
+                    bookedCount * slotGroup.MinutesPerPatient);
+
+                // ✅ Slot full check
+                if (calculatedTime > slotEndUtc)
+                {
+                    _logger.LogWarning("❌ Slot full — DoctorId: {DoctorId}, Date: {Date}, TimeSlot: {TimeSlot}",
+                        dto.DoctorId, dto.Date, dto.TimeSlot);
+                    throw new Exception("Slot is fully booked");
+                }
+
+                tentativeTime = calculatedTime;
+
+                _logger.LogInformation("✅ TentativeTime: {TentativeTime}", tentativeTime);
+            }
+
+            // ✅ Already booked check
             var alreadyBooked = await _apps.GetAsync(x =>
                 x.PatientId == patient.Id &&
                 x.DoctorId == dto.DoctorId &&
@@ -4731,7 +4912,8 @@ GetPatientHistory(int userId)
                 TimeSlot = dto.TimeSlot.Trim(),
                 Status = "PaymentPending",
                 ReasonForVisit = dto.ReasonForVisit,
-                FamilyMemberId = isFamily ? dto.FamilyMemberId : null
+                FamilyMemberId = isFamily ? dto.FamilyMemberId : null,
+                TentativeTime = tentativeTime   // ✅ UTC
             };
 
             await _apps.AddAsync(appointment);
@@ -4770,7 +4952,7 @@ GetPatientHistory(int userId)
 
         //Cancel Appointment
         public async Task<CancelResultDto> CancelAppointmentAsync(
-    int patientUserId, CancelAppointmentDto dto)
+     int patientUserId, CancelAppointmentDto dto)
         {
             var appointment = await _apps.Query()
                 .Include(a => a.PaymentLogs)
@@ -4789,10 +4971,18 @@ GetPatientHistory(int userId)
                 throw new Exception("Appointment already cancelled.");
 
             var slotStart = ParseSlotStartTime(appointment.AppointmentDate, appointment.TimeSlot);
-            var now = DateTime.Now;
-            var minutesBeforeSlot = (slotStart - now).TotalMinutes;
 
-            // ✅ Step 1: Appointment status update
+            // ✅ SlotStart IST-ல் இருக்கு — UTC-க்கு convert பண்ணு
+            var istZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Kolkata");
+            var slotStartUtc = TimeZoneInfo.ConvertTimeToUtc(
+                DateTime.SpecifyKind(slotStart, DateTimeKind.Unspecified), istZone);
+
+            var now = DateTime.UtcNow;
+            var minutesBeforeSlot = (slotStartUtc - now).TotalMinutes;
+
+            // ✅ Debug — error message-ல் காட்டு
+           // throw new Exception($"SlotStartUTC: {slotStartUtc}, NowUTC: {now}, MinutesBefore: {minutesBeforeSlot}");
+
             appointment.Status = "Cancelled";
 
             bool refundInitiated = false;
@@ -4800,14 +4990,20 @@ GetPatientHistory(int userId)
             string refundStatus = "NA";
             string? refundFailReason = null;
 
-            if (appointment.IsPaid && !string.IsNullOrEmpty(appointment.RazorpayPaymentId))
+            if (!string.IsNullOrEmpty(appointment.RazorpayPaymentId)
+            && appointment.PaymentStatus == "Success")  // ✅ IsPaid பதிலா PaymentStatus check
             {
                 if (minutesBeforeSlot >= 15)
                 {
-                    // ✅ Step 2: Refund try — RefundLog இதுக்குள்ளே save ஆகும்
+                    // ✅ PaymentLog-ல் இருந்து actual amount எடு
+                    var paidAmount = appointment.PaymentLogs?
+                        .Where(l => l.Status == "Captured")
+                        .OrderByDescending(l => l.CreatedAt)
+                        .FirstOrDefault()?.Amount ?? appointment.Fees;
+
                     var refundResult = await _paymentService.RefundPayment(
                         appointment.RazorpayPaymentId,
-                        appointment.Fees,
+                        paidAmount,             // ✅ Correct amount
                         appointment.Id);
 
                     refundStatus = refundResult.Status;
@@ -4818,7 +5014,6 @@ GetPatientHistory(int userId)
                     {
                         refundId = appointment.RazorpayPaymentId;
 
-                        // PaymentLog update
                         var payLog = appointment.PaymentLogs?
                             .OrderByDescending(l => l.CreatedAt)
                             .FirstOrDefault();
@@ -4838,33 +5033,31 @@ GetPatientHistory(int userId)
                 }
                 else
                 {
-                    // ❌ 15 min-க்கு குள்ள
                     refundStatus = "NA";
                     appointment.PaymentStatus = "NoRefund";
                 }
             }
 
-            // ✅ Step 3: Appointment save
             await _apps.SaveAsync();
 
-            // ✅ Step 4: Cancel Log save
+            // ✅ Cancel Log — எல்லாம் UTC
             var cancelLog = new AppointmentCancelLog
             {
                 AppointmentId = appointment.Id,
                 CancelledByUserId = patientUserId,
                 CancelledByRole = "Patient",
                 Reason = dto.Reason,
-                CancelledAt = now,
+                CancelledAt = DateTime.UtcNow,
                 RefundInitiated = refundInitiated,
                 RefundId = refundId,
                 RefundStatus = refundStatus,
                 RefundAmount = refundInitiated ? appointment.Fees : null,
-                SlotStartTime = slotStart,
+                SlotStartTime = slotStartUtc,      // ✅ UTC
                 MinutesBeforeSlot = minutesBeforeSlot
             };
 
             await _cancelLog.AddAsync(cancelLog);
-            await _cancelLog.SaveAsync(); // ✅ Correct
+            await _cancelLog.SaveAsync();
 
             string message = refundStatus switch
             {
@@ -4885,19 +5078,47 @@ GetPatientHistory(int userId)
         private DateTime ParseSlotStartTime(DateTime appointmentDate, string timeSlot)
         {
             var startPart = timeSlot.Split('-')[0].Trim();
-            var timeOnly = TimeOnly.ParseExact(
-                startPart, "hh:mmtt",
-                System.Globalization.CultureInfo.InvariantCulture);
 
+            var timeOnly = TimeOnly.TryParseExact(startPart, "hh:mm tt",
+                System.Globalization.CultureInfo.InvariantCulture,
+                System.Globalization.DateTimeStyles.None, out var t1)
+                ? t1
+                : TimeOnly.ParseExact(startPart, "hh:mmtt",
+                    System.Globalization.CultureInfo.InvariantCulture);
+
+            // ✅ Unspecified — caller IST convert பண்ணும்
             return new DateTime(
                 appointmentDate.Year,
                 appointmentDate.Month,
                 appointmentDate.Day,
                 timeOnly.Hour,
                 timeOnly.Minute,
-                0);
+                0,
+                DateTimeKind.Unspecified);
         }
 
+
+
+        //BookWithPayment helper
+        private DateTime ParseSlotEndTime(DateTime appointmentDate, string timeSlot)
+        {
+            var endPart = timeSlot.Split('-')[1].Trim();
+
+            var timeOnly = TimeOnly.TryParseExact(endPart, "hh:mm tt",
+                System.Globalization.CultureInfo.InvariantCulture,
+                System.Globalization.DateTimeStyles.None, out var t1)
+                ? t1
+                : TimeOnly.ParseExact(endPart, "hh:mmtt",
+                    System.Globalization.CultureInfo.InvariantCulture);
+
+            return DateTime.SpecifyKind(new DateTime(  // ✅ UTC specify
+                appointmentDate.Year,
+                appointmentDate.Month,
+                appointmentDate.Day,
+                timeOnly.Hour,
+                timeOnly.Minute,
+                0), DateTimeKind.Utc);
+        }
 
 
 
@@ -5383,6 +5604,75 @@ GetPatientHistory(int userId)
                     sp.Speciality.Name
                 )).ToList()
             )).ToList();
+        }
+
+        //**********************
+        // Delete account soft
+        //**********************
+        public async Task DeleteAccountAsync(int userId, DeleteAccountDto dto)
+        {
+            // ✅ User fetch
+            var user = await _u.Query()
+                .Include(u => u.Patient)
+                .Include(u => u.Doctor)
+                .Include(u => u.MedicalRep)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user == null)
+                throw new Exception("User not found.");
+
+            // ✅ Password verify
+        
+            if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.Password))
+            {
+                _logger.LogWarning("❌ Delete failed — Invalid password. UserId: {UserId}", userId);
+                throw new Exception("Invalid password.");
+            }
+
+            // ✅ Soft delete
+            user.IsDeleted = true;
+
+            // Role specific soft delete
+            if (user.Patient != null)
+            {
+                // Active appointments check
+                var hasActiveAppointments = await _apps.Query()
+                    .AnyAsync(a =>
+                        a.PatientId == user.Patient.Id &&
+                        (a.Status == "Booked" || a.Status == "PaymentPending"));
+
+                if (hasActiveAppointments)
+                    throw new Exception(
+                        "Cannot delete account. You have active appointments. " +
+                        "Please cancel them first.");
+            }
+
+            if (user.Doctor != null)
+            {
+                // Future appointments check
+                var hasActiveAppointments = await _apps.Query()
+                    .AnyAsync(a =>
+                        a.DoctorId == user.Doctor.Id &&
+                        a.AppointmentDate >= DateTime.UtcNow &&
+                        (a.Status == "Booked" || a.Status == "PaymentPending"));
+
+                if (hasActiveAppointments)
+                    throw new Exception(
+                        "Cannot delete account. You have upcoming appointments. " +
+                        "Please cancel them first.");
+            }
+
+            if (user.MedicalRep != null)
+            {
+                // MedicalRep soft delete
+                user.MedicalRep.IsDeleted = true;
+            }
+
+            await _u.SaveAsync();
+
+            _logger.LogInformation(
+                "✅ Account deleted — UserId: {UserId}, Role: {Role}",
+                userId, user.Role);
         }
 
 

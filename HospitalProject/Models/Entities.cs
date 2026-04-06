@@ -162,6 +162,7 @@ namespace HospitalProject.Models
         public string TimeSlot { get; set; } = string.Empty;
         public bool IsClosed { get; set; }
 
+
         // 👇 add
         public ICollection<DoctorAvailabilitySpeciality> Specialities { get; set; }
             = new List<DoctorAvailabilitySpeciality>();
@@ -261,6 +262,11 @@ namespace HospitalProject.Models
         // Appointment class-ல் இருக்க existing properties கீழே add பண்ணுங்க
         public AppointmentCancelLog? CancelLog { get; set; }
         public ICollection<RefundLog> RefundLogs { get; set; } = new List<RefundLog>();
+
+        public DateTime? TentativeTime { get; set; }
+        public DateTime? ActualStartTime { get; set; }
+        public DateTime? ActualEndTime { get; set; }
+
     }
 
 
@@ -939,6 +945,7 @@ namespace HospitalProject.Models
         public string TimeSlot { get; set; } = string.Empty;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public int MinutesPerPatient { get; set; } = 10; // Default 10 min
     }
 
 
@@ -949,6 +956,7 @@ namespace HospitalProject.Models
         public string WhatsAppUrl { get; set; }
         public string SenderNumber { get; set; }
         public string TemplateName { get; set; }
+        public string AppointmentTemplateName { get; set; }
     }
 
 
@@ -1007,7 +1015,7 @@ namespace HospitalProject.Models
         public string? FailureReason { get; set; }
         public string? RazorpayResponse { get; set; }
 
-        public DateTime InitiatedAt { get; set; } = DateTime.Now;
+        public DateTime InitiatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? CompletedAt { get; set; }
     }
 
@@ -1023,7 +1031,7 @@ namespace HospitalProject.Models
 
         public string? Reason { get; set; }
 
-        public DateTime CancelledAt { get; set; } = DateTime.Now;
+        public DateTime CancelledAt { get; set; } = DateTime.UtcNow;
 
         public bool RefundInitiated { get; set; } = false;
         public string? RefundId { get; set; }

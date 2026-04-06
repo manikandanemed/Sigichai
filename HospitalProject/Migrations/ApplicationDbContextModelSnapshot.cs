@@ -75,6 +75,12 @@ namespace HospitalProject.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime?>("ActualEndTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ActualStartTime")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<DateTime>("AppointmentDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -146,6 +152,9 @@ namespace HospitalProject.Migrations
 
                     b.Property<decimal?>("Temperature")
                         .HasColumnType("numeric");
+
+                    b.Property<DateTime?>("TentativeTime")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("TimeSlot")
                         .IsRequired()
@@ -553,6 +562,9 @@ namespace HospitalProject.Migrations
                         .HasColumnType("date");
 
                     b.Property<int>("HospitalId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MinutesPerPatient")
                         .HasColumnType("integer");
 
                     b.Property<int>("SpecialityId")

@@ -1,5 +1,4 @@
-﻿using HospitalProject.Data;
-using HospitalProject.Models;
+﻿using HospitalProject.Models;
 using HospitalProject.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Razorpay.Api;
@@ -39,12 +38,12 @@ namespace HospitalProject.Services
                 _config["Razorpay:Secret"]);
 
             Dictionary<string, object> options = new()
-        {
-            { "amount",          (int)(amount * 100) },
-            { "currency",        "INR"               },
-            { "receipt",         receiptId           },
-            { "payment_capture", 1                   }
-        };
+            {
+                { "amount",          (int)(amount * 100) },
+                { "currency",        "INR"               },
+                { "receipt",         receiptId           },
+                { "payment_capture", 1                   }
+            };
 
             Order order = client.Order.Create(options);
             return order["id"].ToString();
@@ -67,7 +66,7 @@ namespace HospitalProject.Services
                     RefundAmount = amount,
                     Status = "AlreadyRefunded",
                     FailureReason = "Refund already processed for this appointment.",
-                    InitiatedAt = DateTime.Now
+                    InitiatedAt = DateTime.UtcNow  // ✅ UTC
                 };
                 await _refundLog.AddAsync(dupLog);
                 await _refundLog.SaveAsync();
@@ -86,7 +85,7 @@ namespace HospitalProject.Services
                 RazorpayPaymentId = paymentId,
                 RefundAmount = amount,
                 Status = "Initiated",
-                InitiatedAt = DateTime.Now
+                InitiatedAt = DateTime.UtcNow  // ✅ UTC
             };
             await _refundLog.AddAsync(log);
             await _refundLog.SaveAsync();
@@ -98,9 +97,9 @@ namespace HospitalProject.Services
                     _config["Razorpay:Secret"]);
 
                 Dictionary<string, object> options = new()
-            {
-                { "amount", (int)(amount * 100) }
-            };
+                {
+                    { "amount", (int)(amount * 100) }
+                };
 
                 var payment = client.Payment.Fetch(paymentId);
                 var refund = payment.Refund(options);
@@ -108,7 +107,7 @@ namespace HospitalProject.Services
 
                 log.Status = "Success";
                 log.RazorpayResponse = rawResp;
-                log.CompletedAt = DateTime.Now;
+                log.CompletedAt = DateTime.UtcNow;  // ✅ UTC
                 await _refundLog.SaveAsync();
 
                 return new RefundResult(true, "Success", null, rawResp);
@@ -117,7 +116,7 @@ namespace HospitalProject.Services
             {
                 log.Status = "Failed";
                 log.FailureReason = ex.Message;
-                log.CompletedAt = DateTime.Now;
+                log.CompletedAt = DateTime.UtcNow;  // ✅ UTC
                 await _refundLog.SaveAsync();
 
                 return new RefundResult(false, "Failed", ex.Message, null);

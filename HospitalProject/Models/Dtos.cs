@@ -1347,7 +1347,8 @@
     DateOnly FromDate,
     DateOnly ToDate,
     List<string> Days,  // ["Monday", "Tuesday", "Wednesday"]
-    string TimeSlot
+    string TimeSlot,
+    int MinutesPerPatient
     );
 
     public record MedicalRepSlotViewDto(
@@ -1405,6 +1406,11 @@
         string RefundStatus
     );
 
+
+
+    public record DeleteAccountDto(
+    string Password  // Confirm password
+);
 
 
 

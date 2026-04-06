@@ -311,6 +311,22 @@
   },
   {
     "ContainingType": "HospitalProject.Controllers.HospitalController",
+    "Method": "DeleteAccount",
+    "RelativePath": "api/hospital/account/delete",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "HospitalProject.Models.DeleteAccountDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HospitalProject.Controllers.HospitalController",
     "Method": "UpdateVitalsByAdmin",
     "RelativePath": "api/hospital/admin/appointment/update-vitals",
     "HttpMethod": "POST",
