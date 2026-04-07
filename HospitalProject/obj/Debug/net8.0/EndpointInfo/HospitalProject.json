@@ -2183,6 +2183,48 @@
         }
       }
     },
+    "/api/hospital/doctor/{doctorId}/slots/partial": {
+      "delete": {
+        "tags": [
+          "Hospital"
+        ],
+        "parameters": [
+          {
+            "name": "doctorId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SlotPartialDeleteDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SlotPartialDeleteDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SlotPartialDeleteDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/hospital/doctor-availability": {
       "get": {
         "tags": [
@@ -2249,6 +2291,90 @@
             "application/*+json": {
               "schema": {
                 "$ref": "#/components/schemas/DeleteAccountDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/hospital/doctor/{doctorId}/location/select": {
+      "post": {
+        "tags": [
+          "Hospital"
+        ],
+        "parameters": [
+          {
+            "name": "doctorId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HospitalSelectDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HospitalSelectDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/HospitalSelectDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/hospital/doctor/{doctorId}/slots/new": {
+      "post": {
+        "tags": [
+          "Hospital"
+        ],
+        "parameters": [
+          {
+            "name": "doctorId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SlotCreateNewDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SlotCreateNewDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SlotCreateNewDto"
               }
             }
           }
@@ -4264,6 +4390,40 @@
         },
         "additionalProperties": false
       },
+      "HospitalSelectDto": {
+        "type": "object",
+        "properties": {
+          "placeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "formattedAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "latitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "longitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "placeId": {
+            "type": "string",
+            "nullable": true
+          },
+          "state": {
+            "type": "string",
+            "nullable": true
+          },
+          "area": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "HospitalSetupDto": {
         "type": "object",
         "properties": {
@@ -4838,6 +4998,31 @@
         },
         "additionalProperties": false
       },
+      "SlotCreateNewDto": {
+        "type": "object",
+        "properties": {
+          "hospitalId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "specialityIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "slots": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SlotItemDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "SlotItemDto": {
         "type": "object",
         "properties": {
@@ -4863,6 +5048,28 @@
           "minutesPerPatient": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SlotPartialDeleteDto": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "hospitalId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "newStartTime": {
+            "type": "string",
+            "nullable": true
+          },
+          "newEndTime": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

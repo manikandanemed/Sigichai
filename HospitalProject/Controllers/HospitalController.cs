@@ -1543,7 +1543,8 @@ namespace HospitalProject.Controllers
                 return Ok(new ApiResponse
                 {
                     Success = true,
-                    Data = result
+                    Message = "Hospitals fetched successfully",
+                    Data = result  // ✅ TotalPages, TotalCount எல்லாம் இருக்கும்
                 });
             }
             catch (Exception ex)
@@ -1859,6 +1860,32 @@ namespace HospitalProject.Controllers
         }
 
 
+        [Authorize(Roles = "Doctor,Admin")]
+        [HttpDelete("doctor/{doctorId}/slots/partial")]
+        public async Task<IActionResult> DeletePartialSlot(
+    int doctorId,
+    SlotPartialDeleteDto dto)
+        {
+            try
+            {
+                await _service.DeletePartialSlotAsync(doctorId, dto);
+                return Ok(new ApiResponse
+                {
+                    Success = true,
+                    Message = "Slot updated successfully."
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
+        }
+
+
         [Authorize(Roles = "Patient")]
         [HttpGet("doctor-availability")]
         public async Task<IActionResult> GetDoctorAvailability(
@@ -1920,6 +1947,59 @@ namespace HospitalProject.Controllers
             }
         }
 
+
+        // API 1 — Hospital Select/Create
+        [Authorize(Roles = "Doctor,Admin")]
+        [HttpPost("doctor/{doctorId}/location/select")]
+        public async Task<IActionResult> SelectHospital(
+            int doctorId,
+            [FromBody] HospitalSelectDto dto)
+        {
+            try
+            {
+                var hospitalId = await _service.SelectOrCreateHospitalAsync(doctorId, dto);
+                return Ok(new ApiResponse
+                {
+                    Success = true,
+                    Message = "Hospital selected successfully",
+                    Data = new { hospitalId }
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
+        }
+
+        // API 2 — Slot Create
+        [Authorize(Roles = "Doctor,Admin")]
+        [HttpPost("doctor/{doctorId}/slots/new")]
+        public async Task<IActionResult> AddDoctorSlotNew(
+            int doctorId,
+            [FromBody] SlotCreateNewDto dto)
+        {
+            try
+            {
+                await _service.AddDoctorSlotNew(doctorId, dto);
+                return Ok(new ApiResponse
+                {
+                    Success = true,
+                    Message = "Slots added successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
+        }
 
 
 

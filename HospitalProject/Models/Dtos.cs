@@ -769,6 +769,14 @@
     List<NearbyDoctorDto> Doctors  // 👈 add
 );
 
+    public record PaginatedResult<T>(
+    List<T> Items,
+    int TotalCount,
+    int TotalPages,
+    int CurrentPage,
+    int PageSize
+);
+
 
     public record NearbyDoctorDto(
     int DoctorId,
@@ -1410,7 +1418,39 @@
 
     public record DeleteAccountDto(
     string Password  // Confirm password
-);
+    );
+
+
+    public record SlotPartialDeleteDto(
+    DateOnly Date,        //  date
+    int HospitalId,
+    string NewStartTime,  //  start time — "06:00PM"
+    string NewEndTime     //  end time — "07:00PM"
+    );
+
+
+    // API 1 — Hospital Select DTO
+    public record HospitalSelectDto(
+        string PlaceName,
+        string FormattedAddress,
+        double Latitude,
+        double Longitude,
+        string PlaceId,
+        string State,
+        string Area
+    );
+
+    // API 2 — Slot Create DTO
+    public record SlotCreateNewDto(
+        int HospitalId,
+        List<int> SpecialityIds,
+        List<SlotItemDto> Slots
+    );
+
+
+
+
+
 
 
 
