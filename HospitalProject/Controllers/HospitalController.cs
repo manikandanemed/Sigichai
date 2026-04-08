@@ -1544,7 +1544,7 @@ namespace HospitalProject.Controllers
                 {
                     Success = true,
                     Message = "Hospitals fetched successfully",
-                    Data = result  // ✅ TotalPages, TotalCount எல்லாம் இருக்கும்
+                    Data = result  // ✅ TotalPages, TotalCount 
                 });
             }
             catch (Exception ex)
@@ -1989,6 +1989,30 @@ namespace HospitalProject.Controllers
                 {
                     Success = true,
                     Message = "Slots added successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
+        }
+
+        [Authorize(Roles = "Doctor")]
+        [HttpDelete("doctor/{doctorId}/assigned-hospital/{hospitalId}")]
+        public async Task<IActionResult> RemoveDoctorHospital(int doctorId, int hospitalId)
+        {
+            try
+            {
+                await _service.RemoveDoctorHospitalAsync(doctorId, hospitalId);
+
+                return Ok(new ApiResponse
+                {
+                    Success = true,
+                    Message = "Hospital removed successfully"
                 });
             }
             catch (Exception ex)

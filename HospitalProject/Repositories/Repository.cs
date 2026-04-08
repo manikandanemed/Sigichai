@@ -16,6 +16,8 @@ namespace HospitalProject.Repositories
         Task<T?> GetAsync(Expression<Func<T, bool>> predicate);
 
         Task AddRangeAsync(IEnumerable<T> entities);
+
+
     }
 
     // =========================

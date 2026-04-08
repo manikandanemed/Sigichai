@@ -207,9 +207,9 @@
     int AppointmentId,
     string TempToken,
     string DoctorName,
-    string Specialization,
+    //string Specialization,
     string HospitalName,
-    DateTime Date,
+    DateOnly Date,
     string TimeSlot,
     string Status,
     string? FamilyMemberName   // ⭐ ADD

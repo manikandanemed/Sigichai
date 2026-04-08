@@ -426,6 +426,32 @@ namespace HospitalProject.Migrations
                     b.ToTable("DoctorDocuments");
                 });
 
+            modelBuilder.Entity("HospitalProject.Models.DoctorHospital", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("DoctorId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("HospitalId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DoctorId");
+
+                    b.HasIndex("HospitalId");
+
+                    b.ToTable("DoctorHospitals");
+                });
+
             modelBuilder.Entity("HospitalProject.Models.DoctorProfile", b =>
                 {
                     b.Property<int>("Id")
@@ -2141,6 +2167,25 @@ namespace HospitalProject.Migrations
                         .IsRequired();
 
                     b.Navigation("Doctor");
+                });
+
+            modelBuilder.Entity("HospitalProject.Models.DoctorHospital", b =>
+                {
+                    b.HasOne("HospitalProject.Models.Doctor", "Doctor")
+                        .WithMany()
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HospitalProject.Models.Hospital", "Hospital")
+                        .WithMany()
+                        .HasForeignKey("HospitalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Doctor");
+
+                    b.Navigation("Hospital");
                 });
 
             modelBuilder.Entity("HospitalProject.Models.DoctorProfile", b =>

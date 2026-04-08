@@ -84,6 +84,7 @@ namespace HospitalProject.Data
 
         public DbSet<RefundLog> RefundLogs { get; set; }
         public DbSet<AppointmentCancelLog> AppointmentCancelLogs { get; set; }
+        public DbSet<DoctorHospital> DoctorHospitals { get; set; }
 
 
 
@@ -179,11 +180,19 @@ namespace HospitalProject.Data
             //    .OnDelete(DeleteBehavior.Restrict);
 
             // Hospital ↔ Appointment
+            //modelBuilder.Entity<Appointment>()
+            //    .HasOne<Hospital>()
+            //    .WithMany()
+            //    .HasForeignKey(a => a.HospitalId)
+            //    .OnDelete(DeleteBehavior.Restrict);
+//temp chat
             modelBuilder.Entity<Appointment>()
-                .HasOne<Hospital>()
-                .WithMany()
-                .HasForeignKey(a => a.HospitalId)
-                .OnDelete(DeleteBehavior.Restrict);
+    .HasOne(a => a.Hospital)
+    .WithMany()
+    .HasForeignKey(a => a.HospitalId)
+    .OnDelete(DeleteBehavior.Restrict);
+            //temp chat
+
 
 
             modelBuilder.Entity<DoctorProfile>()

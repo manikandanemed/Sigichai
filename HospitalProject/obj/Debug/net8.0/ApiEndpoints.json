@@ -596,6 +596,27 @@
   },
   {
     "ContainingType": "HospitalProject.Controllers.HospitalController",
+    "Method": "RemoveDoctorHospital",
+    "RelativePath": "api/hospital/doctor/{doctorId}/assigned-hospital/{hospitalId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "doctorId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "hospitalId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HospitalProject.Controllers.HospitalController",
     "Method": "SelectHospital",
     "RelativePath": "api/hospital/doctor/{doctorId}/location/select",
     "HttpMethod": "POST",

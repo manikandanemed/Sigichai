@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HospitalProject.Models
 {
@@ -243,6 +244,13 @@ namespace HospitalProject.Models
         public int? FamilyMemberId { get; set; }
         public FamilyMember? FamilyMember { get; set; }
         public int? HospitalId { get; set; }
+
+        //temp chat
+
+        [ForeignKey("HospitalId")]
+        public Hospital? Hospital { get; set; }
+        //temp chat
+
 
         public string? ReasonForVisit { get; set; }   // 👈 ADD
 
@@ -1042,5 +1050,19 @@ namespace HospitalProject.Models
 
         public DateTime SlotStartTime { get; set; }
         public double MinutesBeforeSlot { get; set; }
+    }
+
+
+    public class DoctorHospital
+    {
+        public int Id { get; set; }
+
+        public int DoctorId { get; set; }
+        public Doctor Doctor { get; set; } = null!;
+
+        public int HospitalId { get; set; }
+        public Hospital Hospital { get; set; } = null!;
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }
