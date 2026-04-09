@@ -792,20 +792,30 @@ namespace HospitalProject.Controllers
 
         [Authorize(Roles = "Doctor")]
         [HttpPost("doctor/staff")]
-        public async Task<IActionResult> CreateStaff(
-    StaffCreateDto dto)
+        public async Task<IActionResult> CreateStaff(StaffCreateDto dto)
         {
-            int userId = int.Parse(
-                User.FindFirstValue(ClaimTypes.NameIdentifier)!
-            );
-
-            await _service.CreateStaff(userId, dto);
-
-            return Ok(new ApiResponse
+            try
             {
-                Success = true,
-                Message = "Staff created & OTP sent"
-            });
+                int userId = int.Parse(
+                    User.FindFirstValue(ClaimTypes.NameIdentifier)!
+                );
+
+                await _service.CreateStaff(userId, dto);
+
+                return Ok(new ApiResponse
+                {
+                    Success = true,
+                    Message = $"{dto.StaffRole} created successfully & OTP sent"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
         }
 
 
@@ -815,7 +825,7 @@ namespace HospitalProject.Controllers
 
 
 
-        [Authorize(Roles = "Staff")]
+        [Authorize(Roles = "Admin,Staff,Nurse")]
         [HttpGet("staff/queue")]
         public async Task<IActionResult> GetStaffQueue(
     DateOnly date)
@@ -2025,6 +2035,113 @@ namespace HospitalProject.Controllers
             }
         }
 
+       
+
+        //// =====================================================================
+        //// SWITCH ROLE- UI dropdown availability roles
+        //// =====================================================================
+        //[Authorize]
+        //[HttpGet("available-roles")]
+        //public async Task<IActionResult> GetAvailableRoles()
+        //{
+        //    try
+        //    {
+        //        int userId = int.Parse(
+        //            User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        //        var result = await _service.GetAvailableRoles(userId);
+
+        //        var currentRole = User.FindFirstValue(ClaimTypes.Role);
+
+        //        return Ok(new ApiResponse
+        //        {
+        //            Success = true,
+        //            Message = "Available roles fetched successfully",
+        //            Data = new
+        //            {
+        //                currentRole = currentRole,
+        //                availableRoles = ((dynamic)result).availableRoles
+        //            }
+        //        });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(new ApiResponse
+        //        {
+        //            Success = false,
+        //            Message = ex.Message,
+        //            Data = null
+        //        });
+        //    }
+        //}
+
+
+
+        //// =====================================================================
+        //// SWITCH ROLE
+        //// =====================================================================
+
+        //[Authorize]
+        //[HttpPost("switch-role")]
+        //public async Task<IActionResult> SwitchRole([FromBody] SwitchRoleDto dto)
+        //{
+        //    try
+        //    {
+        //        int userId = int.Parse(
+        //            User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        //        var token = await _service.SwitchRole(userId, dto.TargetRole);
+
+        //        return Ok(new ApiResponse
+        //        {
+        //            Success = true,
+        //            Message = $"Switched to {dto.TargetRole} successfully",
+        //            Data = new
+        //            {
+        //                token = token,
+        //                activeRole = dto.TargetRole
+        //            }
+        //        });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(new ApiResponse
+        //        {
+        //            Success = false,
+        //            Message = ex.Message,
+        //            Data = null
+        //        });
+        //    }
+        //}
+
+        //// =====================================================================
+        //// SWITCH ROLE-current role view
+        //// =====================================================================
+
+        //[Authorize]
+        //[HttpGet("current-role")]
+        //public IActionResult GetCurrentRole()
+        //{
+        //    var role = User.FindFirstValue(ClaimTypes.Role);
+        //    var originalRole = User.FindFirst("OriginalRole")?.Value;
+        //    var doctorId = User.FindFirst("DoctorId")?.Value;
+        //    var staffId = User.FindFirst("StaffId")?.Value;
+
+        //    return Ok(new ApiResponse
+        //    {
+        //        Success = true,
+        //        Message = "Current role fetched successfully",
+        //        Data = new
+        //        {
+        //            activeRole = role,
+        //            originalRole = originalRole,
+        //            doctorId = doctorId,
+        //            staffId = staffId
+        //        }
+        //    });
+        //}
+
+        
 
 
 

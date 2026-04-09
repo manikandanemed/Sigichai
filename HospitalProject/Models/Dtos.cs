@@ -351,8 +351,8 @@
     public record StaffCreateDto(
     string Name,
     string Mobile,
-    string StaffRole   // Nurse / Reception
-);
+    string StaffRole   // Admin / Nurse / Reception
+    );
 
     public record StaffQueueDto(
         int AppointmentId,
@@ -1446,6 +1446,19 @@
         List<int> SpecialityIds,
         List<SlotItemDto> Slots
     );
+
+//claude
+    //    public record SwitchRoleDto(
+    //    string TargetRole,
+    //    string CurrentRole  // ✅ Frontend current role pass பண்ணும்
+    //);
+
+//chatgpt
+    public class SwitchRoleDto
+    {
+        public string TargetRole { get; set; } = string.Empty;
+    }
+
 
 
 

@@ -501,6 +501,16 @@
   },
   {
     "ContainingType": "HospitalProject.Controllers.HospitalController",
+    "Method": "GetAvailableRoles",
+    "RelativePath": "api/hospital/available-roles",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HospitalProject.Controllers.HospitalController",
     "Method": "BookFamily",
     "RelativePath": "api/hospital/book/family",
     "HttpMethod": "POST",
@@ -561,6 +571,16 @@
         "IsRequired": true
       }
     ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HospitalProject.Controllers.HospitalController",
+    "Method": "GetCurrentRole",
+    "RelativePath": "api/hospital/current-role",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
     "ReturnTypes": []
   },
   {
@@ -1438,6 +1458,22 @@
         "Name": "date",
         "Type": "System.DateOnly",
         "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HospitalProject.Controllers.HospitalController",
+    "Method": "SwitchRole",
+    "RelativePath": "api/hospital/switch-role",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "HospitalProject.Models.SwitchRoleDto",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []

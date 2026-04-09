@@ -522,17 +522,90 @@ namespace HospitalProject.Services
         // Verify Otp
         //----------------------
 
+        //       public async Task<(
+        //    string Token,
+        //    string Role,
+        //    string Name,
+        //    int UserId,
+        //    int? AdminId,
+        //    int? DoctorId,
+        //    int? PatientId,
+        //    int? MedicalRepId,
+        //    int? InternalPharmacyStaffId
+        //)> VerifyOtp(VerifyOtpDto d)
+        //       {
+        //           var rec = await _otp.GetAsync(x =>
+        //               x.MobileNumber == d.MobileNumber &&
+        //               x.OtpCode == d.Otp &&
+        //               x.Purpose == "LOGIN" &&
+        //               x.IsUsed == false &&
+        //               x.Expiry > DateTime.UtcNow
+        //           );
+
+        //           if (rec == null)
+        //               throw new Exception("Invalid or expired OTP");
+
+        //           // ✅ Login initiated-ஆ check
+        //           if (!rec.IsLoginInitiated)
+        //               throw new Exception("Please login first");
+
+
+        //           rec.IsUsed = true;
+        //           await _otp.SaveAsync();
+
+        //           var user = await _u.Query()
+        //               .Include(x => x.Admin)
+        //               .Include(x => x.Doctor)
+        //               .Include(x => x.Patient)
+        //               .Include(x => x.MedicalRep)
+        //               .FirstOrDefaultAsync(x => x.Id == rec.UserId);
+
+        //           if (user == null)
+        //               throw new Exception("User not found");
+
+        //           if (user.IsDeleted)
+        //               throw new Exception("User account is deactivated");
+
+        //           var token = GenerateJwt(user);
+
+        //           // 🔥 Fetch approved request Id
+        //           int? staffRequestId = null;
+
+        //           if (user.Role == "InternalPharmacyStaff")
+        //           {
+        //               var request = await _staffRequest.GetAsync(x =>
+        //                   x.MobileNumber == user.MobileNumber &&
+        //                   x.Status == "Approved");
+
+        //               staffRequestId = request?.Id;
+        //           }
+
+        //           return (
+        //               token,
+        //               user.Role,
+        //               user.Name,
+        //               user.Id,
+        //               user.Admin?.Id,
+        //               user.Doctor?.Id,
+        //               user.Patient?.Id,
+        //               user.MedicalRep?.Id,
+        //               staffRequestId   // ✅ Now request table Id
+        //           );
+        //       }
+
+
         public async Task<(
-     string Token,
-     string Role,
-     string Name,
-     int UserId,
-     int? AdminId,
-     int? DoctorId,
-     int? PatientId,
-     int? MedicalRepId,
-     int? InternalPharmacyStaffId
- )> VerifyOtp(VerifyOtpDto d)
+    string Token,
+    string Role,
+    string Name,
+    int UserId,
+    int? AdminId,
+    int? DoctorId,
+    int? PatientId,
+    int? MedicalRepId,
+    int? InternalPharmacyStaffId,
+    int? StaffId          // ✅ NEW — DoctorStaff.Id
+)> VerifyOtp(VerifyOtpDto d)
         {
             var rec = await _otp.GetAsync(x =>
                 x.MobileNumber == d.MobileNumber &&
@@ -545,10 +618,8 @@ namespace HospitalProject.Services
             if (rec == null)
                 throw new Exception("Invalid or expired OTP");
 
-            // ✅ Login initiated-ஆ check
             if (!rec.IsLoginInitiated)
                 throw new Exception("Please login first");
-
 
             rec.IsUsed = true;
             await _otp.SaveAsync();
@@ -566,18 +637,26 @@ namespace HospitalProject.Services
             if (user.IsDeleted)
                 throw new Exception("User account is deactivated");
 
-            var token = GenerateJwt(user);
+            var token = await GenerateJwtAsync(user);
 
-            // 🔥 Fetch approved request Id
+            // InternalPharmacyStaff Id
             int? staffRequestId = null;
-
             if (user.Role == "InternalPharmacyStaff")
             {
                 var request = await _staffRequest.GetAsync(x =>
                     x.MobileNumber == user.MobileNumber &&
                     x.Status == "Approved");
-
                 staffRequestId = request?.Id;
+            }
+
+            // ✅ Staff / Admin (DoctorStaff) — DoctorStaff.Id fetch
+            int? doctorStaffId = null;
+            if (user.Role == "Staff" ||
+                (user.Role == "Admin" && user.Admin == null)) // Doctor clinic admin
+            {
+                var doctorStaff = await _doctorStaff.GetAsync(
+                    x => x.UserId == user.Id);
+                doctorStaffId = doctorStaff?.Id;
             }
 
             return (
@@ -589,7 +668,8 @@ namespace HospitalProject.Services
                 user.Doctor?.Id,
                 user.Patient?.Id,
                 user.MedicalRep?.Id,
-                staffRequestId   // ✅ Now request table Id
+                staffRequestId,
+                doctorStaffId    // ✅ StaffId
             );
         }
 
@@ -1556,51 +1636,96 @@ namespace HospitalProject.Services
         // ======================================
 
         //Doctor create staff
+        // Doctor create staff (Admin / Nurse / Reception)
         public async Task CreateStaff(
-    int doctorUserId,
-    StaffCreateDto dto)
+            int doctorUserId,
+            StaffCreateDto dto)
         {
+            // 1️⃣ StaffRole validate
+            var allowedRoles = new[] { "Admin", "Nurse", "Reception" };
+            if (!allowedRoles.Contains(dto.StaffRole))
+                throw new Exception("Invalid StaffRole. Allowed: Admin, Nurse, Reception");
+
+            // 2️⃣ Doctor check
             var doctor = await _d.GetAsync(d => d.UserId == doctorUserId);
             if (doctor == null)
                 throw new Exception("Doctor not found");
 
+            // 3️⃣ Duplicate mobile check
             if (await _u.GetAsync(x => x.MobileNumber == dto.Mobile) != null)
                 throw new Exception("Mobile already exists");
 
-            // Create user
+            // 4️⃣ Role & Password — StaffRole based
+            string userRole;
+            string tempPassword;
+
+            //if (dto.StaffRole == "Admin")
+            //{
+            //    userRole = "Admin";
+            //    // 6 digit secure temp password
+            //    tempPassword = Random.Shared.Next(100000, 999999).ToString();
+            //}
+            //else
+            //{
+            //    userRole = "Staff";
+            //    tempPassword = Random.Shared.Next(100000, 999999).ToString();
+            //}
+
+            //  REPLACE:
+            userRole = dto.StaffRole == "Admin" ? "Admin" : "Staff";
+            tempPassword = "123456";
+
+            // 5️⃣ Create User
             var user = new User
             {
-                Name = dto.Name,
-                MobileNumber = dto.Mobile,
-                Password = BCrypt.Net.BCrypt.HashPassword("1234"), // temp
-                Role = "Staff"
+                Name = dto.Name.Trim(),
+                MobileNumber = dto.Mobile.Trim(),
+                Password = BCrypt.Net.BCrypt.HashPassword(tempPassword),
+                Role = userRole
             };
 
             await _u.AddAsync(user);
             await _u.SaveAsync();
 
-            // Link staff to doctor
+            // 6️⃣ Link to Doctor via DoctorStaff
             await _doctorStaff.AddAsync(new DoctorStaff
             {
                 DoctorId = doctor.Id,
                 UserId = user.Id,
-                StaffRole = dto.StaffRole
+                StaffRole = dto.StaffRole   // "Admin" / "Nurse" / "Reception"
             });
 
             await _doctorStaff.SaveAsync();
 
-            // Send OTP for first login
-            var otp = new Random().Next(1000, 9999).ToString();
+            // 7️⃣ OTP for first login
+            var otp = Random.Shared.Next(100000, 999999).ToString();
 
             await _otp.AddAsync(new OtpStore
             {
-                MobileNumber = dto.Mobile,
+                UserId = user.Id,
+                MobileNumber = dto.Mobile.Trim(),
                 OtpCode = otp,
-                Expiry = DateTime.UtcNow.AddMinutes(5)
+                OtpType = "SMS",
+                Purpose = "LOGIN",
+                CreatedTime = DateTime.UtcNow,
+                Expiry = DateTime.UtcNow.AddMinutes(5),
+                IsUsed = false,
+                IsSent = true,
+                IsLoginInitiated = true
             });
 
             await _otp.SaveAsync();
-            await _twilio.SendOtpAsync(dto.Mobile, otp);
+
+            // 8️⃣ MSG91 SMS — role based message
+            //var message = dto.StaffRole == "Admin"
+            //    ? $"You are added as Clinic Admin.\nTemp Password: {tempPassword}\nOTP: {otp}\nPlease login and change your password."
+            //    : $"You are added as {dto.StaffRole}.\nTemp Password: {tempPassword}\nOTP: {otp}\nPlease login to continue.";
+
+            await _msg91.SendOtpAsync(dto.Mobile.Trim(), otp);
+
+            _logger.LogInformation(
+                "✅ Staff created — DoctorId: {DoctorId}, Role: {Role}, Mobile: {Mobile}",
+                doctor.Id, dto.StaffRole, dto.Mobile);
         }
 
         // Staff see quee for doctors assigned staffs
@@ -2182,95 +2307,159 @@ GetPatientHistory(int userId)
 
 
 
-        private string GenerateJwt(User u)
+        //    private string GenerateJwt(User u)
+        //    {
+        //        var key = new SymmetricSecurityKey(
+        //            Encoding.UTF8.GetBytes(_config["Jwt:Key"]!)
+        //        );
+
+        //        // 🔑 Base claims (ALL users)
+        //        var claims = new List<Claim>
+        //{
+        //    new Claim(ClaimTypes.NameIdentifier, u.Id.ToString()),
+        //    new Claim(ClaimTypes.Role, u.Role)
+        //};
+
+        //        // 🔒 HospitalId ONLY for Admin & Doctor
+        //        if (u.Role == "Admin")
+        //        {
+        //            // Hospital Admin
+        //            if (u.Admin?.HospitalId != null)
+        //            {
+        //                claims.Add(
+        //                    new Claim("HospitalId", u.Admin.HospitalId.ToString())
+        //                );
+        //            }
+        //            else
+        //            {
+        //                // Doctor Clinic Admin
+        //                var staff = _doctorStaff
+        //                    .GetAsync(x => x.UserId == u.Id)
+        //                    .GetAwaiter()
+        //                    .GetResult();
+
+        //                if (staff == null)
+        //                    throw new Exception("Admin not linked to hospital or doctor");
+
+        //                claims.Add(
+        //                    new Claim("DoctorId", staff.DoctorId.ToString())
+        //                );
+        //            }
+        //        }
+
+        //        else if (u.Role == "Doctor")
+        //        {
+        //            if (u.Doctor?.HospitalId != null)
+        //            {
+        //                claims.Add(
+        //                    new Claim("HospitalId", u.Doctor.HospitalId.Value.ToString())
+        //                );
+        //            }
+        //        }
+
+        //        else if (u.Role == "Staff")
+        //        {
+        //            // 🔥 STAFF → DoctorId only
+        //            var staff = _doctorStaff
+        //                .GetAsync(x => x.UserId == u.Id)
+        //                .GetAwaiter()
+        //                .GetResult();
+
+        //            if (staff == null)
+        //                throw new Exception("Staff not linked to doctor");
+
+        //            claims.Add(
+        //                new Claim("DoctorId", staff.DoctorId.ToString())
+        //            );
+        //        }
+
+        //        else if (u.Role == "Patient")
+        //        {
+        //            // ✅ Patient-க்கு HospitalId claim வேண்டாம்
+        //            // Nothing to add here
+        //        }
+
+
+        //        else if (u.Role == "MedicalRep")
+        //        {
+        //            // 🔥 MedicalRep – no extra claims needed
+        //        }
+
+        //        else if (u.Role == "InternalPharmacyStaff")
+        //        {
+        //            // 🔥 Pharmacy Staff – no extra claims needed
+        //        }
+
+        //        else if (u.Role == "ProductAdmin")
+        //        {
+        //            // 🔥 ProductAdmin – no extra claims needed
+        //        }
+
+
+        //        else
+        //        {
+        //            throw new Exception("Invalid role");
+        //        }
+
+        //        var token = new JwtSecurityToken(
+        //            issuer: _config["Jwt:Issuer"],
+        //            audience: _config["Jwt:Audience"],
+        //            claims: claims,
+        //            expires: DateTime.Now.AddHours(2),
+        //            signingCredentials:
+        //                new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
+        //        );
+
+        //        return new JwtSecurityTokenHandler().WriteToken(token);
+        //    }
+
+
+
+        private async Task<string> GenerateJwtAsync(User u)
         {
             var key = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(_config["Jwt:Key"]!)
             );
 
-            // 🔑 Base claims (ALL users)
             var claims = new List<Claim>
     {
         new Claim(ClaimTypes.NameIdentifier, u.Id.ToString()),
         new Claim(ClaimTypes.Role, u.Role)
     };
 
-            // 🔒 HospitalId ONLY for Admin & Doctor
             if (u.Role == "Admin")
             {
-                // Hospital Admin
                 if (u.Admin?.HospitalId != null)
                 {
-                    claims.Add(
-                        new Claim("HospitalId", u.Admin.HospitalId.ToString())
-                    );
+                    claims.Add(new Claim("HospitalId", u.Admin.HospitalId.ToString()));
                 }
                 else
                 {
-                    // Doctor Clinic Admin
-                    var staff = _doctorStaff
-                        .GetAsync(x => x.UserId == u.Id)
-                        .GetAwaiter()
-                        .GetResult();
-
+                    var staff = await _doctorStaff.GetAsync(x => x.UserId == u.Id);
                     if (staff == null)
                         throw new Exception("Admin not linked to hospital or doctor");
-
-                    claims.Add(
-                        new Claim("DoctorId", staff.DoctorId.ToString())
-                    );
+                    claims.Add(new Claim("DoctorId", staff.DoctorId.ToString()));
                 }
             }
-
             else if (u.Role == "Doctor")
             {
                 if (u.Doctor?.HospitalId != null)
-                {
-                    claims.Add(
-                        new Claim("HospitalId", u.Doctor.HospitalId.Value.ToString())
-                    );
-                }
+                    claims.Add(new Claim("HospitalId", u.Doctor.HospitalId.Value.ToString()));
             }
-
             else if (u.Role == "Staff")
             {
-                // 🔥 STAFF → DoctorId only
-                var staff = _doctorStaff
-                    .GetAsync(x => x.UserId == u.Id)
-                    .GetAwaiter()
-                    .GetResult();
-
+                var staff = await _doctorStaff.GetAsync(x => x.UserId == u.Id);
                 if (staff == null)
                     throw new Exception("Staff not linked to doctor");
-
-                claims.Add(
-                    new Claim("DoctorId", staff.DoctorId.ToString())
-                );
+                claims.Add(new Claim("DoctorId", staff.DoctorId.ToString()));
             }
-
-            else if (u.Role == "Patient")
+            else if (u.Role == "Patient"
+                  || u.Role == "MedicalRep"
+                  || u.Role == "InternalPharmacyStaff"
+                  || u.Role == "ProductAdmin")
             {
-                // ✅ Patient-க்கு HospitalId claim வேண்டாம்
-                // Nothing to add here
+                // No extra claims
             }
-
-
-            else if (u.Role == "MedicalRep")
-            {
-                // 🔥 MedicalRep – no extra claims needed
-            }
-
-            else if (u.Role == "InternalPharmacyStaff")
-            {
-                // 🔥 Pharmacy Staff – no extra claims needed
-            }
-
-            else if (u.Role == "ProductAdmin")
-            {
-                // 🔥 ProductAdmin – no extra claims needed
-            }
-
-
             else
             {
                 throw new Exception("Invalid role");
@@ -2280,14 +2469,12 @@ GetPatientHistory(int userId)
                 issuer: _config["Jwt:Issuer"],
                 audience: _config["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddHours(2),
-                signingCredentials:
-                    new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
+                expires: DateTime.UtcNow.AddHours(2),
+                signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-
 
 
 
@@ -4762,6 +4949,204 @@ GetPatientHistory(int userId)
                 doctorId, hospitalId);
         }
 
+
+
+        //****************************************************
+        //Switch role (MAIN)-CGP
+        //****************************************************
+
+        public async Task<string> SwitchRole(int userId, string targetRole)
+        {
+            var user = await _u.Query()
+                .Include(x => x.Admin)
+                .Include(x => x.Doctor)
+                .FirstOrDefaultAsync(x => x.Id == userId);
+
+            if (user == null)
+                throw new Exception("User not found");
+
+            // 🔥 IMPORTANT SECURITY CHECK
+            // Only original Admin users can switch roles
+            if ((user.Role ?? "").ToLower() != "admin")
+                throw new Exception("Only Admin can switch roles");
+
+            var normalizedRole = targetRole.Trim().ToLower();
+
+            // =========================
+            // SWITCH TO NURSE
+            // =========================
+            if (normalizedRole == "nurse")
+            {
+                int? doctorId = await GetLinkedDoctorId(userId, user);
+
+                if (!doctorId.HasValue)
+                    throw new Exception("No doctor/clinic mapping found for this user");
+
+                var nurseStaff = await _doctorStaff.Query()
+                    .FirstOrDefaultAsync(x =>
+                        x.DoctorId == doctorId.Value &&
+                        x.StaffRole.ToLower() == "nurse");
+
+                if (nurseStaff == null)
+                    throw new Exception("No Nurse role found for this clinic");
+
+                return GenerateSwitchedJwt(user, "Nurse", doctorId.Value, nurseStaff.Id);
+            }
+
+            // =========================
+            // SWITCH TO ADMIN
+            // =========================
+            if (normalizedRole == "admin")
+            {
+                int? doctorId = await GetLinkedDoctorId(userId, user);
+
+                bool isHospitalAdmin = user.Admin != null;
+
+                bool isClinicAdmin = false;
+                int? staffId = null;
+
+                if (doctorId.HasValue)
+                {
+                    var adminStaff = await _doctorStaff.Query()
+                        .FirstOrDefaultAsync(x =>
+                            x.DoctorId == doctorId.Value &&
+                            x.UserId == userId &&
+                            x.StaffRole.ToLower() == "admin");
+
+                    if (adminStaff != null)
+                    {
+                        isClinicAdmin = true;
+                        staffId = adminStaff.Id;
+                    }
+                }
+
+                if (!isHospitalAdmin && !isClinicAdmin)
+                    throw new Exception("You are not assigned as Admin");
+
+                return GenerateSwitchedJwt(user, "Admin", doctorId, staffId);
+            }
+
+            throw new Exception("Invalid target role");
+        }
+
+
+        //****************************************************
+        //Switch role helper for link doctorid admin and nurse
+        //****************************************************
+        private async Task<int?> GetLinkedDoctorId(int userId, User user)
+        {
+            // 1️⃣ Doctor userனா direct doctor id
+            if (user.Doctor != null)
+                return user.Doctor.Id;
+
+            // 2️⃣ DoctorStaff table மூலம் clinic mapping
+            var staff = await _doctorStaff.Query()
+                .FirstOrDefaultAsync(x => x.UserId == userId);
+
+            if (staff != null)
+                return staff.DoctorId;
+
+            return null;
+        }
+
+       
+     //****************************
+     //Switch role JWT
+     //***************************
+        private string GenerateSwitchedJwt(
+    User user,
+    string activeRole,
+    int? doctorId = null,
+    int? staffId = null)
+        {
+            var claims = new List<Claim>
+    {
+        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        new Claim(ClaimTypes.Name, user.Name ?? ""),
+        new Claim(ClaimTypes.Role, activeRole),
+        new Claim("OriginalRole", user.Role ?? "")
+    };
+
+            if (doctorId.HasValue)
+                claims.Add(new Claim("DoctorId", doctorId.Value.ToString()));
+
+            if (staffId.HasValue)
+                claims.Add(new Claim("StaffId", staffId.Value.ToString()));
+
+            if (user.Admin != null)
+            {
+                claims.Add(new Claim("AdminId", user.Admin.Id.ToString()));
+                claims.Add(new Claim("HospitalId", user.Admin.HospitalId.ToString()));
+            }
+
+            var key = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
+
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: _config["Jwt:Issuer"],
+                audience: _config["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.UtcNow.AddDays(7),
+                signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public async Task<object> GetAvailableRoles(int userId)
+        {
+            var user = await _u.Query()
+                .Include(x => x.Admin)
+                .Include(x => x.Doctor)
+                .FirstOrDefaultAsync(x => x.Id == userId);
+
+            if (user == null)
+                throw new Exception("User not found");
+
+            var availableRoles = new List<string>();
+
+            // Current role from token / user table
+            string currentRole = user.Role ?? "";
+
+            // 1️⃣ Admin check
+            bool isHospitalAdmin = user.Admin != null;
+
+            var linkedDoctorId = await GetLinkedDoctorId(userId, user);
+
+            bool isClinicAdmin = false;
+            bool hasNurse = false;
+
+            if (linkedDoctorId.HasValue)
+            {
+                isClinicAdmin = await _doctorStaff.Query()
+                    .AnyAsync(x =>
+                        x.UserId == userId &&
+                        x.DoctorId == linkedDoctorId.Value &&
+                        x.StaffRole.ToLower() == "admin");
+
+                hasNurse = await _doctorStaff.Query()
+                    .AnyAsync(x =>
+                        x.DoctorId == linkedDoctorId.Value &&
+                        x.StaffRole.ToLower() == "nurse");
+            }
+
+            if (isHospitalAdmin || isClinicAdmin)
+                availableRoles.Add("Admin");
+
+            if (hasNurse)
+                availableRoles.Add("Nurse");
+
+            // duplicate remove
+            availableRoles = availableRoles.Distinct().ToList();
+
+            return new
+            {
+                currentRole = currentRole,
+                availableRoles = availableRoles
+            };
+        }
 
 
 
